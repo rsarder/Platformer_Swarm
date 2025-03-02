@@ -17,10 +17,10 @@ langchain = "^0.3.19"
 langchain-core = "^0.3.40"
 langchain-community = "^0.3.18"
 langchain-anthropic = "^0.3.8"
-# Two unfixed bugs in crewai prevents us upgrading to 0.4x
-# - Agent not able to delegate task if extra tools are assigned
-# - Agent not able to invoke non-deterministic tool even with cache disabled
-# crewai = { extras = ["tools"], version = "0.36.1" }
+
+sentence_transformers = "^3.4.1"
+faiss-cpu = "^1.10.0"
+
 crewai = { git = "https://github.com/hukaidong/crewAI", rev = "d74376ebd2c5debe0007c57f0149bcf21dcac9b1", extras = [
   "tools",
 ] }

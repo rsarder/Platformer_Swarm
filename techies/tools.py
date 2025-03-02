@@ -3,12 +3,16 @@ import os
 import re
 import requests
 
+import numpy as np
+import faiss
+
 from bs4 import BeautifulSoup
 from crewai.tools import BaseTool
 from freesound import FreesoundClient
 from pydantic import BaseModel, Field
 from tempfile import TemporaryDirectory
 from typing import Type, List, Dict, Any, Optional
+from sentence_transformers import SentenceTransformer
 
 
 class ReadFileToolSchema(BaseModel):
@@ -58,6 +62,9 @@ class SaveSoundToolSchema(BaseModel):
 
 class ReadHtmlExamplesToolSchema(BaseModel):
     pass
+
+class QueryMechanicsToolSchema(BaseModel):
+    query: str = Field(type=str, description="Search query for game mechanic.")
 
 class ReadFileTool(BaseTool):
     name: str = "Read a File"
@@ -271,6 +278,66 @@ class ReadHtmlExamplesTool(BaseTool):
             return examples
         except Exception as e:
             return f"Failed to read examples: {e}"
+
+class QueryMechanicsTool(BaseTool):
+    name: str = "Query Mechanics"
+    id: str = "query_mechanics"
+    description: str = (
+        "Searches a JSON file of game mechanics (with precomputed embeddings) for the closest "
+        "semantic match to the query. Returns matching mechanics that fall within a given threshold."
+    )
+    args_schema: Type[BaseModel] = QueryMechanicsToolSchema
+
+    def __init__(self, embeddings_file: str = "/../refs/mechanics_db/mechanics_with_embeddings.json", initial_top_k: int = 15, threshold: float = 1.5, **kwargs):
+        super().__init__(**kwargs)
+        self.embeddings_file = embeddings_file
+        self.initial_top_k = initial_top_k
+        self.threshold = threshold
+
+        # Load the mechanics JSON with embeddings
+        with open(self.embeddings_file, 'r') as infile:
+            self.mechanics = json.load(infile)
+
+        # Build a FAISS index from the precomputed embeddings
+        self.embeddings = np.array([m['embedding'] for m in self.mechanics]).astype('float32')
+        self.dimension = self.embeddings.shape[1]
+        self.index = faiss.IndexFlatL2(self.dimension)
+        self.index.add(self.embeddings)
+
+        # Initialize the SentenceTransformer for query encoding
+        self.model = SentenceTransformer('all-MiniLM-L6-v2')
+
+    def _run(self, **kwargs) -> str:
+        query = kwargs.get("query", "")
+        if not query:
+            return "No query provided."
+
+        # Compute embedding for the query
+        query_embedding = self.model.encode(query).astype('float32')
+        query_embedding = np.expand_dims(query_embedding, axis=0)
+
+        # Perform FAISS search and filer results based on threshhold (larger value means looser threshold)
+        distances, indices = self.index.search(query_embedding, self.initial_top_k)
+
+        relevant_results = []
+        for dist, idx in zip(distances[0], indices[0]):
+            if dist < self.threshold:
+                relevant_results.append(self.mechanics[idx])
+
+        if not relevant_results:
+            return "No relevant game mechanics found for your query."
+
+        response_lines = []
+        for i, result in enumerate(relevant_results, 1):
+            response_lines.append(f"Result {i}:")
+            response_lines.append(f"Name: {result.get('Name', 'N/A')}")
+            response_lines.append(f"Description: {result.get('Description', 'N/A')}")
+            response_lines.append(f"Implementation Details: {result.get('Implementation Details', 'N/A')}")
+            response_lines.append(f"Pseudocode: {result.get('Pseudocode (Phaser.js)', 'N/A')}\n")
+        return "\n".join(response_lines)
+
+    async def _arun(self, **kwargs) -> str:
+        return self._run(**kwargs)
 
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
