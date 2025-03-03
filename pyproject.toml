@@ -18,6 +18,9 @@ langchain-core = "^0.3.40"
 langchain-community = "^0.3.18"
 langchain-anthropic = "^0.3.8"
 
+# not possible yet because of dependency issues
+# langchain-deepseek = "^0.1.0"
+
 sentence_transformers = "^3.4.1"
 faiss-cpu = "^1.10.0"
 

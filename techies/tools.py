@@ -280,7 +280,7 @@ class ReadHtmlExamplesTool(BaseTool):
             return f"Failed to read examples: {e}"
 
 class QueryMechanicsTool(BaseTool):
-    name: str = "Query Mechanics"
+    name: str = "Query Mechanics Tool"
     id: str = "query_mechanics"
     description: str = (
         "Searches a JSON file of game mechanics (with precomputed embeddings) for the closest "
@@ -288,9 +288,9 @@ class QueryMechanicsTool(BaseTool):
     )
     args_schema: Type[BaseModel] = QueryMechanicsToolSchema
 
-    def __init__(self, embeddings_file: str = "/../refs/mechanics_db/mechanics_with_embeddings.json", initial_top_k: int = 15, threshold: float = 1.5, **kwargs):
+    def __init__(self, initial_top_k: int = 15, threshold: float = 1.5, **kwargs):
         super().__init__(**kwargs)
-        self.embeddings_file = embeddings_file
+        self.embeddings_file = os.path.normpath(__file__ + "/../refs/mechanics_db/mechanics_with_embeddings.json")
         self.initial_top_k = initial_top_k
         self.threshold = threshold
 
