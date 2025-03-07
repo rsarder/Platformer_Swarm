@@ -9,7 +9,7 @@ import faiss
 from bs4 import BeautifulSoup
 from crewai.tools import BaseTool
 from freesound import FreesoundClient
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr, ConfigDict
 from tempfile import TemporaryDirectory
 from typing import Type, List, Dict, Any, Optional
 from sentence_transformers import SentenceTransformer
@@ -288,24 +288,34 @@ class QueryMechanicsTool(BaseTool):
     )
     args_schema: Type[BaseModel] = QueryMechanicsToolSchema
 
+    initial_top_k: int = 15
+    threshold: float = 1.5
+    embeddings_file: str = os.path.normpath(__file__ + "/../refs/mechanics_db/mechanics_with_embeddings.json")
+    mechanics: dict = {}
+    embeddings: np.ndarray = Field(default=None)
+    dimension: int = Field(default=0)
+    index: faiss.IndexFlatL2 = Field(default=None)
+    model: SentenceTransformer = Field(default=None)
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     def __init__(self, initial_top_k: int = 15, threshold: float = 1.5, **kwargs):
-        super().__init__(**kwargs)
-        self.embeddings_file = os.path.normpath(__file__ + "/../refs/mechanics_db/mechanics_with_embeddings.json")
-        self.initial_top_k = initial_top_k
-        self.threshold = threshold
+        super().__init__(initial_top_k=initial_top_k, threshold=threshold, **kwargs)
 
         # Load the mechanics JSON with embeddings
         with open(self.embeddings_file, 'r') as infile:
-            self.mechanics = json.load(infile)
+            object.__setattr__(self, 'mechanics', json.load(infile))
 
         # Build a FAISS index from the precomputed embeddings
-        self.embeddings = np.array([m['embedding'] for m in self.mechanics]).astype('float32')
-        self.dimension = self.embeddings.shape[1]
-        self.index = faiss.IndexFlatL2(self.dimension)
-        self.index.add(self.embeddings)
+        embeddings = np.array([m['embedding'] for m in self.mechanics]).astype('float32')
+        dimension = embeddings.shape[1]
+        index = faiss.IndexFlatL2(dimension)
+        index.add(embeddings)
 
-        # Initialize the SentenceTransformer for query encoding
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')
+        object.__setattr__(self, 'embeddings', embeddings)
+        object.__setattr__(self, 'dimension', dimension)
+        object.__setattr__(self, 'index', index)
+        object.__setattr__(self, 'model', SentenceTransformer('all-MiniLM-L6-v2'))
 
     def _run(self, **kwargs) -> str:
         query = kwargs.get("query", "")
@@ -356,7 +366,7 @@ def get_all_tools():
     tools = {}
     toolklasses = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool
+        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)
