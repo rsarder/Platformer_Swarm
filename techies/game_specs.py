@@ -123,4 +123,9 @@ grid, ensuring that the resulting game is both user-friendly and faithful to
 the original design and gameplay mechanics.
 """,
 
+
+MarioClone_gamespec = """
+This classic 2D side-scrolling platformer centers on a nimble protagonist who navigates a series of intricately designed levels composed of tiled backgrounds and platforms. The game engine employs a tile-based system with precise collision detection, allowing the character to traverse terrains that include static and moving platforms, hidden passages, and warp mechanisms. Movement is governed by simple yet responsive controls: directional inputs move the character horizontally while a dedicated jump action, influenced by realistic physics parameters such as gravity, momentum, and friction, enables the player to clear obstacles, gaps, and oncoming adversaries. Enemies follow preset patrol routes with basic AI that triggers interactions upon proximity or collision, requiring players to time their jumps and maneuvers carefully. Additionally, the environment is rich with collectible items and power-ups that temporarily enhance abilities—such as increased size, strength, or speed—and secret areas that reward exploration. The game’s architecture supports modular level design, featuring scripted events, dynamic object interactions, and an underlying scoring and timer system that together create a progressively challenging experience.
+
+""",
 )
