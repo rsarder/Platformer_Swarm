@@ -26,6 +26,8 @@ hierarchy_architect_v2:
     - read_file
     - write_file
     - batch_read_files
+  llm:
+    - o1-2024-12-17
 
 hierarchy_entity_engineer_v2:
   <<: *common_attributes
@@ -73,6 +75,8 @@ hierarchy_entity_engineer_v2:
     - list_files
     - read_file
     - write_file
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_validator:
   <<: *common_attributes_no_deleg
@@ -94,6 +98,8 @@ hierarchy_validator:
     - list_files
     - read_file
     - write_file
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_implementation_planner:
   <<: *common_attributes_no_deleg
@@ -108,5 +114,7 @@ hierarchy_implementation_planner:
     - list_files
     - read_file
     - write_file
+  llm:
+    - gpt-4o-2024-08-06
 
 # vim: set foldmethod=indent foldlevel=0:

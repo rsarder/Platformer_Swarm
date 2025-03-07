@@ -43,6 +43,8 @@ hierarchy_architect:
     - read_file
     - write_file
     - batch_read_files
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_entity_engineer:
   <<: *common_attributes_no_deleg
@@ -67,6 +69,8 @@ hierarchy_entity_engineer:
     - list_files
     - read_file
     - write_file
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_manager_engineer:
   <<: *common_attributes_no_deleg
@@ -88,6 +92,8 @@ hierarchy_manager_engineer:
     - list_files
     - read_file
     - write_file
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_reviewer:
   <<: *common_attributes
@@ -107,6 +113,8 @@ hierarchy_reviewer:
     - list_files
     - read_file
     - batch_read_files
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_detailed_reviewer:
   <<: *common_attributes_no_deleg
@@ -122,6 +130,8 @@ hierarchy_detailed_reviewer:
   tools:
     - list_files
     - read_file
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_question_reflector:
   <<: *common_attributes_no_deleg
@@ -133,6 +143,8 @@ hierarchy_question_reflector:
   tools:
     - list_files
     - read_file
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_architect_refiner:
   <<: *common_attributes
@@ -157,6 +169,8 @@ hierarchy_architect_refiner:
     - read_file
     - write_file
     - batch_read_files
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_entity_refiner:
   <<: *common_attributes_no_deleg
@@ -177,6 +191,8 @@ hierarchy_entity_refiner:
   tools:
     - read_file
     - write_file
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_manager_refiner:
   <<: *common_attributes_no_deleg
@@ -197,6 +213,8 @@ hierarchy_manager_refiner:
   tools:
     - read_file
     - write_file
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_assembler:
   <<: *common_attributes_no_deleg
@@ -217,6 +235,8 @@ hierarchy_assembler:
     - list_files
     - read_file
     - batch_read_files
+  llm:
+    - gpt-4o-2024-08-06
 
 game_develop_manager:
   <<: *common_attributes
@@ -236,6 +256,8 @@ game_develop_manager:
     - list_files
     - read_file
     - write_file
+  llm:
+    - gpt-4o-2024-08-06
 
 game_develop_engineer:
   <<: *common_attributes_no_deleg
@@ -251,5 +273,7 @@ game_develop_engineer:
     - list_files
     - read_file
     - write_file
-
+  llm:
+    - gpt-4o-2024-08-06
+    
 # vim: set foldmethod=indent foldlevel=0:

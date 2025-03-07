@@ -50,6 +50,8 @@ html5_game_architect:
     - write_file
     - batch_read_files
     - read_examples_html
+  llm:
+    - gpt-4o-2024-08-06
 
 html5_game_engineer:
   <<: *common_attributes_no_deleg
@@ -87,6 +89,8 @@ html5_game_engineer:
     - read_file
     - write_file
     - read_examples_html
+  llm:
+    - gpt-4o-2024-08-06
 
 html5_game_ui_engineer:
   <<: *common_attributes_no_deleg
@@ -119,6 +123,8 @@ html5_game_ui_engineer:
     - read_file
     - write_file
     - read_examples_html
+  llm:
+    - gpt-4o-2024-08-06
 
 html5_game_uinput_engineer:
   <<: *common_attributes
@@ -142,6 +148,8 @@ html5_game_uinput_engineer:
     - read_file
     - write_file
     - read_examples_html
+  llm:
+    - gpt-4o-2024-08-06
 
 html5_game_logic_engineer:
   <<: *common_attributes_no_deleg
@@ -167,6 +175,8 @@ html5_game_logic_engineer:
     - read_file
     - write_file
     - read_examples_html
+  llm:
+    - gpt-4o-2024-08-06
 
 html5_game_tester:
   <<: *common_attributes_no_deleg
@@ -189,6 +199,8 @@ html5_game_tester:
     - read_file
     - write_file
     - read_examples_html
+  llm:
+    - gpt-4o-2024-08-06
 
 html5_sound_engineer:
   <<: *common_attributes_no_deleg
@@ -206,6 +218,8 @@ html5_sound_engineer:
     - write_file
     - search_sound
     - save_sound
+  llm:
+    - gpt-4o-2024-08-06
 
 html5_game_rules_engineer:
   <<: *common_attributes_no_deleg
@@ -229,6 +243,8 @@ html5_game_rules_engineer:
     - list_files
     - read_file
     - write_file
+  llm:
+    - gpt-4o-2024-08-06
 
 html5_sound_integrator_agent:
   <<: *common_attributes_no_deleg
@@ -254,5 +270,7 @@ html5_sound_integrator_agent:
     - read_file
     - write_file
     - read_examples_html
-
+  llm:
+    - gpt-4o-2024-08-06
+    
 # vim: set foldmethod=indent foldlevel=0:
