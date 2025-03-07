@@ -49,27 +49,29 @@ def search_mechanics_dynamic(query, initial_top_k=10, threshold=1.5):
     # Retrieve a larger set of candidates initially
     distances, indices = index.search(query_embedding, initial_top_k)
     
-    # Convert distances to similarities if needed (e.g., if using cosine similarity, similarity = 1 - distance)
-    # Here, we assume a threshold where lower distance means more similar.
+    # lower distance means more similar.
     relevant_results = []
     for dist, idx in zip(distances[0], indices[0]):
-        # Apply a threshold: adjust condition based on how your distances are measured
         if dist < threshold:
-            relevant_results.append(mechanics[idx])
-    
+            normalized_similarity = max(0, (threshold - dist) / threshold)
+            mechanic = mechanics[idx]
+            mechanic['similarity_score'] = round(normalized_similarity, 4)
+            relevant_results.append(mechanic)
     return relevant_results
 
 # embed_json()
 # Usage example:
 query = input("Enter your query: ")
-results = search_mechanics_dynamic(query, initial_top_k=15, threshold=1.5)
+results = search_mechanics_dynamic(query, initial_top_k=15, threshold=1.4)
 if results:
     for idx, result in enumerate(results, 1):
+        
         print(f"Result {idx}:")
         print("Name:", result["Name"])
         print("Description:", result["Description"])
         print("Implementation Details:", result["Implementation Details"])
         print("Phaser Pseudocode:", result["Pseudocode (Phaser.js)"])
-        print("-----")
+        print("Similarity Score:", result["similarity_score"])
+        print("-")
 else:
     print("No relevant mechanics found for your query.")

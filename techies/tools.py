@@ -316,13 +316,16 @@ class QueryMechanicsTool(BaseTool):
         query_embedding = self.model.encode(query).astype('float32')
         query_embedding = np.expand_dims(query_embedding, axis=0)
 
-        # Perform FAISS search and filer results based on threshhold (larger value means looser threshold)
+        # Perform FAISS search for the initial top_k candidates
         distances, indices = self.index.search(query_embedding, self.initial_top_k)
 
         relevant_results = []
         for dist, idx in zip(distances[0], indices[0]):
             if dist < self.threshold:
-                relevant_results.append(self.mechanics[idx])
+                normalized_similarity = max(0, (self.threshold - dist) / self.threshold)
+                mechanic = self.mechanics[idx]
+                mechanic['similarity_score'] = round(normalized_similarity, 4)
+                relevant_results.append(mechanic)
 
         if not relevant_results:
             return "No relevant game mechanics found for your query."
@@ -333,11 +336,13 @@ class QueryMechanicsTool(BaseTool):
             response_lines.append(f"Name: {result.get('Name', 'N/A')}")
             response_lines.append(f"Description: {result.get('Description', 'N/A')}")
             response_lines.append(f"Implementation Details: {result.get('Implementation Details', 'N/A')}")
-            response_lines.append(f"Pseudocode: {result.get('Pseudocode (Phaser.js)', 'N/A')}\n")
+            response_lines.append(f"Pseudocode: {result.get('Pseudocode (Phaser.js)', 'N/A')}")
+            response_lines.append(f"Similarity Score: {result.get('similarity_score', 'N/A')}\n")
         return "\n".join(response_lines)
 
     async def _arun(self, **kwargs) -> str:
         return self._run(**kwargs)
+
 
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
