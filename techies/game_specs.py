@@ -128,4 +128,49 @@ MarioClone_gamespec = """
 This classic 2D side-scrolling platformer centers on a nimble protagonist who navigates a series of intricately designed levels composed of tiled backgrounds and platforms. The game engine employs a tile-based system with precise collision detection, allowing the character to traverse terrains that include static and moving platforms, hidden passages, and warp mechanisms. Movement is governed by simple yet responsive controls: directional inputs move the character horizontally while a dedicated jump action, influenced by realistic physics parameters such as gravity, momentum, and friction, enables the player to clear obstacles, gaps, and oncoming adversaries. Enemies follow preset patrol routes with basic AI that triggers interactions upon proximity or collision, requiring players to time their jumps and maneuvers carefully. Additionally, the environment is rich with collectible items and power-ups that temporarily enhance abilities—such as increased size, strength, or speed—and secret areas that reward exploration. The game’s architecture supports modular level design, featuring scripted events, dynamic object interactions, and an underlying scoring and timer system that together create a progressively challenging experience.
 
 """,
+
+Platformer_Test = """
+Game Concept and Vision:
+
+The game is a retro-inspired 2D platformer designed to challenge players' agility and strategic thinking. Set against a strikingly simple black background, the game's colorful characters, enemies, and obstacles stand out vividly, capturing the aesthetic of classic arcade games. The player navigates through progressively challenging levels, aiming to reach each level's endpoint while collecting coins, avoiding various obstacles, and surpassing dynamic and patterned enemies.
+
+User Interface (UI):
+
+The game's UI will be designed to support the retro aesthetic with pixelated fonts and minimalistic layouts reminiscent of classic 8-bit games. The heads-up display (HUD) will include elements like:
+
+Score Counter: Displaying the total coins collected.
+Life Indicator: Showing the remaining lives.
+Level Indicator: Indicating the current level number.
+Main menus, pause screens, and settings will use simple, intuitive navigation with a pixel art style consistent with the game.
+
+User Input Mechanisms:
+
+The game will support multiple input methods to accommodate different players:
+
+Keyboard: Arrow keys for movement (left/right), spacebar for jump, and a dedicated key for sprint (like Shift).
+Gamepad: Analog stick for movement, a button for jump, and another for sprint.
+Touch Controls: Virtual buttons for mobile devices, replicating the above functionalities.
+Game Logic and Rules:
+
+Core Gameplay Mechanics: Players will jump, sprint, and dodge their way through levels filled with enemies and obstacles.
+Enemy Types: Include both predictable (back and forth, jumping, climbing) and dynamic (following the player) enemies.
+Obstacles: Vary from stationary to moving, with effects like hazards or hindrances (sticky floors).
+Progression and Levels: Each level acts as a self-contained puzzle, with players needing to master timing and movement to successfully navigate through.
+Win/Loss Conditions: Completing a level successfully involves reaching the end point without losing all lives. Collecting coins adds to the player's score but isn't mandatory for level completion.
+In-Game Assets:
+
+Characters: Pixel-art styled player and enemy sprites.
+Environment: Platforms, obstacles, and coins designed in bright, contrasting colors to stand out against the black background.
+Audio: Chiptune background music and sound effects to complement the retro theme.
+Additional Components:
+
+Score System: Coins count towards the player’s total score, incentivizing exploration.
+Level Design: While the background remains black, the placement of obstacles and enemies will create visually compelling puzzles.
+Implementation Considerations:
+
+Visual Clarity: Ensure the vibrant colors of sprites are easily distinguishable against the black background.
+Level Balancing: Carefully balance the difficulty of levels to keep the game challenging, yet accessible.
+Audio Design: The sound should match the visual style without becoming repetitive or distracting.
+
+"""
 )

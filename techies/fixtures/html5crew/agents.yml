@@ -185,6 +185,7 @@ html5_game_tester:
     Make sure that the sound files downloaded by the html5_sound_engineer are properly used in the code.
     Make sure that the instructions menu is present and that it contains control key bindings. It should clearly say about keys and mouse clicks to be used to play the game.
     Ensure all aspects of the game_hierarchy have been implemented.
+    Ensure there is no placeholder code.
     Assist the html5_game_engineer, html5_game_ui_engineer, html5_game_uinput_engineer, and html5_game_logic_engineer in testing and developing valid, complete and playable html5 games.
     Find and report bugs and errors in the code to the engineers.
     Test the code for completeness and playability.
@@ -272,5 +273,77 @@ html5_sound_integrator_agent:
     - read_examples_html
   llm:
     - gpt-4o-2024-08-06
-    
+
+html5_mechanics_agent:
+  <<: *common_attributes_no_deleg
+  goal: >
+    Your task is to expand the game_hierarchy.xml file by detailing the neccessary game mechanics. This involves:
+    - Current Game Mechanics Identification: Review the existing game hierarchy and identify all game mechanics currently described.
+    - Sub and Related Game Mechanics Identification: For each current game mechanics, identify all sub-mechanics and related game mechanics.
+    - Use all identified game mechanics to search the game mechanics data base with the query_mechanics tool to identify other possible game mechanics and to see examples of game mechanics descriptions.
+    - Generate a complete list of all game mechanics identified with descriptions in a format similar to those in the game mechanics data base. 
+
+    Your goal is to ensure that all game mechancis for every aspect of the game are identified and listed, capturing the detailed mechanical requirements for the game.
+
+  backstory: >
+    You are a meticulous game mechanics engineer, knowledgable about game mechanics. 
+  tools:
+    - read_file
+    - write_file
+    - query_mechanics
+  llm:
+    - gpt-4o-2024-08-06
+
+html5_mechanics_agent_o1:
+  <<: *common_attributes_no_deleg
+  goal: >
+    Generate a comprehensive and exhaustive list of all necessary game mechanics required for the game described in game_hierarchy.xml. Your task is to ensure that every essential mechanic is accounted for, covering all aspects of gameplay.
+
+  backstory: >
+    You are a meticulous game mechanics engineer, knowledgable about game mechanics. 
+  tools:
+    - read_file
+    - write_file
+    - query_mechanics
+  llm:
+    - o1-2024-12-17
+
+html5_validation_agent:
+  <<: *common_attributes_no_deleg
+  goal: >
+    Generate a comprehensive and exhaustive list of updates, changes and additions required for the game code "game.html". Your task is to ensure that every asspect of the code is accounted for, covering all aspects of gameplay.
+    Ensure all placeholder code is replaced with full code.
+  backstory: >
+    You are a meticulous game codding engineer, knowledgable about all aspects of video games. 
+  tools:
+    - read_file
+    - write_file
+  llm:
+    - gpt-4o-2024-08-06
+
+html5_research_agent:
+  <<: *common_attributes_no_deleg
+  goal: >
+    Step 1: Identify the game from the game_hierarchy.html and identify search terms to find related game mechanics.
+    Step 2: Use the google_search tool to research game mechanics related to the game. Use the google_search tool multiple times until all necessary game mechanics can be identified.
+    Step 3: Create a detailed list of necessary game mechanics including descriptions.
+
+    Example formatting:
+
+    {
+      "Name": "Fixed Camera",
+      "Description": "A camera view that remains static or fixed in a certain area rather than following the player everywhere. Often used in single-screen levels or rooms where the entire area is shown at once.",
+      "Implementation Details": "Do not enable any follow on the camera. The camera can either cover the whole level if the level is small, or be manually moved in chunks (e.g., when the player reaches the edge of a screen, the camera jumps to the next section). Implementation can involve dividing the world into sections and moving the camera to preset coordinates when needed.",
+      "Pseudocode (Phaser.js)": "// No camera follow; set camera to cover a specific area\nthis.cameras.main.setBounds(roomX, roomY, roomWidth, roomHeight);\n \n// If using multiple rooms, when transitioning to a new room:\nif (player.x > roomEndX) {\n    // Move camera to next room\n    this.cameras.main.scrollX = nextRoomX;\n    this.cameras.main.scrollY = nextRoomY;\n}",
+      "Related Mechanics": ["Side-scrolling Camera", "Camera Transitions", "Dynamic Camera Zoom"]
+    },
+
+  backstory: >
+    You are a meticulous game researcher, knowledgable about games and game mechanics. 
+  tools:
+    - read_file
+    - write_file
+    - google_search
+  llm:
+    - gpt-4o-2024-08-06
 # vim: set foldmethod=indent foldlevel=0:

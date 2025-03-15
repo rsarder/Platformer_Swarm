@@ -20,7 +20,7 @@ class ChatOpenAINoTemp(ChatOpenAI):
         params.pop("temperature", None)
         return params
     
-@track_agent()
+@agentops.track_agent()
 class Agent(_Agent):  # Inherit from _Agent class
     @staticmethod
     def eager_load_all(**extra_kwargs):

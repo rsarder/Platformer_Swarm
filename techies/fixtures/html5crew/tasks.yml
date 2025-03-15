@@ -23,4 +23,159 @@ html5_game_coding:
   expected_output: >
     After fill out all the requirements and complete the file "game.html", say "I have successfully developed the game saved in "game.html", as described per the game specification and game_hierarchy.xml file."
 
+html5_game_validation:
+  <<: *task_common
+  agent: html5_validation_agent
+  description: >
+    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
+    Read and analyze the game file "game.html" to understand what has been coded so far and what has not been coded.
+    Think about what needs to be updated, changed or added to the code to make it a fully functional game with all aspects listed in the game hierarchy.
+    Use the write_file tool to write to the file "game_updates.txt" a list of what needs to be updated, changed or added to make the game fully functional.
+    Include detailed descriptions and instructions on how to make these updates, changes or additions.
+  expected_output: >
+    A detailed list writtent to the file "game_updates.txt" of updates, changes and additions with descriptions and instructions on how to implement these updates, changes and additions.
+    
+html5_game_update:
+  <<: *task_common
+  agent: html5_game_architect
+  description: >
+    Read the game updates file "game_updates.txt" to understand the game updates.
+    Write a perfect HTML5, CSS, and JavaScript code.
+    Make sure that the final code represent a complete and playable game as detailed in the game layout and specifications.
+    Test and review the code with every change.
+    Sound is required for the game.
+    Delegate the task of coding the different parts of the game to the most fitting agents.
+    For any tasks that do not fit any specialized agents, delegate the task to the html5_game_engineer agent.
+    Agents must be conscious of their coworkers' code, and must ensure they refer to already exisiting components. If a necessary component does not exist, create it in the code or delegate the task of doing so to the right agent.
+    Delegate the task of generating and integrating a comprehensive Rules and Instructions menu into the "game.html" to html5_game_rules_engineer agent based on the game hierarchy and interactions outlined in game_hierarchy.xml and game.html files.
+    Delegate the task of downloading the sound resources as per the "game_hierarchy.xml" to html5_sound_engineer agent.
+    Delegate the task of integrating the downloaded sounds to html5_sound_integrator_agent agent. Make sure that html5_sound_integrator_agent agent consult with co-workers to carefully integrate the downloaded sound files provided by the sound engineer into the "game.html" file using the <audio> tags at their appropriate places.
+    Delegate the task of testing the code and giving feedback to the html5_game_tester.
+    Do not finalize your answer until the html5_game_tester says the game is complete and playable, and you have met all requirements.
+    Your final output should include code in a single file for the game and only HTML5 code for the game.
+  expected_output: >
+    After fill out all the requirements and complete the file "game.html", say "I have successfully developed the game saved in "game.html", as described per the game specification and game_hierarchy.xml file."
+
+test_task:
+  <<: *task_common
+  agent: html5_mechanics_agent
+  description: >
+    You are tasked with expanding the game_hierarchy.xml file by detailing the game mechanics. Your job is to identify all game mechanics for each of the components defined in the `<Game>` element. This process should specify the core game play mechanics, interaction & input mechanics, progression & advencement mechanics, narrative & world mechanics, AI & NPC interaction mechanics, meta & external mechanics, and any other necessary game mechanics.
+
+    Follow these guidelines to produce your output as a single structured markup file called game_mechanics.xml:
+
+    **Setup:**
+    - **Understanding the Specifications:**
+      - Begin by thoroughly reviewing and fully understanding the game specifications.
+      - Carefully review the existing game_hierarchy.xml file, analyzing its structure and content, with a focus on how game mechanics are implemented and interconnected.
+    
+    **Game Mechanics Identification & Expansion:**
+    - **Current Game Mechanics Identification:**
+      - Review the existing game hierarchy (game_hierarchy.xml) and extract all explicitly defined game mechanics.
+      - Identify the logic, conditions, and triggers associated with each mechanic.
+      - Ensure all mechanics are categorized appropriately (e.g., core mechanics, auxiliary mechanics, progression-related mechanics).
+    - **Sub-Mechanics and Related Mechanics Identification: **
+      - For each identified game mechanic, determine all necessary sub-mechanics that contribute to its function.
+      - Identify related mechanics that interact with or influence the primary mechanics.
+      - Document dependencies and interconnections between mechanics.
+    - **External Mechanics Comparison:**
+      - Utilize the query_mechanics tool to search the game mechanics database for additional mechanics that align with the identified ones.
+      - Retrieve reference examples of similar mechanics to ensure completeness and best practices in design.
+      - Identify potential new mechanics that could enhance gameplay, balance, or player engagement.
+    
+    **Game Mechanics Documentation:**
+    - Use the write_file tool to compile a structured list of all identified mechanics (including new ones from external sources).
+    - Format each mechanic’s description in alignment with the game mechanics database, ensuring consistency and clarity.
+    - For each identified game mechanic, provide a structured breakdown using the following JSON format:
+
+      {
+        "Name": "<Mechanic Name>",
+        "Category": "<Core / Auxiliary / Progression-related>",
+        "Description": "<A concise yet comprehensive explanation of what the mechanic does, its purpose, and its design considerations.>",
+        "Functionality & Rules": "<Define its logic, triggers, interactions, and dependencies. Include details about states, player inputs, and environmental conditions that affect this mechanic.>",
+        "Implementation Details": "<Technical considerations for implementing this mechanic, including frameworks, physics systems, collision handling, AI behaviors, and any necessary calculations or constraints.>",
+        "Pseudocode": "<Provide simplified logic for implementation in a game engine (e.g., Unity C#, Phaser.js, Unreal Blueprint).>",
+        "Related Mechanics": ["<List of other mechanics this interacts with, such as movement, physics, or ability-based systems>"]
+      }
+
+  expected_output: >
+    A structured and formatted list of all game mechanics, sub-mechanics, and related mechanics with detailed descriptions.
+
+
+test_task2:
+  <<: *task_common
+  agent: html5_mechanics_agent
+  description: >
+    Objective:
+    You are provided with game_mechanics.xml, which contains a structured list of game mechanics identified in the initial phase. Your task is to expand upon this list by identifying and documenting any missing game mechanics necessary for a complete and well-balanced gameplay experience. These mechanics should align with the game structure outlined in game_hierarchy.xml.
+
+    Follow these guidelines to produce your output as a single structured markup file called game_mechanics_v2.xml:
+
+    **Identifying Missing Game Mechanics:**
+      - Analyze the game_hierarchy.xml file to determine the full scope of game elements and ensure that all necessary mechanics are accounted for.
+      - Compare the existing game_mechanics.xml file with the game’s design framework to identify gaps where additional mechanics are required.
+      - Use the query_mechanics tool to cross-check with similar games and industry standards to ensure completeness.
+
+    **Expanding the Mechanics List:**
+
+      - For each missing mechanic, define:
+        - What gameplay function it serves
+        - How it integrates with existing mechanics
+        - What interactions and dependencies it has with other systems
+      - Ensure that mechanics cover all necessary categories, including:
+        - Core Gameplay Mechanics (e.g., movement, combat, resource management)
+        - Interaction & Input Mechanics (e.g., controls, UI interactions, physics-based inputs)
+        - Progression & Advancement Mechanics (e.g., leveling, skill upgrades, economy systems)
+        - Narrative & World Mechanics (e.g., story progression, dynamic environments, quest logic)
+        - AI & NPC Interaction Mechanics (e.g., enemy behavior, dialogue systems, faction relationships)
+        - Meta & External Mechanics (e.g., achievements, player data tracking, online features)
+    
+    **Game Mechanics Documentation:**
+    - Use the write_file tool to compile a structured list of all identified mechanics (including new ones from external sources).
+    - Format each mechanic’s description in alignment with the game mechanics database, ensuring consistency and clarity.
+    - For each identified game mechanic, provide a structured breakdown using the following JSON format:
+
+      {
+        "Name": "<Mechanic Name>",
+        "Category": "<Core / Auxiliary / Progression-related>",
+        "Description": "<A concise yet comprehensive explanation of what the mechanic does, its purpose, and its design considerations.>",
+        "Functionality & Rules": "<Define its logic, triggers, interactions, and dependencies. Include details about states, player inputs, and environmental conditions that affect this mechanic.>",
+        "Implementation Details": "<Technical considerations for implementing this mechanic, including frameworks, physics systems, collision handling, AI behaviors, and any necessary calculations or constraints.>",
+        "Pseudocode": "<Provide simplified logic for implementation in a game engine (e.g., Unity C#, Phaser.js, Unreal Blueprint).>",
+        "Related Mechanics": ["<List of other mechanics this interacts with, such as movement, physics, or ability-based systems>"]
+      }
+
+  expected_output: >
+    A structured and formatted list of all game mechanics, sub-mechanics, and related mechanics with detailed descriptions.
+
+test_task3:
+  <<: *task_common
+  agent: html5_mechanics_agent_o1
+  description: >
+    Objective:
+    Your task is to generate a comprehensive and exhaustive list of all necessary game mechanics required for the game described in game_hierarchy.xml. This list should ensure full gameplay functionality by covering all relevant gameplay aspects. You are not required to provide descriptions, functionality details, or implementation specifics—your sole focus is on identifying and naming every essential mechanic.
+    
+    Follow these guidelines to produce your output as a single structured markup file called game_mechanics_v2.xml:
+
+    **Identifying Required Game Mechanics:**
+      - Analyze game_hierarchy.xml to determine all gameplay elements and systems that require mechanics.
+
+    **Categorizing Mechanics:**
+    - Ensure the list includes mechanics across all relevant gameplay categories, such as:
+
+      - Core Gameplay Mechanics (e.g., movement, combat, resource collection)
+      - Interaction & Input Mechanics (e.g., player controls, UI navigation, physics interactions)
+      - Progression & Advancement Mechanics (e.g., leveling, skill trees, economy systems)
+      - Narrative & World Mechanics (e.g., quest tracking, environmental storytelling, dialogue systems)
+      - AI & NPC Interaction Mechanics (e.g., enemy behavior, NPC routines, faction systems)
+      - Meta & External Mechanics (e.g., achievements, player data tracking, matchmaking)
+
+    **Output Format:**
+      - Produce a structured list in game_mechanics_list.txt, formatted as follows:
+        - Mechanic Name 1
+        - Mechanic Name 2
+        - Mechanic Name 3
+
+  expected_output: >
+    A structured and formatted list of all game mechanics.
 # vim: set foldmethod=indent foldlevel=0:

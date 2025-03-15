@@ -18,3 +18,9 @@ html5_crew:
   tasks:
     - html5_game_coding
 
+test_crew:
+  <<: *crew_common
+  agents:
+    - html5_validation_agent
+  tasks:
+    - html5_game_validation

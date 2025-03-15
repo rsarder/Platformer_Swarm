@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field, PrivateAttr, ConfigDict
 from tempfile import TemporaryDirectory
 from typing import Type, List, Dict, Any, Optional
 from sentence_transformers import SentenceTransformer
+from langchain_community.utilities import GoogleSerperAPIWrapper
 
 
 class ReadFileToolSchema(BaseModel):
@@ -65,6 +66,9 @@ class ReadHtmlExamplesToolSchema(BaseModel):
 
 class QueryMechanicsToolSchema(BaseModel):
     query: str = Field(type=str, description="Search query for game mechanic.")
+
+class GoogleSearchToolSchema(BaseModel):
+    query: str = Field(type=str, description="The search query to use for Google search.")
 
 class ReadFileTool(BaseTool):
     name: str = "Read a File"
@@ -353,6 +357,29 @@ class QueryMechanicsTool(BaseTool):
     async def _arun(self, **kwargs) -> str:
         return self._run(**kwargs)
 
+class GoogleSearchTool(BaseTool):
+    name: str = "Google Search"
+    id: str = "google_search"
+    description: str = "Search Google for recent results using the provided query."
+    args_schema: Type[BaseModel] = GoogleSearchToolSchema
+
+    search: GoogleSerperAPIWrapper = Field(default=None)  # Define search as a Pydantic field
+
+    # Add model configuration for Pydantic
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        object.__setattr__(self, 'search', GoogleSerperAPIWrapper())  # Bypass Pydantic validation
+
+    # Define the _run method to execute the search
+    def _run(self, **kwargs) -> str:
+        try:
+            query = kwargs['query']
+            results = self.search.run(query)
+            return results
+        except Exception as e:
+            return f"Failed to perform Google search: {e}"
 
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
@@ -366,7 +393,7 @@ def get_all_tools():
     tools = {}
     toolklasses = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool
+        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)

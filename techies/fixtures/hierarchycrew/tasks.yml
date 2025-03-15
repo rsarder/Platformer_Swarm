@@ -6,13 +6,13 @@ game_hierarchy_representation_v2:
   <<: *task_common
   agent: hierarchy_architect_v2
   description: |
-      You are tasked with creating a structured XML file titled game_hierarchy.xml based on the provided game specifications. This file will serve as a detailed guide that bridges the gap between the client's game specifications and the final product of the game development pipeline. It must encapsulate all the high-level components required for the game's implementation, ensuring a clear, modular, and scalable structure.
+      You are tasked with writing to a file a structured XML file titled game_hierarchy.xml based on the provided game specifications. This file will serve as a detailed guide that bridges the gap between the client's game specifications and the final product of the game development pipeline. It must encapsulate all the high-level components required for the game's implementation, ensuring a clear, modular, and scalable structure.
 
       Follow these guidelines to produce your output as a single structured markup file called game_hierarchy.xml:
 
       **Setup:**
       - **Conceptual Understanding:**
-        - Begin by reading and thoroughly understanding the provided game specifications.
+        - Begin by reading and thoroughly understanding the provided game specifications and game_mechanics_list.xml.
         - Ensure you grasp all aspects of the game, including mechanics, logic, user interface (UI), audio, and any special features or edge cases.
         - Consider how each element of the game hierarchy will interact with others to ensure a cohesive and logical structure within the final XML file.
 
@@ -30,7 +30,7 @@ game_hierarchy_representation_v2:
       - **Component Identification:**
         - Break down the game into its fundamental outer components. Consider elements such as:
           - **Board:** The game board or screen for games which utilize one.
-          - **Logic:** Core game logic, including turn management, scoring system, and progression mechanics.
+          - **Logic:** Core game logic, including core gameplay mechanics, interaction & input mechanics, progression & advancement mechanics, narrative & world mechanics, AI & NPC interaction mechanics, meta & external mechanics, audio mechanics and visual mechancis.
           - **Rules:** How the game is played, objective of the game, controls of the game, actions with corresponding controls.
           - **Assets:** Includes audio for sound effects and background music, and images for visual assets.
           - **Input:** Represents the player control schemas for the game (e.g., keyboard controls, mouse controls, on-screen interactables).
@@ -43,6 +43,9 @@ game_hierarchy_representation_v2:
           - Explains what the component is.
           - Details how it should be implemented.
           - Specifies the logic or interactions it involves.
+        - **Mechanics Integration:**
+          - Extract all mechanics from game_mechanics_list.xml and include them under the <Logic> element.
+          - Each mechanic must have a <Mechanic> sub-element with a <name> and <description>, ensuring clear documentation of how each mechanic functions within the game.
 
         - **Example Outer Components:**
           - **Board:** `<Board>` element covering the game's board or playing window.
@@ -60,7 +63,16 @@ game_hierarchy_representation_v2:
                 <Description>Represents different screens in the game, such as the main menu, game screen containing the board, and endgame screen. Each screen is responsible for displaying specific information and handling user interactions related to its context.</Description>
             </Screens>
             <Logic>
-                <Description>Handles the core game logic, including player control and turn management. This involves processing player inputs, updating the game state, and managing the game's progression through different levels or states.</Description>
+                <Description>Handles the core game logic, including player control and turn management. Includes all game mechanics derived from game_mechanics_list.xml, detailing how each contributes to the gameplay.</Description>
+                <Mechanic>
+                    <Name>Example Mechanic 1</Name>
+                    <Description>Detailed explanation of this mechanic and how it affects gameplay.</Description>
+                </Mechanic>
+                <Mechanic>
+                    <Name>Example Mechanic 2</Name>
+                    <Description>Detailed explanation of this mechanic and how it affects gameplay.</Description>
+                </Mechanic>
+                <!-- Additional mechanics from game_mechanics_list.xml -->
             </Logic>
             <Rules>
               <Description>Details the guidelines for gameplay, including how objectives are achieved, how controls translate into actions, how points are scored, and how penalties are applied. It outlines win/loss conditions, scoring system, control mappings to actions, penalties for rule violations, and any unique game events or special rules.</Description>
@@ -75,13 +87,14 @@ game_hierarchy_representation_v2:
           ```
 
       **Final Guidelines:**
+      - Use the write_file tool to write the game_hierarchy.xml to a file.
       - Ensure all elements are detailed, focusing on the outer layers of the game hierarchy.
       - Perform no coding or sourcing in this task; your goal is to structure the XML file based on the provided specifications.
       - Your output should include the `<Metadata>`, `<Game>`, and the immediate children of the `<Game>` element, ensuring a clear and logical structure for the game's outer components.
 
 
   expected_output: >
-    After you finished writing up game_hierarchy.xml, says "I have created the game_hierarchy.xml file as per the provided specifications.".
+    After you finished writing up game_hierarchy.xml using the write_file tool, say "I have created the game_hierarchy.xml file as per the provided specifications.".
 
 game_hierarchy_inner_layers_task:
   <<: *task_common
@@ -143,17 +156,27 @@ game_hierarchy_inner_layers_task:
       **Example for Logic Component:**
       ```
       <Logic>
-        <Description>Handles core game logic, including player control, turn management, scoring system, and progression logic. This component ensures that all game rules are followed and manages the game's state transitions.</Description>
-        <PieceGeneration>
-          <Description>Controls the generation of pieces that fall from the top of the screen. Each piece is a cluster of tiles with random numbers.</Description>
-          <RandomNumberAssignment>
-            <Description>Assigns random numbers (0 to 9) to each block in the piece. Ensures randomness while avoiding patterns that could make the game too easy or too difficult.</Description>
-            <FairnessAlgorithm>Implements a fairness algorithm to prevent long streaks of high or low numbers, maintaining game balance.</FairnessAlgorithm>
-          </RandomNumberAssignment>
-          <StandardShapes>
-            <Description>Uses standard Tetris shapes (I, O, T, S, Z, L, J) for piece generation. Each shape follows specific rules for placement and rotation.</Description>
-          </StandardShapes>
-        </PieceGeneration>
+        <Description>Handles core game mechanics, including core gameplay mechanics, interaction & input mechanics, progression & advancement mechanics, narrative & world mechanics, AI & NPC interaction mechanics, meta & external mechanics, audio mechanics and visual mechancis. This component ensures that all game rules are followed and manages the game's state transitions.</Description>
+        <Mechanic>
+            <Name>Piece Generation</Name>
+            <Description>Controls the generation of pieces that fall from the top of the screen. Each piece is a cluster of tiles with random numbers.</Description>
+            
+            <SubMechanic>
+                <Name>Random Number Assignment</Name>
+                <Description>Assigns random numbers (0 to 9) to each block in the piece. Ensures randomness while avoiding patterns that could make the game too easy or too difficult.</Description>
+                <FairnessAlgorithm>Implements a fairness algorithm to prevent long streaks of high or low numbers, maintaining game balance.</FairnessAlgorithm>
+            </SubMechanic>
+            
+            <SubMechanic>
+                <Name>Standard Shapes</Name>
+                <Description>Uses standard Tetris shapes (I, O, T, S, Z, L, J) for piece generation. Each shape follows specific rules for placement and rotation.</Description>
+            </SubMechanic>
+        </Mechanic>
+
+        <Mechanic>
+            <Name>Example Mechanic 2</Name>
+            <Description>Detailed explanation of this mechanic and how it affects gameplay.</Description>
+        </Mechanic>
       </Logic>
       ```
 
@@ -182,12 +205,12 @@ game_hierarchy_validation:
       Follow these guidelines to validate and enhance the game_hierarchy.xml:
 
       **Setup:**
-      - **Understand the Game Specifications:**
-        - Begin by thoroughly reading and understanding the provided game specifications.
+      - **Understand the Game Specifications and Mechanics List:**
+        - Begin by thoroughly reading and understanding the provided game specifications and game mecchanics list.
         - Review the current game_hierarchy.xml file in its entirety.
 
       **Validation Process:**
-      - **Cross-Check with Specifications:**
+      - **Cross-Check with Specifications and Mechanics List:**
         - For each element in the game_hierarchy.xml file, ensure it matches the descriptions and requirements from the game specifications.
         - For each concept, feature, and element in the given specifications, ensure it is detailed thoroughly in the game_hierarchy.xml file.
         - Verify that all core game mechanics, UI elements, progression systems, scoring logic, and special features are represented accurately and in full detail.
@@ -204,7 +227,7 @@ game_hierarchy_validation:
         - Confirm that the file has been written successfully before completing your task.
 
       **Final Guidelines:**
-      - Ensure that the final game_hierarchy.xml file is complete, accurate, and reflective of the original game specifications.
+      - Ensure that the final game_hierarchy.xml file is complete, accurate, and reflective of the original game specifications and game mechanics list.
       - Focus on creating a robust hierarchy that can guide the game's development without any ambiguities or missing information. 
   expected_output: >
     A thoroughly validated and enhanced game_hierarchy.xml file that fully matches the original game specifications. Briefly report the changes and additions made.
@@ -221,7 +244,7 @@ hierarchy_implementation_support:
 
     **Selective Implementation Suggestions:**
     - **Identifying Necessary Implementation Details:**
-      - Focus on elements that refer to algorithms, rules, or any complex logic that is not fully detailed.
+      - Add implementation for all game mechanics elements.
       - For these elements, add an <implementation> tag inside the relevant XML element.
       - Inside the <implementation> tag, provide a detailed conceptual breakdown on how to implement the component. This should include:
         - **Logical Flow:** Explain how the algorithm or rule should be constructed and interact with other components.
@@ -230,34 +253,54 @@ hierarchy_implementation_support:
 
     - **Example:**
       ```
-      <ScoringSystem>
-        <Description>Calculates and updates the player's score based on the length of the words formed.</Description>
-        <Points>
-          <Description>Points are awarded as follows: 3-letter words: 1 point, 4-letter words: 2 points, 5-letter words: 3 points, 6-letter words: 5 points, 7-letter words: 8 points, 8+ letter words: 10 points.</Description>
-          <implementation>
-            <details>
-              Implement a scoring function that checks the length of each word formed and assigns the corresponding points based on a predefined scoring table.
-              The function should be called whenever a word is successfully formed and validated. It should also update the player's score in real-time.
-            </details>
-            <pseudocode>
-              function calculateScore(word):
-                  length = word.length
-                  if length == 3:
-                      return 1
-                  elif length == 4:
-                      return 2
-                  elif length == 5:
-                      return 3
-                  elif length == 6:
-                      return 5
-                  elif length == 7:
-                      return 8
-                  else:
-                      return 10
-            </pseudocode>
-          </implementation>
-        </Points>
-      </ScoringSystem>
+      <Mechanic>
+          <Name>Scoring System</Name>
+          <Description>Calculates and updates the player's score based on the length of the words formed.</Description>
+
+          <SubMechanic>
+              <Name>Points System</Name>
+              <Description>Points are awarded based on word length, following a predefined scoring table.</Description>
+              
+              <ScoringTable>
+                  <ThreeLetterWords>1 point</ThreeLetterWords>
+                  <FourLetterWords>2 points</FourLetterWords>
+                  <FiveLetterWords>3 points</FiveLetterWords>
+                  <SixLetterWords>5 points</SixLetterWords>
+                  <SevenLetterWords>8 points</SevenLetterWords>
+                  <EightOrMoreLetterWords>10 points</EightOrMoreLetterWords>
+              </ScoringTable>
+          </SubMechanic>
+
+          <SubMechanic>
+              <Name>Score Calculation</Name>
+              <Description>Implements a function to determine the score of a word based on its length and updates the player's total score in real time.</Description>
+              
+              <Implementation>
+                  <Details>
+                      A scoring function checks the length of each formed word and assigns the corresponding points.  
+                      The function is triggered whenever a word is successfully formed and validated.  
+                      It ensures that the player's score is updated dynamically.
+                  </Details>
+                  
+                  <Pseudocode>
+                      function calculateScore(word):  
+                          length = word.length  
+                          if length == 3:  
+                              return 1  
+                          elif length == 4:  
+                              return 2  
+                          elif length == 5:  
+                              return 3  
+                          elif length == 6:  
+                              return 5  
+                          elif length == 7:  
+                              return 8  
+                          else:  
+                              return 10  
+                  </Pseudocode>
+              </Implementation>
+          </SubMechanic>
+      </Mechanic>
       ```
     - **Final Step**:
       - After completing all updates and enhancements, ensure to use the `write_file` tool to save the updated `game_hierarchy.xml` file.
@@ -272,4 +315,147 @@ hierarchy_implementation_support:
     An updated game_hierarchy.xml file with selective implementation tags added to necessary components providing a detailed conceptual breakdown of how to implement them.
 
 
+hierarchy_mechanics_generation:
+  <<: *task_common
+  agent: hierarchy_mechanics_engineer
+  description: >
+    Objective:
+    Your task is to generate a comprehensive and exhaustive list of all necessary game mechanics required for the game. This list should ensure full gameplay functionality by covering all relevant gameplay aspects. You are not required to provide descriptions, functionality details, or implementation specifics—your sole focus is on identifying and naming every essential mechanic.
+    
+    Follow these guidelines to produce your output as a single structured markup file called game_mechanicss_list.xml:
+
+    **Identifying Required Game Mechanics:**
+      - Begin by thoroughly reviewing and fully understanding the game specifications.
+      - Based on your knowledge of the game determine all other game mechanics needed for a fully functional game.
+
+    **Categorizing Mechanics:**
+    - Ensure the list includes mechanics across all relevant gameplay categories, such as:
+
+      - Core Gameplay Mechanics (e.g., movement, combat, resource collection)
+      - Interaction & Input Mechanics (e.g., player controls, UI navigation, physics interactions)
+      - Progression & Advancement Mechanics (e.g., leveling, skill trees, economy systems)
+      - Narrative & World Mechanics (e.g., quest tracking, environmental storytelling, dialogue systems)
+      - AI & NPC Interaction Mechanics (e.g., enemy behavior, NPC routines, faction systems)
+      - Meta & External Mechanics (e.g., achievements, player data tracking, matchmaking)
+
+    **Output Format:**
+      - Produce a structured list in game_mechanics_list.xml, formatted as follows:
+      '''
+      <Mechanics>
+          <CoreGameplay>
+              <Mechanic>CoreGameplay Mechanic 1</Mechanic>
+              <Mechanic>CoreGameplay Mechanic 2</Mechanic>
+              <Mechanic>CoreGameplay Mechanic 3</Mechanic>
+          </CoreGameplay>
+          
+          <InteractionAndInput>
+              <Mechanic>InteractionAndInput Mechanic 1</Mechanic>
+              <Mechanic>InteractionAndInput Mechanic 2</Mechanic>
+              <Mechanic>InteractionAndInput Mechanic 3</Mechanic>
+          </InteractionAndInput>
+      </Mechanics>
+      '''
+  expected_output: >
+    A structured and formatted list of all game mechanics named game_mechanics_list.xml
+
+hierarchy_test_task:
+  <<: *task_common
+  agent: hierarchy_mechanics_agent_o1
+  description: >
+    You are tasked with expanding the game_hierarchy.xml file by detailing the game mechanics. Your job is to identify all game mechanics for each of the components defined in the `<Game>` element. This process should specify the core game play mechanics, interaction & input mechanics, progression & advencement mechanics, narrative & world mechanics, AI & NPC interaction mechanics, meta & external mechanics, and any other necessary game mechanics. You are provided with an additional file, game_mechanics_list.xml, which contains a comprehensive list of all necessary mechanics. Your role is to use this list as a foundation and fully document each mechanic, ensuring a complete and structured breakdown.
+
+    Follow these guidelines to produce your output as a single structured markup file called game_mechanics.xml:
+
+    **Setup:**
+    - **Understanding the Specifications:**
+      - Begin by thoroughly reviewing and fully understanding the game specifications.
+      - Carefully review the existing game_hierarchy.xml file, analyzing its structure and content, with a focus on how game mechanics are implemented and interconnected.
+      - Examine game_mechanics_list.xml to familiarize yourself with all identified mechanics and ensure none are overlooked.
+
+    **Game Mechanics Identification & Expansion:**
+    - **Current Game Mechanics Identification:**
+      - Cross-reference the mechanics in game_mechanics_list.xml with the game structure in game_hierarchy.xml.
+      - Identify the logic, conditions, and triggers associated with each mechanic.
+      - Ensure all mechanics are categorized appropriately (e.g., core mechanics, auxiliary mechanics, progression-related mechanics).
+    - **Sub-Mechanics and Related Mechanics Identification: **
+      - For each identified game mechanic, determine all necessary sub-mechanics that contribute to its function.
+      - Identify related mechanics that interact with or influence the primary mechanics.
+      - Document dependencies and interconnections between mechanics.
+    - **External Mechanics Comparison:**
+      - Utilize the query_mechanics tool to search the game mechanics database for additional mechanics that align with the identified ones.
+      - Retrieve reference examples of similar mechanics to ensure completeness and best practices in design.
+      - Identify potential new mechanics that could enhance gameplay, balance, or player engagement.
+    
+    **Game Mechanics Documentation:**
+    - Use the write_file tool to compile a structured list of all identified mechanics (including new ones from external sources).
+    - Format each mechanic’s description in alignment with the game mechanics database, ensuring consistency and clarity.
+    - For each identified game mechanic, provide a structured breakdown using the following JSON format:
+
+      ```
+        "Name": "<Mechanic Name>",
+        "Category": "<Core / Auxiliary / Progression-related>",
+        "Description": "<A concise yet comprehensive explanation of what the mechanic does, its purpose, and its design considerations.>",
+        "Functionality & Rules": "<Define its logic, triggers, interactions, and dependencies. Include details about states, player inputs, and environmental conditions that affect this mechanic.>",
+        "Implementation Details": "<Technical considerations for implementing this mechanic, including frameworks, physics systems, collision handling, AI behaviors, and any necessary calculations or constraints.>",
+        "Pseudocode": "<Provide simplified logic for implementation in a game engine (e.g., Unity C#, Phaser.js, Unreal Blueprint).>",
+        "Related Mechanics": ["<List of other mechanics this interacts with, such as movement, physics, or ability-based systems>"]
+      ```
+
+  expected_output: >
+    A structured and formatted game_mechanics.xml file containing:
+
+      - Full documentation of all mechanics listed in game_mechanics_list.xml
+      - Expanded details for each mechanic, including sub-mechanics and related mechanics
+      - New mechanics discovered through external comparisons
+
+hierarchy_test_task2:
+  <<: *task_common
+  agent: hierarchy_mechanics_agent
+  description: >
+    Objective:
+    You are provided with game_mechanics.xml, which contains a structured list of game mechanics identified in the initial phase. Your task is to expand upon this list by identifying and documenting any missing game mechanics necessary for a complete and well-balanced gameplay experience. These mechanics should align with the game structure outlined in game_hierarchy.xml.
+
+    Follow these guidelines to produce your output as a single structured markup file called game_mechanics_v2.xml:
+
+    **Identifying Missing Game Mechanics:**
+      - Analyze the game_hierarchy.xml file to determine the full scope of game elements and ensure that all necessary mechanics are accounted for.
+      - Compare the existing game_mechanics.xml file with the game’s design framework to identify gaps where additional mechanics are required.
+      - Use the query_mechanics tool to cross-check with similar games and industry standards to ensure completeness.
+
+    **Expanding the Mechanics List:**
+
+      - For each missing mechanic, define:
+        - What gameplay function it serves
+        - How it integrates with existing mechanics
+        - What interactions and dependencies it has with other systems
+      - Ensure that mechanics cover all necessary categories, including:
+        - Core Gameplay Mechanics (e.g., movement, combat, resource management)
+        - Interaction & Input Mechanics (e.g., controls, UI interactions, physics-based inputs)
+        - Progression & Advancement Mechanics (e.g., leveling, skill upgrades, economy systems)
+        - Narrative & World Mechanics (e.g., story progression, dynamic environments, quest logic)
+        - AI & NPC Interaction Mechanics (e.g., enemy behavior, dialogue systems, faction relationships)
+        - Meta & External Mechanics (e.g., achievements, player data tracking, online features)
+    
+    **Game Mechanics Documentation:**
+    - Use the write_file tool to compile a structured list of all identified mechanics (including new ones from external sources).
+    - Format each mechanic’s description in alignment with the game mechanics database, ensuring consistency and clarity.
+    - For each identified game mechanic, provide a structured breakdown using the following JSON format:
+
+      '''
+        "Name": "<Mechanic Name>",
+        "Category": "<Core / Auxiliary / Progression-related>",
+        "Description": "<A concise yet comprehensive explanation of what the mechanic does, its purpose, and its design considerations.>",
+        "Functionality & Rules": "<Define its logic, triggers, interactions, and dependencies. Include details about states, player inputs, and environmental conditions that affect this mechanic.>",
+        "Implementation Details": "<Technical considerations for implementing this mechanic, including frameworks, physics systems, collision handling, AI behaviors, and any necessary calculations or constraints.>",
+        "Pseudocode": "<Provide simplified logic for implementation in a game engine (e.g., Unity C#, Phaser.js, Unreal Blueprint).>",
+        "Related Mechanics": ["<List of other mechanics this interacts with, such as movement, physics, or ability-based systems>"]
+      '''
+
+  expected_output: >
+    A structured and formatted list of all game mechanics, sub-mechanics, and related mechanics with detailed descriptions.
+
+
+
+
+#       - Analyze game_hierarchy.xml to determine all gameplay elements and systems that require mechanics.
 # vim: set foldmethod=indent foldlevel=0:

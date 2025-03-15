@@ -118,7 +118,7 @@ Usage:
             print(runtime_config())
         elif options.command == "run":
             args = [options.crew] + args
-            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2"]:
+            if options.crew in ["hierarchy_crew", "hierarchy_crew_v2", "hierarchy_test_crew"]:
                 self.kickoff_hierarchy_crew(args)
             elif options.crew in ["html5_crew"]:
                 self.kickoff_html5_crew(args)
