@@ -141,12 +141,13 @@ hierarchy_mechanics_engineer:
   <<: *common_attributes_no_deleg
   goal: >
     Generate a comprehensive and exhaustive list of all necessary game mechanics required for the game. Your task is to ensure that every essential mechanic is accounted for, covering all aspects of gameplay.
-
+    Use the query_mechanics tool to identify other possible game mechanics and to see examples of game mechanics descriptions.
   backstory: >
     You are a meticulous game mechanics engineer, knowledgable about game mechanics. 
     You are asked to follow the game specification: {game_specifications}.
   tools:
     - write_file
+    - query_mechanics
   llm:
     - gpt-4o-2024-08-06
 # vim: set foldmethod=indent foldlevel=0:

@@ -13,7 +13,7 @@ game_hierarchy_representation_v2:
       **Setup:**
       - **Conceptual Understanding:**
         - Begin by reading and thoroughly understanding the provided game specifications and game_mechanics_list.xml.
-        - Ensure you grasp all aspects of the game, including mechanics, logic, user interface (UI), audio, and any special features or edge cases.
+        - Ensure you grasp all aspects of the game, including mechanics, presentation systems, audio systems, UI/HUD systems, input/control systems, physics/simulation systems, game world/level design systems and any other neccessary systems.
         - Consider how each element of the game hierarchy will interact with others to ensure a cohesive and logical structure within the final XML file.
 
       - **File Initialization:**
@@ -29,11 +29,16 @@ game_hierarchy_representation_v2:
 
       - **Component Identification:**
         - Break down the game into its fundamental outer components. Consider elements such as:
-          - **Board:** The game board or screen for games which utilize one.
-          - **Logic:** Core game logic, including core gameplay mechanics, interaction & input mechanics, progression & advancement mechanics, narrative & world mechanics, AI & NPC interaction mechanics, meta & external mechanics, audio mechanics and visual mechancis.
-          - **Rules:** How the game is played, objective of the game, controls of the game, actions with corresponding controls.
-          - **Assets:** Includes audio for sound effects and background music, and images for visual assets.
-          - **Input:** Represents the player control schemas for the game (e.g., keyboard controls, mouse controls, on-screen interactables).
+          - **Mechanics:** Game mechanics are methods invoked by agents, designed for interaction with the game state.
+          - **Presentation Systems:** Elements of the game primarily focused on displaying and conveying the game world to the player or audience, without altering gameplay states on their own.
+          - **Audio Systems:** Systems responsible for generating, managing, and playing back sounds and music in the game.
+          - **UI/HUD Systems:** The interface layer that displays information to the player (health bars, maps, menus) and allows them to navigate menus or inventories.
+          - **Input/Control Systems:** The layer responsible for interpreting user (or AI) inputs and mapping them to in-game actions or commands.
+          - **Physics/Simulation Systems:** The simulation layer that calculates movement, collisions, forces, and interactions in the game world.
+          - **Game World/Level Design Systems:** The structures and data defining the spatial layout, environmental objects, and interactive elements within levels or open worlds.
+          - **Narrative/Story Systems:** The frameworks handling story progression, dialogue, cutscenes, branching narrative paths, and lore.
+          - **Progression/Reward Systems:** Systems that track and modify long-term player growth, rewards, achievements, and unlocks.
+          - **Data/Save Management Systems:** Systems that handle how game state is persisted, loaded, or transmitted between play sessions.
 
       **Outer Hierarchy Population:**
       - **Modularization:**
@@ -45,45 +50,131 @@ game_hierarchy_representation_v2:
           - Specifies the logic or interactions it involves.
         - **Mechanics Integration:**
           - Extract all mechanics from game_mechanics_list.xml and include them under the <Logic> element.
-          - Each mechanic must have a <Mechanic> sub-element with a <name> and <description>, ensuring clear documentation of how each mechanic functions within the game.
+          - Each mechanic must have a <Mechanic> sub-element with a <Name>, <Description>, <ImplementationDetails> and <PseudoCode>, ensuring clear documentation of how each mechanic functions within the game.
 
         - **Example Outer Components:**
-          - **Board:** `<Board>` element covering the game's board or playing window.
-          - **Screens:** `<Screens>` element with sub-elements for each screen type.
-          - **Logic:** `<Logic>` element covering game mechanics, including player control and scoring.
-          - **Rules:** `<Rules>` element covering rules of the game, including objectives, controls and actions.
-          - **Assets:** `<Assets>` element for audio and visual assets.
-          - **Input:** `<Input>` element detailing the control mechanisms.
-
+          - **Mechanics:** `<Board>` element covering the gameplay mechanics.
+          - **Presentation Systems:** `<Screens>` element foucsed on the game screen, like camera systems.
+          - **UI/HUD Systems:** `<Logic>` element covering the interface layer that displays information to the player and allows them to navigate menus or inventories.
+          - **Input/Control Systems:** `<Rules>` element covering responsible for interpreting user inputs and mapping them to in-game actions or commands.
+          - **Physics/Simulation Systems:** `<Assets>` element for the simulation layer that calculates movement, collisions, forces, and interactions in the game world.
+          - **Game World/Level Design Systems:** `<Input>` element detailing the structures and data defining the spatial layout, environmental objects, and interactive elements within levels or open worlds.
       - **Example Structure:** 
         - Here is an example of how the `<Game>` element might be populated:
           ```
           <Game>
-            <Screens>
-                <Description>Represents different screens in the game, such as the main menu, game screen containing the board, and endgame screen. Each screen is responsible for displaying specific information and handling user interactions related to its context.</Description>
-            </Screens>
-            <Logic>
-                <Description>Handles the core game logic, including player control and turn management. Includes all game mechanics derived from game_mechanics_list.xml, detailing how each contributes to the gameplay.</Description>
-                <Mechanic>
-                    <Name>Example Mechanic 1</Name>
-                    <Description>Detailed explanation of this mechanic and how it affects gameplay.</Description>
-                </Mechanic>
-                <Mechanic>
-                    <Name>Example Mechanic 2</Name>
-                    <Description>Detailed explanation of this mechanic and how it affects gameplay.</Description>
-                </Mechanic>
-                <!-- Additional mechanics from game_mechanics_list.xml -->
-            </Logic>
-            <Rules>
-              <Description>Details the guidelines for gameplay, including how objectives are achieved, how controls translate into actions, how points are scored, and how penalties are applied. It outlines win/loss conditions, scoring system, control mappings to actions, penalties for rule violations, and any unique game events or special rules.</Description>
-            </Rules>
-            <Assets>
-                <Description>Includes all audio and visual assets necessary for the game. These assets are used to create the game's aesthetic and auditory experience, providing feedback to the player and enhancing the overall gameplay.</Description>
-            </Assets>
-            <Input>
-                <Description>Represents the player control mechanisms for the game, including keyboard and mouse interactions. This element defines how player inputs are captured and translated into game actions.</Description>
-            </Input>
+            <Mechanics>
+              <Description>
+                Game mechanics are methods invoked by agents, designed for interaction with the game state. This includes movement, rotation, game state updates, and all mechanics derived from game_mechanics_list.xml.
+              </Description>
+
+              <Mechanic>
+                <Name>Example Mechanic 1</Name>
+                <Description>
+                  Controls player input for moving and rotating pieces. Directly affects player agency and responsiveness during gameplay.
+                </Description>
+
+                <ImplementationDetails>
+                  Listens for player input (e.g., arrow keys, WASD, or controller input) and updates the current piece's position or orientation accordingly. Includes collision detection to prevent illegal moves.
+                </ImplementationDetails>
+
+                <PseudoCode>
+                  function handlePlayerInput(key):
+                      if key == LEFT:
+                          if isValidMove(currentPiece, x - 1, y):
+                              currentPiece.x -= 1
+                      elif key == RIGHT:
+                          if isValidMove(currentPiece, x + 1, y):
+                              currentPiece.x += 1
+                      elif key == DOWN:
+                          if isValidMove(currentPiece, x, y + 1):
+                              currentPiece.y += 1
+                      elif key == ROTATE:
+                          newOrientation = rotate(currentPiece)
+                          if isValidRotation(newOrientation):
+                              currentPiece.orientation = newOrientation
+                </PseudoCode>
+              </Mechanic>
+
+              <Mechanic>
+                <Name>Example Mechanic 2</Name>
+                <Description>
+                  Manages the turn-based flow of gameplay. Ensures that actions occur in a controlled sequence and game state updates happen at the right time.
+                </Description>
+
+                <ImplementationDetails>
+                  Defines the game's main loop and update cycle. Handles transitions such as piece locking, line clearing, score updating, and new piece spawning. Checks win/lose conditions after each action.
+                </ImplementationDetails>
+
+                <PseudoCode>
+                  function gameLoop():
+                      while gameIsRunning:
+                          if playerHasControl:
+                              handlePlayerInput(getInput())
+                          updatePiecePosition()
+                          if pieceLanded():
+                              lockPiece()
+                              checkForClearedLines()
+                              spawnNewPiece()
+                              if isGameOver():
+                                  endGame()
+                          renderGameState()
+                          wait(frameTime)
+                </PseudoCode>
+              </Mechanic>
+
+              <!-- Additional mechanics from game_mechanics_list.xml -->
+            </Mechanics>
+
+            <PresentationSystems>
+              <Description>
+                Elements of the game focused on displaying and conveying the game world to the player or audience, without directly altering gameplay states.
+              </Description>
+              <SubSystem>
+                <Name>Screens</Name>
+                <Description>
+                  Represents different visual screens in the game, such as the main menu, in-game board view, and endgame screen. Each screen is responsible for displaying context-specific information and UI components.
+                </Description>
+              </SubSystem>
+            </PresentationSystems>
+
+            <AudioSystems>
+              <Description>
+                Systems responsible for generating, managing, and playing back sounds and music in the game.
+              </Description>
+              <SubSystem>
+                <Name>Assets</Name>
+                <Description>
+                  Includes audio files for sound effects and background music. Used to create the auditory experience of the game and provide feedback to the player.
+                </Description>
+              </SubSystem>
+            </AudioSystems>
+
+            <UIHUDSystems>
+              <Description>
+                The interface layer that displays information to the player and allows them to navigate menus or inventories.
+              </Description>
+              <SubSystem>
+                <Name>Rules</Name>
+                <Description>
+                  Details the guidelines for gameplay, including objectives, control mappings, scoring, penalties, and win/loss conditions. Serves as reference data displayed via the UI or manual screen.
+                </Description>
+              </SubSystem>
+            </UIHUDSystems>
+
+            <InputControlSystems>
+              <Description>
+                The system responsible for interpreting user inputs and mapping them to in-game actions.
+              </Description>
+              <SubSystem>
+                <Name>Input</Name>
+                <Description>
+                  Captures player interactions via keyboard and mouse. Defines how inputs are translated into gameplay actions like movement and rotation.
+                </Description>
+              </SubSystem>
+            </InputControlSystems>
           </Game>
+
           ```
 
       **Final Guidelines:**
@@ -131,53 +222,32 @@ game_hierarchy_inner_layers_task:
     - **Examples of Detailed Inner Layers:**
       - Below are examples of how inner layers should be detailed. These examples demonstrate how to structure your XML elements and provide clear, actionable descriptions.
 
-      **Example for Board Component:**
-      ```
-      <Board>
-        <Description>Represents the game board where the gameplay occurs. The board is a grid that serves as the primary area for player interactions and game mechanics.</Description>
-        <Grid>
-          <Description>The 7x5 grid where the game tiles are placed and moved. This grid is responsible for managing the positions of all tiles during gameplay.</Description>
-          <Dimensions>
-            <Rows>7</Rows>
-            <Columns>5</Columns>
-          </Dimensions>
-          <Tile>
-            <Description>Individual tile component that appears on the grid. Handles merging logic, tile display, and position tracking.</Description>
-            <Value>Represents the number displayed on the tile.</Value>
-            <MergingLogic>
-              <Description>Describes how tiles merge when they come into contact with identical tiles. Tiles merge to form a single tile with a value equal to the sum of the original tiles.</Description>
-              <EdgeCases>Handles scenarios such as when multiple tiles are eligible for merging, determining the order and rules for merging.</EdgeCases>
-            </MergingLogic>
-          </Tile>
-        </Grid>
-      </Board>
-      ```
-
       **Example for Logic Component:**
       ```
       <Logic>
-        <Description>Handles core game mechanics, including core gameplay mechanics, interaction & input mechanics, progression & advancement mechanics, narrative & world mechanics, AI & NPC interaction mechanics, meta & external mechanics, audio mechanics and visual mechancis. This component ensures that all game rules are followed and manages the game's state transitions.</Description>
-        <Mechanic>
-            <Name>Piece Generation</Name>
-            <Description>Controls the generation of pieces that fall from the top of the screen. Each piece is a cluster of tiles with random numbers.</Description>
-            
-            <SubMechanic>
-                <Name>Random Number Assignment</Name>
-                <Description>Assigns random numbers (0 to 9) to each block in the piece. Ensures randomness while avoiding patterns that could make the game too easy or too difficult.</Description>
-                <FairnessAlgorithm>Implements a fairness algorithm to prevent long streaks of high or low numbers, maintaining game balance.</FairnessAlgorithm>
-            </SubMechanic>
-            
-            <SubMechanic>
-                <Name>Standard Shapes</Name>
-                <Description>Uses standard Tetris shapes (I, O, T, S, Z, L, J) for piece generation. Each shape follows specific rules for placement and rotation.</Description>
-            </SubMechanic>
-        </Mechanic>
+        <Description>
+          Handles core game mechanics, including core gameplay mechanics, interaction & input mechanics, progression & advancement mechanics, narrative & world mechanics, AI & NPC interaction mechanics, meta & external mechanics, audio mechanics, and visual mechanics. This component ensures that all game rules are followed and manages the game's state transitions.
+        </Description>
 
         <Mechanic>
-            <Name>Example Mechanic 2</Name>
-            <Description>Detailed explanation of this mechanic and how it affects gameplay.</Description>
+          <Name>Example Mechanic</Name>
+          <Description>
+            Detailed explanation of this mechanic and how it affects gameplay.
+          </Description>
+
+          <ImplementationDetails>
+            Replace this placeholder with the implementation steps required to bring the mechanic to life in the game loop.
+          </ImplementationDetails>
+
+          <PseudoCode>
+            // Pseudo code to be written based on mechanic-specific logic
+            function exampleMechanic2():
+                // Implement core behavior
+                // Trigger effects or update game state
+          </PseudoCode>
         </Mechanic>
       </Logic>
+
       ```
 
     - **Ensuring Completeness:**
@@ -327,32 +397,60 @@ hierarchy_mechanics_generation:
     **Identifying Required Game Mechanics:**
       - Begin by thoroughly reviewing and fully understanding the game specifications.
       - Based on your knowledge of the game determine all other game mechanics needed for a fully functional game.
+      - Once you have generated a list expand on this list by using the query_mechanics tool to search for additional game mechanics and to more thoroughly describe the current game mechancis.
 
     **Categorizing Mechanics:**
     - Ensure the list includes mechanics across all relevant gameplay categories, such as:
+      - Game Play Mechanics:
+        - Movement: Mechanics involving an agent changing position or orientation in the game world.
+        - Combat: Mechanics that involve offensive, defensive, or evasive actions.
+        - Interaction: Mechanics that allow agents to engage with objects, NPCs, or the environment.
+        - Inventory & Resource: Mechanics for managing and using items or in-game currencies.
+        - Meta-Strategic Mechanics: Mechanics that revolve around overarching strategic or long-term gameplay elements.
+      - Presentation Systems: 
+        - Camera Systems
+      - Audio Systems
+      - UI/HUD Systems Scaffoldable
+      - Input/Control Systems
+      - Physics/Simulation Systems
+      - Game World/Level Design Systems
+      - Narrative/Story Systems
+      - Data/Save Management Systems
 
-      - Core Gameplay Mechanics (e.g., movement, combat, resource collection)
-      - Interaction & Input Mechanics (e.g., player controls, UI navigation, physics interactions)
-      - Progression & Advancement Mechanics (e.g., leveling, skill trees, economy systems)
-      - Narrative & World Mechanics (e.g., quest tracking, environmental storytelling, dialogue systems)
-      - AI & NPC Interaction Mechanics (e.g., enemy behavior, NPC routines, faction systems)
-      - Meta & External Mechanics (e.g., achievements, player data tracking, matchmaking)
 
     **Output Format:**
       - Produce a structured list in game_mechanics_list.xml, formatted as follows:
       '''
       <Mechanics>
-          <CoreGameplay>
-              <Mechanic>CoreGameplay Mechanic 1</Mechanic>
-              <Mechanic>CoreGameplay Mechanic 2</Mechanic>
-              <Mechanic>CoreGameplay Mechanic 3</Mechanic>
-          </CoreGameplay>
+          <Movement Mechanics>
+              <Mechanic>Movement Mechanic 1</Mechanic>
+                  <Description>Movement Mechanic 1 Description</Description>
+                  <Implementation Details>Movement Mechanic 1 Implementation Details</Implementation Details>
+                  <Pseudocode>Movement Mechanic 1 Pseudocode</Pseudocode>
+              <Mechanic>Movement Mechanic 2</Mechanic>
+                  <Description>Movement Mechanic 2 Description</Description>
+                  <Implementation Details>Movement Mechanic 2 Implementation Details</Implementation Details>
+                  <Pseudocode>Movement Mechanic 2 Pseudocode</Pseudocode>
+              <Mechanic>Movement Mechanic 3</Mechanic>
+                  <Description>Movement Mechanic 3 Description</Description>
+                  <Implementation Details>Movement Mechanic 3 Implementation Details</Implementation Details>
+                  <Pseudocode>Movement Mechanic 3 Pseudocode</Pseudocode>
+          </Movement Mechanics>
           
-          <InteractionAndInput>
-              <Mechanic>InteractionAndInput Mechanic 1</Mechanic>
-              <Mechanic>InteractionAndInput Mechanic 2</Mechanic>
-              <Mechanic>InteractionAndInput Mechanic 3</Mechanic>
-          </InteractionAndInput>
+          <Combat Mechanics>
+              <Mechanic>Combat Mechanic 1</Mechanic>
+                  <Description>Combat Mechanic 1 Description</Description>
+                  <Implementation Details>Combat Mechanic 1 Implementation Details</Implementation Details>
+                  <Pseudocode>Combat Mechanic 1 Pseudocode</Pseudocode>
+              <Mechanic>Combat Mechanic 2</Mechanic>
+                  <Description>Combat Mechanic 2 Description</Description>
+                  <Implementation Details>Combat Mechanic 2 Implementation Details</Implementation Details>
+                  <Pseudocode>Combat Mechanic 2 Pseudocode</Pseudocode>
+              <Mechanic>Combat Mechanic 3</Mechanic>
+                  <Description>Combat Mechanic 3 Description</Description>
+                  <Implementation Details>Combate Mechanic 3 Implementation Details</Implementation Details>
+                  <Pseudocode>Combat Mechanic 3 Pseudocode</Pseudocode>
+          </Combat Mechanics>
       </Mechanics>
       '''
   expected_output: >

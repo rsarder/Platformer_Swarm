@@ -51,7 +51,7 @@ html5_game_architect:
     - batch_read_files
     - read_examples_html
   llm:
-    - gpt-4o-2024-08-06
+    - o1-2024-12-17
 
 html5_game_engineer:
   <<: *common_attributes_no_deleg
@@ -179,7 +179,7 @@ html5_game_logic_engineer:
     - gpt-4o-2024-08-06
 
 html5_game_tester:
-  <<: *common_attributes_no_deleg
+  <<: *common_attributes
   goal: >
     Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
     Make sure that the sound files downloaded by the html5_sound_engineer are properly used in the code.

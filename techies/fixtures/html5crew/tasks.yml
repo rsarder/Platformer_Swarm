@@ -23,6 +23,148 @@ html5_game_coding:
   expected_output: >
     After fill out all the requirements and complete the file "game.html", say "I have successfully developed the game saved in "game.html", as described per the game specification and game_hierarchy.xml file."
 
+html5_game_initial_structure:
+  <<: *task_common
+  agent: html5_game_architect
+  description: |
+    You are tasked with creating the initial foundational structure for the HTML5 game in a single file called "game.html," but without fully implementing the complete logic. Instead, you will:
+
+    **Setup:**
+    - **Review the "game_hierarchy.xml" File:**
+      - Carefully read "game_hierarchy.xml" to understand every mechanic, component, and system (UI, audio, rules, etc.).
+      - Make a list of all the core functionality and systems needed.
+
+    **Core Task:**
+    - **Functions & Placeholder Pseudocode:**
+      - In "game.html," define all the major functions and methods that the game will need, but do not fully implement them yet.  
+      - Use placeholder bodies or clear pseudocode within each function to outline their logic.  
+      - Ensure your pseudocode clearly reflects the dependencies and sequence of calls between functions (e.g., game initialization, input handling, audio loading, UI updates, etc.).  
+
+    - **Example Structure:**
+      - **HTML Structure:**  
+        Basic HTML layout with `<head>` and `<body>`. Inside `<body>`, placeholder `<div>`s or `<canvas>` elements for game rendering, along with any needed placeholders for UI (menus, HUD elements, etc.).
+      - **CSS:**  
+        Include minimal CSS in a `<style>` tag or placeholder references. Enough to illustrate layout but not final.
+      - **JavaScript/Pseudocode:**  
+        - A `<script>` section containing functions such as:
+          - `initGame()`
+          - `loadAssets()`
+          - `handleInput()`
+          - `updateGameState()`
+          - `renderGame()`
+          - `playSoundEffect()`
+          - `showInstructions()`
+          - …and any other functions derived from the game_hierarchy.xml.  
+        - Provide high-level pseudocode detailing what each function will eventually do without giving final code.
+      
+    **Delegation:**
+    - **Agents Involved:**
+      - If any specialized functionality is identified (e.g., `html5_game_engineer`, `html5_sound_engineer`, etc.), outline how they will be brought in to finalize certain pieces of the code in later tasks. However, do not implement those sections in detail yet.
+    
+    **Testing & Review:**
+    - Since this is an initial skeleton, the `html5_game_tester` or other testers can only confirm that function stubs/pseudocode exist for every part of the final game plan, not that they are fully functional.
+
+    **Final Step:**
+    - **Save the File:**
+      - Use the `write_file` tool to save your partial game structure to "game.html".
+    - **Output Confirmation:**
+      - Conclude with a statement indicating you have created a placeholder structure containing all necessary functions in "game.html."
+  expected_output: >
+    After creating the partial "game.html" with all function definitions and pseudocode, say "I have created the initial structured file 'game.html' with all necessary functions as placeholders, as outlined in the game_hierarchy.xml."
+
+
+html5_game_code_implementation:
+  <<: *task_common
+  agent: html5_game_architect
+  description: |
+    You are tasked with taking the "game.html" file containing placeholder/pseudocode functions and completing the actual logic for each function so that the game is fully functional. This includes replacing pseudocode and placeholders with final HTML, CSS, and JavaScript code.
+
+    **Setup:**
+    - **Review the Existing Placeholder Code:**
+      - Open the "game.html" file generated from the previous task.
+      - Identify each placeholder function or pseudocode block.
+
+    **Core Task:**
+    - **Full Implementation:**
+      - For each placeholder function (e.g., `initGame()`, `handleInput()`, `updateGameState()`, etc.), replace all pseudocode with the actual code.
+      - Ensure your final code:
+        - Reflects the logic defined in the "game_hierarchy.xml" (mechanics, UI interactions, audio triggers, etc.).
+        - Properly handles user input, updates the game state, and renders updates to the screen.
+        - Integrates any required resources (images, sprites, or audio files) as specified in the hierarchy.
+        - Includes all essential rules, instructions, menus, and HUD elements detailed in the hierarchy.
+
+    - **Example Implementation Areas:**
+      - **Game Initialization:**  
+        - Load assets (images, sounds), create game objects, set up initial states.
+      - **Input Handling:**  
+        - Capture keyboard or mouse events, convert them into in-game actions.
+      - **Core Loop:**  
+        - Update the game state and redraw the screen (if using a game loop).
+      - **Audio Integration:**  
+        - Ensure each event triggers the correct sound effect or music track, using `<audio>` tags or the Web Audio API, as planned.
+      - **UI & Instructions Menu:**  
+        - Implement the full “Rules and Instructions” menu using the relevant agent’s code (e.g., `html5_game_rules_engineer`), and ensure it ties into the rest of the interface.
+
+    **Delegation:**
+    - **Agents & Code Contributions:**
+      - Collaborate with specialized agents (e.g., `html5_game_engineer`, `html5_sound_integrator_agent`, `html5_game_rules_engineer`) to replace pseudocode with final implementations.
+      - Confirm each segment is working properly in the integrated environment.
+
+    **Testing & Review:**
+    - **Continuous Testing:**
+      - Involve the `html5_game_tester` to test each newly completed part.  
+      - Verify that no errors occur and that gameplay flow matches the "game_hierarchy.xml" design.
+
+    **Final Step:**
+    - **Save the File:**
+      - Use the `write_file` tool to overwrite "game.html" with the completed, functional code.
+    - **Output Confirmation:**
+      - Once the file is fully implemented, conclude with a statement confirming that all pseudocode has been replaced and the game is ready for final review.
+  expected_output: >
+    After finalizing the code for all pseudocode placeholders in "game.html," say "I have replaced all placeholder and pseudocode with fully implemented logic in 'game.html' per the specifications in game_hierarchy.xml."
+
+
+html5_game_final_validation:
+  <<: *task_common
+  agent: html5_game_tester
+  description: |
+    Your task is to validate and confirm that the "game.html" file now contains a complete, playable HTML5 game adhering to all details in "game_hierarchy.xml."
+
+    **Setup:**
+    - **Cross-Verification with Game Hierarchy:**
+      - Thoroughly read and compare "game.html" against "game_hierarchy.xml."
+      - Ensure every mechanic, component, feature, and rule described in the hierarchy is found and functional within the code.
+
+    **Validation Process:**
+    - **Check Feature Completeness:**
+      - Verify that all UI, audio, and game mechanics are implemented and match the hierarchy’s requirements.
+      - Confirm the presence of a Rules/Instructions menu with correct functionality.
+      - Ensure that any specialized features (e.g., advanced physics, achievements, AI behavior, or dynamic UI elements) are implemented as specified.
+
+    - **Test Gameplay Flow:**
+      - Play through the game from start to finish, checking for:
+        - Correct initialization, state changes, scoring, or leveling up (if relevant).
+        - Audio triggers or music playback at the right times.
+        - Accurate responses to player inputs or interactions.
+
+    - **Edge Cases & Robustness:**
+      - Validate that the code handles invalid inputs or unusual states gracefully.
+      - Confirm that no crashes or exceptions occur.
+
+    **Enhancement & Final Adjustments:**
+      - If any inconsistencies or missing features are found, log them and delegate tasks to update to the relevant agent.  
+      - Re-test until all issues are resolved.
+
+    **Final Step:**
+    - **Confirmation of Completion:**
+      - Once the game is verified as complete and playable, finalize the “game.html” and report that all requirements have been met.
+
+    **Output Guidelines:**
+    - Conclude only when you can affirm that the “game.html” file is thoroughly validated and consistent with “game_hierarchy.xml.”
+
+  expected_output: >
+    After validating that "game.html" is complete, say "All features have been validated against game_hierarchy.xml, and the game is confirmed fully playable in 'game.html'."
+
 html5_game_validation:
   <<: *task_common
   agent: html5_validation_agent
