@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Phaser Platformer Scaffold</title>
+    <!-- Include Phaser 3 library from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+    <style>
+      body {
+        margin: 0;
+      }
+      #game {
+        overflow: hidden; /* container for the game canvas */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"></div>
+    <script>
+      // BootScene: initial scene, could load assets if any. Here it just starts Menu.
+      class BootScene extends Phaser.Scene {
+        constructor() {
+          super({ key: "BootScene" });
+        }
+        preload() {
+          // No assets to load in scaffold (would go here)
+        }
+        create() {
+          // Immediately start the Menu scene after boot
+          this.scene.start("MenuScene");
+        }
+      }
+
+      // MenuScene: Main menu with Start, Settings, Instructions
+      class MenuScene extends Phaser.Scene {
+        constructor() {
+          super({ key: "MenuScene" });
+        }
+        create() {
+          // Set background color for menu (e.g., using a rectangle filling the screen)
+          this.cameras.main.setBackgroundColor("#24252A");
+
+          // Title text
+          this.add
+            .text(400, 100, "Platformer Demo", {
+              font: "32px Arial",
+              fill: "#ffffff",
+            })
+            .setOrigin(0.5);
+          // Menu options as interactive text
+          const startText = this.add
+            .text(400, 200, "Start Game", {
+              font: "20px Arial",
+              fill: "#00ff00",
+            })
+            .setOrigin(0.5);
+          const settingsText = this.add
+            .text(400, 250, "Settings", { font: "20px Arial", fill: "#ffffff" })
+            .setOrigin(0.5);
+          const instrText = this.add
+            .text(400, 300, "Instructions", {
+              font: "20px Arial",
+              fill: "#ffffff",
+            })
+            .setOrigin(0.5);
+
+          // Make menu texts interactive and define pointer (mouse/touch) events
+          startText.setInteractive({ useHandCursor: true });
+          settingsText.setInteractive({ useHandCursor: true });
+          instrText.setInteractive({ useHandCursor: true });
+
+          startText.on("pointerdown", () => {
+            // Start the main game scene
+            this.scene.start("GameScene");
+          });
+          settingsText.on("pointerdown", () => {
+            // Go to settings scene
+            this.scene.start("SettingsScene");
+          });
+          instrText.on("pointerdown", () => {
+            // Go to instructions scene
+            this.scene.start("InstructionsScene");
+          });
+        }
+      }
+
+      // GameScene: Main gameplay scene (simple platformer demo)
+      class GameScene extends Phaser.Scene {
+        constructor() {
+          super({ key: "GameScene" });
+        }
+        create() {
+          // Set sky background color
+          this.cameras.main.setBackgroundColor("#87CEEB");
+
+          // Enable Arcade physics
+          this.physics.world.setBounds(0, 0, 800, 600); // world bounds
+          // Create ground platform as a static physics body (using a rectangle shape)
+          const ground = this.add.rectangle(400, 580, 800, 40, 0x8b4513);
+          this.physics.add.existing(ground, true); // true = static body
+          // Create a player as a dynamic physics body (a small rectangle)
+          this.player = this.add.rectangle(100, 500, 30, 30, 0x00ff00);
+          this.physics.add.existing(this.player); // dynamic body by default
+          this.player.body.setBounce(0.1);
+          this.player.body.setCollideWorldBounds(true);
+
+          // Add collision between player and ground
+          this.physics.add.collider(this.player, ground);
+
+          // Set up keyboard input (WASD + SPACE for jump)
+          this.cursors = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            right: Phaser.Input.Keyboard.KeyCodes.D,
+            jump: Phaser.Input.Keyboard.KeyCodes.SPACE,
+          });
+          // Optionally, also allow arrow keys (Phaser provides cursors by default)
+          this.arrowKeys = this.input.keyboard.createCursorKeys();
+
+          // Text to display instructions or status in game
+          this.infoText = this.add.text(
+            16,
+            16,
+            "Use WASD or Arrow keys to move. Space to jump. P to Pause.",
+            { font: "14px Arial", fill: "#000" }
+          );
+        }
+        update() {
+          const playerBody = this.player.body;
+          // Horizontal movement
+          if (this.cursors.left.isDown || this.arrowKeys.left.isDown) {
+            playerBody.setVelocityX(-200);
+          } else if (this.cursors.right.isDown || this.arrowKeys.right.isDown) {
+            playerBody.setVelocityX(200);
+          } else {
+            // stop horizontal movement gradually
+            playerBody.setVelocityX(0);
+          }
+          // Jump (if on ground)
+          if (
+            (this.cursors.up.isDown ||
+              this.cursors.jump.isDown ||
+              this.arrowKeys.up.isDown) &&
+            playerBody.blocked.down
+          ) {
+            playerBody.setVelocityY(-350); // jump upward
+          }
+
+          // Pause game if P is pressed
+          if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey("P"))) {
+            // Launch PauseScene on top, pause this scene
+            this.scene.launch("PauseScene");
+            this.scene.pause();
+          }
+        }
+      }
+
+      // PauseScene: shown when game is paused
+      class PauseScene extends Phaser.Scene {
+        constructor() {
+          super({ key: "PauseScene" });
+        }
+        create() {
+          // Semi-transparent overlay
+          this.cameras.main.setBackgroundColor("rgba(0, 0, 0, 0.5)");
+          this.add
+            .text(400, 200, "Paused", { font: "30px Arial", fill: "#ffffff" })
+            .setOrigin(0.5);
+          const resumeText = this.add
+            .text(400, 300, "Resume", { font: "20px Arial", fill: "#00ff00" })
+            .setOrigin(0.5);
+          const menuText = this.add
+            .text(400, 350, "Main Menu", {
+              font: "20px Arial",
+              fill: "#ffffff",
+            })
+            .setOrigin(0.5);
+          resumeText.setInteractive({ useHandCursor: true });
+          menuText.setInteractive({ useHandCursor: true });
+
+          // Resume game: stop PauseScene and resume GameScene
+          resumeText.on("pointerdown", () => {
+            this.scene.stop("PauseScene");
+            this.scene.resume("GameScene");
+          });
+          // Return to main menu: stop GameScene and PauseScene, start MenuScene
+          menuText.on("pointerdown", () => {
+            this.scene.stop("GameScene");
+            this.scene.start("MenuScene");
+          });
+        }
+      }
+
+      // SettingsScene: allows adjusting volume (placeholder logic)
+      class SettingsScene extends Phaser.Scene {
+        constructor() {
+          super({ key: "SettingsScene" });
+          this.volStep = 0.1; // volume increment step
+        }
+        create() {
+          this.cameras.main.setBackgroundColor("#333");
+          this.add
+            .text(400, 100, "Settings", { font: "28px Arial", fill: "#ffffff" })
+            .setOrigin(0.5);
+          // Display volume
+          this.volumeText = this.add
+            .text(400, 200, "Volume: " + Math.round(this.sound.volume * 10), {
+              font: "20px Arial",
+              fill: "#ffff00",
+            })
+            .setOrigin(0.5);
+          this.add
+            .text(400, 240, "(Use Left/Right arrows to adjust)", {
+              font: "16px Arial",
+              fill: "#ffffff",
+            })
+            .setOrigin(0.5);
+          const backText = this.add
+            .text(400, 400, "Back to Menu", {
+              font: "20px Arial",
+              fill: "#00ff00",
+            })
+            .setOrigin(0.5);
+          backText.setInteractive({ useHandCursor: true });
+          backText.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+          });
+
+          // Input keys for adjusting volume
+          this.leftKey = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.LEFT
+          );
+          this.rightKey = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.RIGHT
+          );
+        }
+        update() {
+          // Decrease volume
+          if (Phaser.Input.Keyboard.JustDown(this.leftKey)) {
+            let newVol = Phaser.Math.Clamp(
+              this.sound.volume - this.volStep,
+              0,
+              1
+            );
+            this.sound.setVolume(newVol);
+            this.volumeText.setText("Volume: " + Math.round(newVol * 10));
+          }
+          // Increase volume
+          if (Phaser.Input.Keyboard.JustDown(this.rightKey)) {
+            let newVol = Phaser.Math.Clamp(
+              this.sound.volume + this.volStep,
+              0,
+              1
+            );
+            this.sound.setVolume(newVol);
+            this.volumeText.setText("Volume: " + Math.round(newVol * 10));
+          }
+        }
+      }
+
+      // InstructionsScene: shows controls or instructions
+      class InstructionsScene extends Phaser.Scene {
+        constructor() {
+          super({ key: "InstructionsScene" });
+        }
+        create() {
+          this.cameras.main.setBackgroundColor("#222");
+          this.add
+            .text(400, 100, "How to Play", {
+              font: "28px Arial",
+              fill: "#ffffff",
+            })
+            .setOrigin(0.5);
+          this.add
+            .text(400, 180, "Use W A S D keys to move", {
+              font: "20px Arial",
+              fill: "#ffffff",
+            })
+            .setOrigin(0.5);
+          this.add
+            .text(400, 220, "Press SPACE to jump", {
+              font: "20px Arial",
+              fill: "#ffffff",
+            })
+            .setOrigin(0.5);
+          this.add
+            .text(400, 260, "Press P to pause the game", {
+              font: "20px Arial",
+              fill: "#ffffff",
+            })
+            .setOrigin(0.5);
+          this.add
+            .text(400, 300, "(Arrow keys also work for movement)", {
+              font: "18px Arial",
+              fill: "#aaaaaa",
+            })
+            .setOrigin(0.5);
+          const backText = this.add
+            .text(400, 500, "Back to Menu", {
+              font: "20px Arial",
+              fill: "#00ff00",
+            })
+            .setOrigin(0.5);
+          backText.setInteractive({ useHandCursor: true });
+          backText.on("pointerdown", () => {
+            this.scene.start("MenuScene");
+          });
+        }
+      }
+
+      // Game configuration and launch
+      const config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        parent: "game", // ID of the DOM element to attach the game canvas
+        backgroundColor: "#000000",
+        physics: {
+          default: "arcade",
+          arcade: { gravity: { y: 500 }, debug: false },
+        },
+        scene: [
+          BootScene,
+          MenuScene,
+          GameScene,
+          PauseScene,
+          SettingsScene,
+          InstructionsScene,
+        ],
+      };
+      const game = new Phaser.Game(config);
+    </script>
+  </body>
+</html>

@@ -128,4 +128,60 @@ MarioClone_gamespec = """
 This classic 2D side-scrolling platformer centers on a nimble protagonist who navigates a series of intricately designed levels composed of tiled backgrounds and platforms. The game engine employs a tile-based system with precise collision detection, allowing the character to traverse terrains that include static and moving platforms, hidden passages, and warp mechanisms. Movement is governed by simple yet responsive controls: directional inputs move the character horizontally while a dedicated jump action, influenced by realistic physics parameters such as gravity, momentum, and friction, enables the player to clear obstacles, gaps, and oncoming adversaries. Enemies follow preset patrol routes with basic AI that triggers interactions upon proximity or collision, requiring players to time their jumps and maneuvers carefully. Additionally, the environment is rich with collectible items and power-ups that temporarily enhance abilities—such as increased size, strength, or speed—and secret areas that reward exploration. The game’s architecture supports modular level design, featuring scripted events, dynamic object interactions, and an underlying scoring and timer system that together create a progressively challenging experience.
 
 """,
+
+Mario_upgraded = """
+"Jump Quest" is a classic 2D side-scrolling platformer inspired by iconic titles from the genre, focusing on precision jumping and exploration. The game features Pippo, a vibrant and adventurous character, embarking on an exciting quest filled with obstacles, enemies, and hidden secrets.
+Theme and Setting:
+The game is set in a whimsical world with a variety of vibrant and thematic environments. Each level presents unique challenges and visual styles, encouraging players to explore and master the mechanics as they progress.
+User Interface (UI):
+Design and Layout:
+Main Menu: Simple and intuitive with options for Start Game, Options, and Exit.
+HUD: Displays lives, collected coins, current power-ups, and the timer (if applicable).
+Pause Menu: Allows players to resume, restart, access settings, or return to the main menu.
+Visual Style:
+Aesthetic focuses on colorful and dynamic environments with a cartoon-like quality.
+Character and enemy designs are simple yet distinct, maintaining a coherent style.
+User Input Mechanisms:
+Controls:
+Keyboard: Arrow keys for movement (left/right), spacebar for jump.
+Controls are fully customizable through the options menu.
+Game Logic and Rules:
+Core Mechanics:
+Players navigate Pippo through levels by running, jumping, and avoiding or defeating enemies.
+The game uses a physics-based jumping mechanic that emphasizes momentum and timing.
+Objectives:
+Reach the end of each level while collecting as many coins and power-ups as possible.
+Discover hidden areas and secrets for additional rewards.
+Challenges:
+Levels contain various enemy types and environmental hazards that increase in difficulty.
+Timed sections and puzzles add variety and challenge to the gameplay.
+Progression System:
+Levels are designed to be linear, with each one offering progressively more complex challenges.
+Players can revisit levels to improve their score or find missed secrets.
+In-Game Assets:
+Characters:
+Pippo: The main character with a bright, recognizable design.
+Enemies:
+Stompers: Basic walking enemies.
+Floaties: Flying nuisances.
+Guardians: Stationary projectile shooters.
+Bosses: Unique and challenging encounters at the end of each world.
+Collectibles and Power-Ups:
+Coins: Increase score and can unlock extra lives.
+Power-Up Hats: Grant temporary abilities (e.g., Speed Hat, Bounce Boots, Shield Cap).
+Environments:
+Diverse settings like Grassy Meadows, Mushroom Forest, Cloud Heights, and Castle Ruins.
+Additional Components:
+Features:
+Hidden Passages: Discoverable sections leading to bonus rooms.
+Breakable Blocks: Contain coins or power-ups, adding a layer of exploration.
+Time Trials: Optional challenges for speed-oriented players.
+Implementation Considerations:
+Challenges:
+Balancing precision mechanics with accessibility for all skill levels.
+Ensuring visual and auditory cues guide players effectively without overwhelming them.
+Additional Focus Areas:
+Designing levels that encourage replayability through secret discovery and time trials.
+Incorporating feedback systems to assist player learning and progression.
+""",
 )

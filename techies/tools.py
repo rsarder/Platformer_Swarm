@@ -9,7 +9,7 @@ import faiss
 from bs4 import BeautifulSoup
 from crewai.tools import BaseTool
 from freesound import FreesoundClient
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr
 from tempfile import TemporaryDirectory
 from typing import Type, List, Dict, Any, Optional
 from sentence_transformers import SentenceTransformer
@@ -64,7 +64,14 @@ class ReadHtmlExamplesToolSchema(BaseModel):
     pass
 
 class QueryMechanicsToolSchema(BaseModel):
+    
     query: str = Field(type=str, description="Search query for game mechanic.")
+
+class ReadScaffoldToolSchema(BaseModel):
+    path: str = Field(
+        type=str, 
+        description="Path to the scaffold file."
+    )
 
 class ReadFileTool(BaseTool):
     name: str = "Read a File"
@@ -288,42 +295,58 @@ class QueryMechanicsTool(BaseTool):
     )
     args_schema: Type[BaseModel] = QueryMechanicsToolSchema
 
+    _embeddings_file: str = PrivateAttr()
+    _initial_top_k: int = PrivateAttr()
+    _threshold: float = PrivateAttr()
+    _mechanics: List[Any] = PrivateAttr()
+    _embeddings: np.ndarray = PrivateAttr()
+    _dimension: int = PrivateAttr()
+    _index: Any = PrivateAttr()
+    _model: Any = PrivateAttr()
+
     def __init__(self, initial_top_k: int = 15, threshold: float = 1.5, **kwargs):
         super().__init__(**kwargs)
-        self.embeddings_file = os.path.normpath(__file__ + "/../refs/mechanics_db/mechanics_with_embeddings.json")
-        self.initial_top_k = initial_top_k
-        self.threshold = threshold
+        self._embeddings_file = os.path.normpath(__file__ + "/../refs/mechanics_db/mechanics_with_embeddings.json")
+        self._initial_top_k = initial_top_k
+        self._threshold = threshold
 
         # Load the mechanics JSON with embeddings
-        with open(self.embeddings_file, 'r') as infile:
-            self.mechanics = json.load(infile)
+        try:
+            with open(self._embeddings_file, 'r') as infile:
+                self._mechanics = json.load(infile)
+        except Exception as e:
+            raise ValueError(f"Failed to load mechanics from {self._embeddings_file}: {e}")
 
         # Build a FAISS index from the precomputed embeddings
-        self.embeddings = np.array([m['embedding'] for m in self.mechanics]).astype('float32')
-        self.dimension = self.embeddings.shape[1]
-        self.index = faiss.IndexFlatL2(self.dimension)
-        self.index.add(self.embeddings)
+        try:
+            self._embeddings = np.array([m['embedding'] for m in self._mechanics]).astype('float32')
+            self._dimension = self._embeddings.shape[1]
+            self._index = faiss.IndexFlatL2(self._dimension)
+            self._index.add(self._embeddings)
+        except Exception as e:
+            raise ValueError(f"Failed to build FAISS index: {e}")
 
         # Initialize the SentenceTransformer for query encoding
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')
+        try:
+            self._model = SentenceTransformer('all-MiniLM-L6-v2')
+        except Exception as e:
+            raise ValueError(f"Failed to initialize SentenceTransformer: {e}")
 
     def _run(self, **kwargs) -> str:
         query = kwargs.get("query", "")
         if not query:
             return "No query provided."
 
-        # Compute embedding for the query
-        query_embedding = self.model.encode(query).astype('float32')
+        query_embedding = self._model.encode(query).astype('float32')
         query_embedding = np.expand_dims(query_embedding, axis=0)
 
-        # Perform FAISS search for the initial top_k candidates
-        distances, indices = self.index.search(query_embedding, self.initial_top_k)
+        distances, indices = self._index.search(query_embedding, self._initial_top_k)
 
         relevant_results = []
         for dist, idx in zip(distances[0], indices[0]):
-            if dist < self.threshold:
-                normalized_similarity = max(0, (self.threshold - dist) / self.threshold)
-                mechanic = self.mechanics[idx]
+            if dist < self._threshold:
+                normalized_similarity = max(0, (self._threshold - dist) / self._threshold)
+                mechanic = self._mechanics[idx]
                 mechanic['similarity_score'] = round(normalized_similarity, 4)
                 relevant_results.append(mechanic)
 
@@ -343,6 +366,26 @@ class QueryMechanicsTool(BaseTool):
     async def _arun(self, **kwargs) -> str:
         return self._run(**kwargs)
 
+class ReadScaffoldTool(BaseTool):
+    name: str = "Read Scaffold Tool"
+    id: str = "read_scaffold"
+    description: str = "Retrieve the base scaffolding to be used as a starting point for a project."
+    args_schema: Type[BaseModel] = ReadScaffoldToolSchema
+    base_dir: str
+    _scaffold_path: str = PrivateAttr()
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> str:
+        try:
+            # Directly refer to the scaffold file
+            self._scaffold_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/scaffold_platformer_game.html")
+            with open(self._scaffold_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            return content
+        except Exception as e:
+            return f"Failed to read scaffold: {e}"
 
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
@@ -356,7 +399,7 @@ def get_all_tools():
     tools = {}
     toolklasses = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool
+        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool, ReadScaffoldTool
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)

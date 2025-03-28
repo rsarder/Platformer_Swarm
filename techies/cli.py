@@ -53,7 +53,8 @@ def get_openai_crew(crewname, manage_agentops=False):
 
     from langchain_openai import ChatOpenAI
 
-    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="o3-mini", temperature=0.4))
+    # agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="o3-mini", temperature=0.4))
+    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="o3-mini"))
     task_pool = Task.eager_load_all(agent_pool)
     if isinstance(crewname, str):
         crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
@@ -75,8 +76,8 @@ def get_anthropic_crew(crewname, **kwargs):
 
     from langchain_anthropic import ChatAnthropic
 
-    agent_pool = Agent.eager_load_all(llm=ChatAnthropic(model="claude-3-5-sonnet-20240620"))
-    # agent_pool = Agent.eager_load_all(llm=ChatAnthropic(model="claude-3-7-sonnet-20250219"))
+    # agent_pool = Agent.eager_load_all(llm=ChatAnthropic(model="claude-3-5-sonnet-20240620"))
+    agent_pool = Agent.eager_load_all(llm=ChatAnthropic(model="claude-3-7-sonnet-20250219"))
     task_pool = Task.eager_load_all(agent_pool)
     crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
 

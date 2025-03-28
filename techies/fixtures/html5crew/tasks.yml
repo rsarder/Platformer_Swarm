@@ -2,25 +2,119 @@ _task_common: &task_common
   human_input: false
   async_execution: false
 
-html5_game_coding:
+integrate_base_scaffold:
   <<: *task_common
-  agent: html5_game_architect
+  agent: game_architect
   description: >
-    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
-    Write a perfect HTML5, CSS, and JavaScript code.
-    Make sure that the final code represent a complete and playable game as detailed in the game layout and specifications.
-    Test and review the code with every change.
-    Sound is required for the game.
-    Delegate the task of coding the different parts of the game to the most fitting agents.
-    For any tasks that do not fit any specialized agents, delegate the task to the html5_game_engineer agent.
-    Agents must be conscious of their coworkers' code, and must ensure they refer to already exisiting components. If a necessary component does not exist, create it in the code or delegate the task of doing so to the right agent.
-    Delegate the task of generating and integrating a comprehensive Rules and Instructions menu into the "game.html" to html5_game_rules_engineer agent based on the game hierarchy and interactions outlined in game_hierarchy.xml and game.html files.
-    Delegate the task of downloading the sound resources as per the "game_hierarchy.xml" to html5_sound_engineer agent.
-    Delegate the task of integrating the downloaded sounds to html5_sound_integrator_agent agent. Make sure that html5_sound_integrator_agent agent consult with co-workers to carefully integrate the downloaded sound files provided by the sound engineer into the "game.html" file using the <audio> tags at their appropriate places.
-    Delegate the task of testing the code and giving feedback to the html5_game_tester.
-    Do not finalize your answer until the html5_game_tester says the game is complete and playable, and you have met all requirements.
-    Your final output should include code in a single file for the game and only HTML5 code for the game.
+    Retrieve and verify the base scaffold (scaffold.html) using read_scaffold. Confirm that all placeholder scenes and inline JavaScript modules are loaded correctly and meet baseline technical requirements.
   expected_output: >
-    After fill out all the requirements and complete the file "game.html", say "I have successfully developed the game saved in "game.html", as described per the game specification and game_hierarchy.xml file."
+    The base scaffold is successfully loaded and accessible, providing a verified foundation for subsequent development.
+
+implement_player_controls:
+  <<: *task_common
+  agent: gameplay_programmer
+  description: >
+    Enhance the GameScene by implementing robust player controls, including responsive input handling (WASD/Space), gravity application, and accurate collision detection.
+  expected_output: >
+    A fully responsive player character that moves, jumps, and collides with level geometry according to design specifications.
+  depends_on: [integrate_base_scaffold]
+
+integrate_health_system:
+  <<: *task_common
+  agent: gameplay_programmer
+  description: >
+    Implement a health system by integrating collision-based damage detection, player health/life tracking, and respawn logic. Ensure state transitions are triggered upon player damage or death.
+  expected_output: >
+    A robust health system that decrements health appropriately, triggers respawn or game over states, and communicates with the UI for feedback.
+  depends_on: [implement_player_controls]
+
+develop_enemy_ai:
+  <<: *task_common
+  agent: enemy_ai_developer
+  description: >
+    Develop adaptive enemy AI routines including patrol, detection, and attack behaviors. Ensure that enemy collisions with the player interact with the health system as specified.
+  expected_output: >
+    Enemy entities demonstrate defined behaviors and interact with the player in accordance with the validated hierarchy.
+  depends_on: [implement_player_controls]
+
+create_collectibles_system:
+  <<: *task_common
+  agent: collectibles_specialist
+  description: >
+    Implement a collectibles system to spawn items (e.g., coins, power-ups), handle collision-based pickups, and update score variables, with real-time integration into the HUD.
+  expected_output: >
+    Collectible items spawn and are collected as per design, with the score and HUD updating accurately upon pickup.
+  depends_on: [implement_player_controls]
+
+design_ui_components:
+  <<: *task_common
+  agent: ui_designer
+  description: >
+    Develop interactive UI components including main menus, pause screens, settings interfaces (with volume control), and an in-game HUD that reflect the specifications outlined in the game hierarchy.
+  expected_output: >
+    Functional and responsive UI screens enabling seamless game navigation and accurate display of game metrics.
+  depends_on: [integrate_base_scaffold]
+
+design_level_layouts:
+  <<: *task_common
+  agent: level_designer
+  description: >
+    Design and implement engaging level layouts with platforms, hazards, and environmental features that adhere to difficulty scaling and progression guidelines from the hierarchy.
+  expected_output: >
+    Multiple levels are implemented with appropriate spatial design and interactive elements, consistent with the validated hierarchy.
+  depends_on: [implement_player_controls, develop_enemy_ai, create_collectibles_system]
+
+integrate_audio_effects:
+  <<: *task_common
+  agent: sound_designer
+  description: >
+    Incorporate audio components including sound effects and background music, as well as visual effects such as particle systems and screen shakes, to enhance player feedback and immersion.
+  expected_output: >
+    Audio and visual effects are fully integrated, with event-driven triggers aligning with gameplay actions, and volume control integrated within the UI.
+  depends_on: [integrate_base_scaffold]
+
+incorporate_narrative_elements:
+  <<: *task_common
+  agent: narrative_designer
+  description: >
+    Develop and integrate narrative components including dialogue sequences, cutscenes, and story triggers, ensuring they align with level transitions and key game events as defined in the hierarchy.
+  expected_output: >
+    Narrative elements are seamlessly incorporated, with scripted events and dialogues triggering at appropriate times during gameplay.
+  depends_on: [design_level_layouts]
+
+perform_optimization_and_testing:
+  <<: *task_common
+  agent: performance_optimiser
+  description: >
+    Analyze, refactor, and optimize the entire codebase to ensure efficient resource usage and stable frame rates, while conducting systematic QA testing across all modules.
+  expected_output: >
+    The game achieves optimal performance metrics with minimal bugs, meeting the quality standards set forth in the hierarchy.
+  depends_on:
+    - implement_player_controls
+    - develop_enemy_ai
+    - create_collectibles_system
+    - design_ui_components
+    - design_level_layouts
+    - integrate_audio_effects
+    - incorporate_narrative_elements
+
+final_integration_and_system_testing:
+  <<: *task_common
+  agent: game_architect
+  description: >
+    Merge all module contributions into a cohesive game product and perform end-to-end system testing to verify that gameplay, AI, UI, audio, and narrative elements operate in harmony as specified in the validated hierarchy.
+  expected_output: >
+    A fully integrated, feature-complete platformer game that adheres to the design specifications and is ready for release.
+  depends_on:
+    - integrate_base_scaffold
+    - implement_player_controls
+    - integrate_health_system
+    - develop_enemy_ai
+    - create_collectibles_system
+    - design_ui_components
+    - design_level_layouts
+    - integrate_audio_effects
+    - incorporate_narrative_elements
+    - perform_optimization_and_testing
 
 # vim: set foldmethod=indent foldlevel=0:

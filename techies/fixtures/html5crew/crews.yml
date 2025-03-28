@@ -6,15 +6,24 @@ _crew_common: &crew_common
 html5_crew:
   <<: *crew_common
   agents:
-    - html5_game_architect
-    - html5_game_engineer
-    - html5_game_ui_engineer
-    - html5_game_uinput_engineer
-    - html5_game_logic_engineer
-    - html5_game_tester
-    - html5_sound_engineer
-    - html5_game_rules_engineer
-    - html5_sound_integrator_agent
+    - game_architect
+    - gameplay_programmer
+    - enemy_ai_developer
+    - collectibles_specialist
+    - ui_designer
+    - level_designer
+    - sound_designer
+    - narrative_designer
+    - performance_optimiser
   tasks:
-    - html5_game_coding
-
+    - integrate_base_scaffold
+    - implement_player_controls
+    - integrate_health_system
+    - develop_enemy_ai
+    - create_collectibles_system
+    - design_ui_components
+    - design_level_layouts
+    - integrate_audio_effects
+    - incorporate_narrative_elements
+    - perform_optimization_and_testing
+    - final_integration_and_system_testing
