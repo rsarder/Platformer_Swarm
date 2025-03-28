@@ -380,7 +380,7 @@ class ReadScaffoldTool(BaseTool):
     def _run(self, **kwargs) -> str:
         try:
             # Directly refer to the scaffold file
-            self._scaffold_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/scaffold_platformer_game.html")
+            self._scaffold_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/game.html")
             with open(self._scaffold_path, "r", encoding="utf-8") as f:
                 content = f.read()
             return content

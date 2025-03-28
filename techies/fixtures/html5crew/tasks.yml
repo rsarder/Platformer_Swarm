@@ -102,7 +102,7 @@ final_integration_and_system_testing:
   <<: *task_common
   agent: game_architect
   description: >
-    Merge all module contributions into a cohesive game product and perform end-to-end system testing to verify that gameplay, AI, UI, audio, and narrative elements operate in harmony as specified in the validated hierarchy.
+    Merge all module contributions into a cohesive game product and perform end-to-end system testing to verify that gameplay, AI, UI, audio, and narrative elements operate in harmony as specified in the validated hierarchy. You must use the write_file tool to generate the final game output, consisting of all necessary files for the game.
   expected_output: >
     A fully integrated, feature-complete platformer game that adheres to the design specifications and is ready for release.
   depends_on:

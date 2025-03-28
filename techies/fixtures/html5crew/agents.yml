@@ -27,7 +27,7 @@ gameplay_programmer:
   <<: *common_attributes
   goal: |
     Develop and optimize core player movement and physics within the GameScene. 
-    Implement responsive controls (WASD and Space), gravity, and collision detection to ensure fluid interaction with the environment.
+    Implement responsive controls (WASD, Space, and/or any other required controls for the game), gravity, and collision detection to ensure fluid interaction with the environment.
   backstory: |
     A specialist in real-time physics and movement mechanics with a proven track record in creating responsive platformer controls.
   allow_delegation: true
