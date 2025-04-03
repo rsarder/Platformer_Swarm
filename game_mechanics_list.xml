@@ -1,0 +1,57 @@
+<Mechanics>
+    <Movement Mechanics>
+        <Mechanic>Jump</Mechanic>
+        <Mechanic>Sprint</Mechanic>
+        <Mechanic>Dodge</Mechanic>
+        <Mechanic>Climb/Descend</Mechanic>
+        <Mechanic>Double Jump</Mechanic>
+        <Mechanic>Swinging</Mechanic>
+        <Mechanic>Traverse Obstacles</Mechanic>
+    </Movement Mechanics>
+    <Combat Mechanics>
+        <Mechanic>Enemy Avoidance</Mechanic>
+        <Mechanic>Cliff/Edge Tactics</Mechanic>
+    </Combat Mechanics>
+    <Interaction Mechanics>
+        <Mechanic>Collect Coins</Mechanic>
+        <Mechanic>Use of Terrain</Mechanic>
+    </Interaction Mechanics>
+    <Inventory & Resource Mechanics>
+        <Mechanic>Score System</Mechanic>
+        <Mechanic>Crafting</Mechanic>
+    </Inventory & Resource Mechanics>
+    <Meta-Strategic Mechanics>
+        <Mechanic>Map Control / Territory Mechanics</Mechanic>
+    </Meta-Strategic Mechanics>
+    <Presentation Systems>
+        <Mechanic>Camera Systems</Mechanic>
+    </Presentation Systems>
+    <Audio Systems>
+        <Mechanic>Chiptune Background Music</Mechanic>
+        <Mechanic>Sound Effects</Mechanic>
+    </Audio Systems>
+    <UI/HUD Systems>
+        <Mechanic>Score Counter</Mechanic>
+        <Mechanic>Life Indicator</Mechanic>
+        <Mechanic>Level Indicator</Mechanic>
+    </UI/HUD Systems>
+    <Input/Control Systems>
+        <Mechanic>Keyboard Input</Mechanic>
+        <Mechanic>Gamepad Input</Mechanic>
+        <Mechanic>Touch Controls</Mechanic>
+    </Input/Control Systems>
+    <Physics/Simulation Systems>
+        <Mechanic>Gravity</Mechanic>
+        <Mechanic>Collision Detection</Mechanic>
+    </Physics/Simulation Systems>
+    <Game World/Level Design Systems>
+        <Mechanic>Level Progression</Mechanic>
+        <Mechanic>Obstacle Placement</Mechanic>
+    </Game World/Level Design Systems>
+    <Narrative/Story Systems>
+        <Mechanic>Level Themes</Mechanic>
+    </Narrative/Story Systems>
+    <Data/Save Management Systems>
+        <Mechanic>Save Progress</Mechanic>
+    </Data/Save Management Systems>
+</Mechanics>

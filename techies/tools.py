@@ -70,6 +70,12 @@ class QueryMechanicsToolSchema(BaseModel):
 class GoogleSearchToolSchema(BaseModel):
     query: str = Field(type=str, description="The search query to use for Google search.")
 
+class ReadScaffoldToolSchema(BaseModel):
+    path: str = Field(
+        type=str, 
+        description="Path to the scaffold file."
+    )
+
 class ReadFileTool(BaseTool):
     name: str = "Read a File"
     id: str = "read_file"
@@ -289,6 +295,7 @@ class QueryMechanicsTool(BaseTool):
     description: str = (
         "Searches a JSON file of game mechanics (with precomputed embeddings) for the closest "
         "semantic match to the query. Returns matching mechanics that fall within a given threshold."
+        "Only use the name of a game mechanic you would like to find similar mechanics too not descriptions. "
     )
     args_schema: Type[BaseModel] = QueryMechanicsToolSchema
 
@@ -381,6 +388,27 @@ class GoogleSearchTool(BaseTool):
         except Exception as e:
             return f"Failed to perform Google search: {e}"
 
+class ReadScaffoldTool(BaseTool):
+    name: str = "Read Scaffold Tool"
+    id: str = "read_scaffold"
+    description: str = "Retrieve the base scaffolding to be used as a starting point for a project."
+    args_schema: Type[BaseModel] = ReadScaffoldToolSchema
+    base_dir: str
+    _scaffold_path: str = PrivateAttr()
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def _run(self, **kwargs) -> str:
+        try:
+            # Directly refer to the scaffold file
+            self._scaffold_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/game.html")
+            with open(self._scaffold_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            return content
+        except Exception as e:
+            return f"Failed to read scaffold: {e}"
+        
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
     base_dir = "."
@@ -393,7 +421,7 @@ def get_all_tools():
     tools = {}
     toolklasses = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool
+        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool, ReadScaffoldTool
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)

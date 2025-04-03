@@ -3,20 +3,63 @@ _crew_common: &crew_common
   max_iter: 100
   memory: false
 
+
 html5_crew:
   <<: *crew_common
   agents:
     - html5_game_architect
-    - html5_game_engineer
-    - html5_game_ui_engineer
-    - html5_game_uinput_engineer
-    - html5_game_logic_engineer
-    - html5_game_tester
-    - html5_game_rules_engineer
+    - mechanics_agent
+    - presentation_agent
+    - audio_agent
+    - ui_hud_agent
+    - input_control_agent
+    - ai_agent
+    - physics_simulation_agent
+    - world_design_agent
+    - progression_agent
   tasks:
     - html5_game_coding
-    - html5_game_validation
-    - html5_game_update
+
+
+# html5_crew:
+#   <<: *crew_common
+#   agents:
+#     - game_architect
+#     - gameplay_programmer
+#     - enemy_ai_developer
+#     - collectibles_specialist
+#     - ui_designer
+#     - level_designer
+#     # - sound_designer
+#     # - narrative_designer
+#     - performance_optimiser
+#   tasks:
+#     - integrate_base_scaffold
+#     - implement_player_controls
+#     - integrate_health_system
+#     - develop_enemy_ai
+#     - create_collectibles_system
+#     - design_ui_components
+#     - design_level_layouts
+#     # - integrate_audio_effects
+#     # - incorporate_narrative_elements
+#     - perform_optimization_and_testing
+#     - final_integration_and_system_testing
+
+# html5_crew:
+#   <<: *crew_common
+#   agents:
+#     - html5_game_architect
+#     - html5_game_engineer
+#     - html5_game_ui_engineer
+#     - html5_game_uinput_engineer
+#     - html5_game_logic_engineer
+#     - html5_game_tester
+#     - html5_game_rules_engineer
+#   tasks:
+#     - html5_game_coding
+#     - html5_game_validation
+#     - html5_game_update
 
 test_crew:
   <<: *crew_common
