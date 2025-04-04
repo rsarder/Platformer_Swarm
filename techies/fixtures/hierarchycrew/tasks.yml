@@ -6,23 +6,25 @@ hierarchy_systems_generation:
   <<: *task_common
   agent: hierarchy_systems_engineer
   description: >
-    Objective:
     Your task is to generate a comprehensive and exhaustive list of all necessary game systems required for the game. This list should ensure full game functionality by covering all relevant funcitonality aspects.
     
-    Follow these guidelines to produce your output as a single structured markup file called game_systems_list.xml:
+    Follow these guidelines to produce your output as a single structured markup snippet detailing the game's systems:
 
     **Identifying Required Game Systems:**
       - Step One: Base all your work on the following game specification: {game_specifications}
       - Step Two: Based on your knowledge of the game determine all other game systems needed for a fully functional game.
-      - Step Four: Your final answer must be the game_systems_list and nothing else.
+      - Step Four: Your final answer must be an exhaustive game systems list and nothing else, and should also be written to game_systems.xml using the write_file tool.
 
     **Categorizing Systems:**
     - Ensure the list includes systems across all relevant game system categories, such as:
       - UI/HUD Systems Scaffoldable
       - Input/Control Systems
+      - Game Logic or State Systems
+      - Movement, health, resources, or other game systems
 
     **Output Format:**
-      - Produce a structured list in game_systems_list, formatted as follows:
+      - Produce a structured xml snippet, formatted as follows:
+      Example:
       '''
       <Systems>
           <Input System>
@@ -42,13 +44,12 @@ hierarchy_systems_generation:
       </Systems>
       '''
   expected_output: >
-    A structured and formatted list of all game systems.
+    A structured and formatted list of all game systems saved as game_systems.xml using the write_file tool.
 
 hierarchy_mechanics_generation:
   <<: *task_common
   agent: hierarchy_mechanics_engineer
   description: >
-    Objective:
     Your task is to generate a comprehensive and exhaustive list of all necessary game mechanics required for the game. This list should ensure full gameplay functionality by covering all relevant gameplay aspects.
     
     Follow these guidelines to produce your output as a single structured markup file called game_mechanics_list.xml:
@@ -56,14 +57,19 @@ hierarchy_mechanics_generation:
     **Identifying Required Game Mechanics:**
       - Step One: Base all your work on the following game specification: {game_specifications}
       - Step Two: Based on your knowledge of the game determine all other game mechanics needed for a fully functional game.
-      - Step Three: Once you have generated a list expand on this list by using the query_mechanics tool to search for additional game mechanics and to more thoroughly describe the current game mechancis.
+      - Step Three: Once you have generated a list expand on this list by using the query_mechanics tool to search for additional game mechanics and to more thoroughly describe the current game mechanics. It is strongly suggested to not rely on the query_mechanics tool alone, but to use it as a supplement to your own knowledge and the game specifications to build a detailed and game-specific output.
       - Step Four: Your final answer must be the game_mechanics_list and nothing else.
 
     **Categorizing Mechanics:**
-    - Ensure the list includes mechanics across all relevant gameplay categories, such as:
-      - Game Play Mechanics:
+    - Ensure the list includes mechanics across all relevant gameplay categories, notable but non-exhaustive examples (only include necessary mechanics, and do not limit yourself to these examples):
+      - Gameplay Mechanics:
         - Movement: Mechanics involving an agent changing position or orientation in the game world.
         - Combat: Mechanics that involve offensive, defensive, or evasive actions.
+        - Resource Management: Mechanics that involve collecting, using, or managing resources.
+        - Game State: Mechanics that involve changing the game state, such as starting, pausing, or ending the game.
+        - Scoring: Mechanics that involve tracking and updating player scores or achievements.
+        - Game Progression: Mechanics that involve advancing through levels, stages, or phases of the game.
+        - Game Events: Mechanics that involve triggering or responding to specific game events or conditions.
 
     **Output Format:**
       - Produce a structured list in game_mechanics_list, formatted as follows:
@@ -101,7 +107,7 @@ hierarchy_mechanics_generation:
       </Mechanics>
       '''
   expected_output: >
-    A structured and formatted list of all game mechanics
+    A structured and formatted list of all game mechanics saved as game_mechanics_list.xml using the write_file tool
 
 game_hierarchy_representation_v2:
   <<: *task_common
@@ -253,7 +259,7 @@ game_hierarchy_representation_v2:
 
 
   expected_output: >
-    After you finished writing up game_hierarchy.xml using the write_file tool, say "I have created the game_hierarchy.xml file as per the provided specifications.".
+    A game hierarchy.xml file that includes the <Metadata> and <Game> elements, with the immediate children of the <Game> element populated according to the provided specifications. The file should be structured and formatted correctly, with all necessary components included. Ensure that the file is saved as game_hierarchy.xml using the write_file tool.
   depends_on:
     - hierarchy_systems_generation
     - hierarchy_mechanics_generation
@@ -363,16 +369,20 @@ game_hierarchy_validation:
         - If any component is missing, under-detailed, or inaccurate, update the game_hierarchy.xml file accordingly.
         - Add any missing elements or descriptions to ensure the hierarchy fully encapsulates the entire game design.
         - Ensure that the hierarchy provides a clear and actionable guide for implementation without omitting any critical details.
+     
+      - **Omit assets and sounds:**
+        - For any assets or sounds mentioned in the game specifications, ensure that they are not included in the game_hierarchy.xml file. Sounds  and assets will be handled separately in the game design pipeline, and for now default polygons will be used in place of sprites.
+        - Focus solely on the game mechanics, UI components, and input/controls, leaving out any references to specific assets or sounds.
 
       - **Final Step**:
-        - After completing all updates and enhancements, ensure to use the `write_file` tool to save the updated `game_hierarchy.xml` file.
+        - After completing all updates and enhancements, use the write_file tool to update the existing game_hierarchy.xml file.
         - Confirm that the file has been written successfully before completing your task.
 
       **Final Guidelines:**
-      - Ensure that the final game_hierarchy.xml file is complete, accurate, and reflective of the original game specifications and game mechanics list.
+      - Ensure that the final game_hierarchy.xml file is complete and written to file using the write_file tool, accurate, and reflective of the original game specifications and game mechanics list.
       - Focus on creating a robust hierarchy that can guide the game's development without any ambiguities or missing information. 
   expected_output: >
-    A thoroughly validated and enhanced game_hierarchy.xml file that fully matches the original game specifications. Briefly report the changes and additions made.
+    A thoroughly validated and enhanced game_hierarchy.xml file that fully matches the original game specifications, updated with the write_file tool. 
   depends_on:
     - game_hierarchy_inner_layers_task
     - hierarchy_systems_generation

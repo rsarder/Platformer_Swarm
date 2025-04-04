@@ -1,420 +1,467 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Metadata>
-  <name>Jump Quest</name>
-  <content>A classic 2D side-scrolling platformer featuring Pippo, where precision jumping, exploration, and physics-based platform mechanics are at the forefront. The game challenges players with obstacles, hidden secrets, and dynamic enemy encounters. The UI/HUD displays key game data and menus, while customizable keyboard input ensures smooth gameplay.</content>
-</Metadata>
-
-<Game>
-  <description>This element encapsulates all major components of the game including mechanics, UI/HUD systems, and input/control systems with a modular and scalable design for further expansion.</description>
-  
-  <Mechanics>
-    <Description>Game mechanics cover movement, jumping, combat, and advanced interactions as defined in the game mechanics list.</Description>
-    
-    <Mechanic>
-      <Name>Basic Horizontal Movement</Name>
-      <Description>Processes left/right movement input to update Pippo’s position across the platforming level.</Description>
-      <ImplementationDetails>Implemented via key polling of left/right input. Normalizes user inputs into Pippo’s horizontal velocity adjustments while checking for collision boundaries.</ImplementationDetails>
-      <PseudoCode>
-if keyPressed("left") then
-    Pippo.velocity.x = -moveSpeed
-else if keyPressed("right") then
-    Pippo.velocity.x = moveSpeed
-else
-    Pippo.velocity.x = 0
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Jumping</Name>
-      <Description>Enables Pippo to perform a physics-based jump for overcoming obstacles and reaching higher platforms.</Description>
-      <ImplementationDetails>Checks if Pippo is on the ground; if jump input is active, applies an upward impulse. Incorporates buffering and coyote time for a responsive jump feel.</ImplementationDetails>
-      <PseudoCode>
-if keyPressed("space") and Pippo.isOnGround then
-    Pippo.velocity.y = jumpForce
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Double Jump</Name>
-      <Description>Allows Pippo to initiate a secondary jump mid-air for extra reach and agility.</Description>
-      <ImplementationDetails>Tracks the number of available jumps. Resets jump counter upon landing; permits one extra jump when Pippo is airborne.</ImplementationDetails>
-      <PseudoCode>
-if Pippo.onGround then
-    Pippo.jumps = 0
-if keyPressed("space") then
-    if Pippo.onGround then
-        Pippo.velocity.y = jumpForce
-        Pippo.jumps = 1
-    else if Pippo.jumps &lt; 2 then
-        Pippo.velocity.y = jumpForce
-        Pippo.jumps++
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Wall Jump</Name>
-      <Description>Enables Pippo to jump off walls when airborne, expanding vertical traversal options.</Description>
-      <ImplementationDetails>Detects contact with a wall on either side. On jump input, applies an upward impulse plus a horizontal push away from the wall. Resets jump counters appropriately on landing.</ImplementationDetails>
-      <PseudoCode>
-if (touchingLeftWall or touchingRightWall) and keyPressed("space") then
-    Pippo.velocity.y = jumpForce
-    if touchingLeftWall then
-        Pippo.velocity.x = horizontalPush
-    else if touchingRightWall then
-        Pippo.velocity.x = -horizontalPush
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Wall Slide</Name>
-      <Description>Slows Pippo’s descent when in contact with a wall to provide extra time for planning jumps.</Description>
-      <ImplementationDetails>Checks if Pippo is sliding against a wall while falling. Limits downward velocity to a predefined slide speed and optionally changes Pippo’s animation state.</ImplementationDetails>
-      <PseudoCode>
-if (touchingLeftWall and keyPressed("left")) or (touchingRightWall and keyPressed("right")) then
-    if Pippo.velocity.y &gt; slideSpeedLimit then
-        Pippo.velocity.y = slideSpeedLimit
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Climbing</Name>
-      <Description>Enables vertical movement when overlapping climbable objects like ladders.</Description>
-      <ImplementationDetails>Detects collision with climbable surfaces. Disables gravity as long as Pippo remains in climbing mode and allows precise vertical movement via input.</ImplementationDetails>
-      <PseudoCode>
-if overlapping(ladder) then
-    Pippo.onLadder = true
-    disableGravity(Pippo)
-if Pippo.onLadder then
-    if keyPressed("up") then
-        Pippo.velocity.y = -climbSpeed
-    else if keyPressed("down") then
-        Pippo.velocity.y = climbSpeed
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Grappling Hook</Name>
-      <Description>Allows Pippo to latch onto valid surfaces and swing or pull himself across gaps.</Description>
-      <ImplementationDetails>On activation via specific input, performs raycasting to detect valid targets. Disables gravity temporarily, applies directional force, and renders a visual rope effect. Re-enables gravity once the grapple is released or target is reached.</ImplementationDetails>
-      <PseudoCode>
-if grappleButtonPressed and not Pippo.isGrappling then
-    target = findGrapplePoint(Pippo.position, aimDirection)
-    if target exists then
-        Pippo.isGrappling = true
-        disableGravity(Pippo)
-        Pippo.velocity = normalize(target - Pippo.position) * grappleSpeed
-if Pippo.isGrappling then
-    updateRopeLine(Pippo.position, target)
-    if reached(target) or cancelGrapple then
-        Pippo.isGrappling = false
-        enableGravity(Pippo)
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Rope Swinging</Name>
-      <Description>Enables a swinging motion on a rope or vine using pendulum dynamics.</Description>
-      <ImplementationDetails>Upon detecting overlap with a rope, Pippo enters swing mode. The system calculates angular momentum and applies pendulum physics until release input is detected, returning Pippo to normal physics.</ImplementationDetails>
-      <PseudoCode>
-if overlapping(ropeEnd) then
-    Pippo.onRope = true
-    disableGravity(Pippo)
-    setSwingParameters(Pippo, ropeAnchor)
-if Pippo.onRope then
-    updateSwing(Pippo)
-    if releaseInput then
-        Pippo.onRope = false
-        enableGravity(Pippo)
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Sliding</Name>
-      <Description>Triggers a low-profile slide to pass under obstacles or evade attacks on the ground.</Description>
-      <ImplementationDetails>On detection of down input with sufficient horizontal speed while grounded, reduces Pippo’s collider size and applies a burst of horizontal movement; reverts after a fixed duration.</ImplementationDetails>
-      <PseudoCode>
-if keyPressed("down") and Pippo.onGround and abs(Pippo.velocity.x) &gt; threshold then
-    Pippo.isSliding = true
-    adjustCollider(Pippo, reducedSize)
-    setVelocity(Pippo, slideSpeed)
-    after(slideDuration):
-        Pippo.isSliding = false
-        restoreCollider(Pippo)
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Crouching</Name>
-      <Description>Enables Pippo to decrease his collider height to avoid obstacles or drop through platforms.</Description>
-      <ImplementationDetails>On down input when grounded, reduces the collider’s height. Optionally, if jump is pressed then temporarily disables collision with one-way platforms.</ImplementationDetails>
-      <PseudoCode>
-if keyPressed("down") and Pippo.onGround then
-    Pippo.isCrouching = true
-    adjustCollider(Pippo, halfHeight)
-if Pippo.isCrouching and keyPressed("space") then
-    disablePlatformCollision(temporary)
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Swimming</Name>
-      <Description>Alters movement dynamics in water by reducing gravity and increasing drag, simulating liquid resistance.</Description>
-      <ImplementationDetails>Detects when Pippo enters water zones. Modifies gravity and movement properties accordingly and repurposes jump inputs for vertical swimming.</ImplementationDetails>
-      <PseudoCode>
-if Pippo in waterZone then
-    Pippo.inWater = true
-    setGravity(Pippo, reducedGravity)
-    setDrag(Pippo, waterDrag)
-if Pippo.inWater then
-    if keyPressed("up") then
-        Pippo.velocity.y = -swimSpeed
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Flying</Name>
-      <Description>Temporarily grants the ability to move freely in the air by reducing or disabling gravity, typically via a power-up.</Description>
-      <ImplementationDetails>On activation, disables normal gravity and allows directional control. Reverts to normal physics when the power-up expires.</ImplementationDetails>
-      <PseudoCode>
-if flightPowerActive then
-    disableGravity(Pippo)
-    if keyPressed("up") then
-        Pippo.velocity.y = -flySpeed
-    if flightPowerExpired then
-        enableGravity(Pippo)
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Environmental Movement Effects</Name>
-      <Description>Adjusts Pippo’s movement based on environmental conditions such as wind, ice, or water currents.</Description>
-      <ImplementationDetails>Checks Pippo’s current environment zone. Applies forces like constant acceleration for wind or reduced friction for ice to affect the movement trajectory.</ImplementationDetails>
-      <PseudoCode>
-if Pippo in windZone then
-    Pippo.velocity.x += windForce
-if Pippo on ice then
-    setFriction(Pippo, low)
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Time Manipulation for Platforming</Name>
-      <Description>Allows Pippo to temporarily slow time, making it easier to perform precise maneuvers in challenging sequences.</Description>
-      <ImplementationDetails>On activation via a designated power-up or input, adjusts the game’s time scale. Reverts back to normal after a limited duration with a cooldown period.</ImplementationDetails>
-      <PseudoCode>
-if timeManipulationActivated then
-    setTimeScale(0.2)
-    after(duration):
-        setTimeScale(1)
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Stomp Attack</Name>
-      <Description>Allows Pippo to defeat enemies by jumping on them, triggering enemy defeat and a bounce effect.</Description>
-      <ImplementationDetails>Detects collision between Pippo’s downward movement and an enemy’s hitbox. Applies a bounce force upon successful enemy defeat.</ImplementationDetails>
-      <PseudoCode>
-if Pippo.velocity.y > 0 and detectCollision(Pippo.bottom, enemy.top) then
-    defeat(enemy)
-    Pippo.velocity.y = bounceForce
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Power-Up Combat</Name>
-      <Description>Enables Pippo to acquire temporary combat advantages through power-ups, enhancing offensive or defensive capabilities.</Description>
-      <ImplementationDetails>On collecting a power-up, temporarily modifies Pippo’s combat attributes for enhanced performance during enemy encounters.</ImplementationDetails>
-      <PseudoCode>
-if collision(Pippo, powerUp) then
-    activatePowerUp(effect, duration)
-if powerUpActive then
-    modifyCombatAttributes(Pippo)
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Damage and Invulnerability Frames</Name>
-      <Description>Manages how Pippo receives damage and grants a brief period of invulnerability to prevent rapid successive hits.</Description>
-      <ImplementationDetails>On taking damage from enemies or hazards, reduces Pippo’s life count and initiates a timer during which Pippo is immune to further damage.</ImplementationDetails>
-      <PseudoCode>
-if collision(Pippo, enemy) then
-    if not Pippo.invulnerable then
-        Pippo.lives -= 1
-        Pippo.invulnerable = true
-        startTimer(invulnerabilityDuration, function() { Pippo.invulnerable = false })
-      </PseudoCode>
-    </Mechanic>
-    
-    <Mechanic>
-      <Name>Boss Combat Mechanics</Name>
-      <Description>Defines multi-phase boss encounters with alternating attack, defense, and vulnerable states for challenging gameplay.</Description>
-      <ImplementationDetails>Uses a state machine to control the boss's behavior, switching between attack, defense, and vulnerable phases, and applying damage when appropriate.</ImplementationDetails>
-      <PseudoCode>
-switch(boss.state):
-    case "attack":
-        boss.performAttackPattern()
-    case "defense":
-        boss.reduceDamage()
-    case "vulnerable":
-        if Pippo.dealsDamage() then
-            applyDamage(boss)
-            if boss.health &lt;= 0 then
-                defeat(boss)
-      </PseudoCode>
-    </Mechanic>
-    
-  </Mechanics>
-  
-  <UIHUDSystems>
-    <Description>The interface layer displays game information such as lives, coins, power-ups and menus to guide and assist the player during gameplay.</Description>
-    
-    <SubSystem>
-      <Name>Main Menu</Name>
-      <Description>Displays options including Start Game, Options, and Exit in an intuitive layout.</Description>
-      <SubComponents repeat="true">
-        <SubComponent>
-          <Name>Start Game Button</Name>
-          <Description>Button that initiates the game, transitioning from menu to active play.</Description>
-          <ImplementationDetails>On click or selection input, calls loadGameScene to begin gameplay. Changes visual state upon hover and click.</ImplementationDetails>
-          <Interactions>Relies on the input system and scene manager to transition screens.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Options Button</Name>
-          <Description>Button to access and modify game settings including input bindings and audio/video preferences.</Description>
-          <ImplementationDetails>Opens the settings menu overlay when clicked. Integrates with the custom input mapping system.</ImplementationDetails>
-          <Interactions>Communicates with the Input Control and Audio Systems to reflect changes immediately.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Exit Button</Name>
-          <Description>Button that exits the game application.</Description>
-          <ImplementationDetails>Triggers the shutdown routine when selected, ensuring all processes are safely terminated.</ImplementationDetails>
-          <Interactions>Interacts with system-level commands to close the application.</Interactions>
-        </SubComponent>
-      </SubComponents>
-    </SubSystem>
-    
-    <SubSystem>
-      <Name>HUD</Name>
-      <Description>Displays real-time in-game data such as lives, coins collected, active power-ups, and optionally a timer.</Description>
-      <SubComponents repeat="true">
-        <SubComponent>
-          <Name>Lives Indicator</Name>
-          <Description>Graphical display showing remaining lives of Pippo.</Description>
-          <ImplementationDetails>Dynamically updates as Pippo loses or gains extra lives. Uses icons or numbers as visual cues.</ImplementationDetails>
-          <Interactions>Listens to gameplay events that change Pippo’s health state.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Coin Counter</Name>
-          <Description>Shows the number of coins collected in the current level.</Description>
-          <ImplementationDetails>Increments on collision with coin objects. Updates the HUD immediately to reflect score changes.</ImplementationDetails>
-          <Interactions>Directly linked to the Coin Collection and Scoring mechanic.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Power-Up Display</Name>
-          <Description>Visual indicator for current active power-ups along with their remaining durations.</Description>
-          <ImplementationDetails>Activates when a power-up is collected. Uses icons with optional timers.</ImplementationDetails>
-          <Interactions>Synchronizes with the Power-Up Mechanics to display current status and countdown.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Timer</Name>
-          <Description>Optional countdown or elapsed time display, used in time-trial sections or challenges.</Description>
-          <ImplementationDetails>Starts when the level begins. Stops or resets when the level ends or is paused.</ImplementationDetails>
-          <Interactions>Interacts with level progression and pause systems to ensure accuracy.</Interactions>
-        </SubComponent>
-      </SubComponents>
-    </SubSystem>
-    
-    <SubSystem>
-      <Name>Pause Menu</Name>
-      <Description>Accessible during gameplay to resume, restart, adjust settings, or return to the main menu.</Description>
-      <SubComponents repeat="true">
-        <SubComponent>
-          <Name>Resume Button</Name>
-          <Description>Returns the player to active gameplay from the paused state.</Description>
-          <ImplementationDetails>Closes the pause overlay and restores the previous game state.</ImplementationDetails>
-          <Interactions>Tied to the game loop to continue updates after pause.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Restart Button</Name>
-          <Description>Restarts the current level, resetting all necessary game states.</Description>
-          <ImplementationDetails>Reloads level assets and resets scores, timers, and Pippo’s position.</ImplementationDetails>
-          <Interactions>Communicates with the Level Loader to perform a full restart.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Settings Button</Name>
-          <Description>Opens the settings interface from within the pause menu.</Description>
-          <ImplementationDetails>Invokes settings overlay, allowing modifications to controls, audio, and video.</ImplementationDetails>
-          <Interactions>Interfaces with Input Control and Audio Systems for on-the-fly adjustments.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Main Menu Button</Name>
-          <Description>Exits the current game session and returns the player to the main menu.</Description>
-          <ImplementationDetails>Triggers a scene transition from the current level to the main menu screen.</ImplementationDetails>
-          <Interactions>Works with the scene manager to safely unload the level and prepare the main menu.</Interactions>
-        </SubComponent>
-      </SubComponents>
-    </SubSystem>
-  </UIHUDSystems>
-  
-  <InputControlSystems>
-    <Description>Handles all user input and translates it into game actions using customizable controls and event-handling mechanisms.</Description>
-    
-    <SubSystem>
-      <Name>Movement Input</Name>
-      <Description>Processes left/right movement through keyboard arrow keys or custom mappings.</Description>
-      <SubComponents repeat="true">
-        <SubComponent>
-          <Name>Key Polling</Name>
-          <Description>Continuously checks for left/right key presses to update Pippo’s horizontal movement.</Description>
-          <ImplementationDetails>Uses event polling to determine if the left or right keys are pressed. Normalizes and maps these actions to velocity changes.</ImplementationDetails>
-          <Interactions>Directly affects Pippo’s basic horizontal movement mechanic and collision detection.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Input Normalization</Name>
-          <Description>Ensures that movement inputs are translated into a consistent velocity value.</Description>
-          <ImplementationDetails>Converts raw key press values into predetermined speed vectors considering game settings such as multiplier effects.</ImplementationDetails>
-          <Interactions>Works in conjunction with the game physics system to apply smooth movement.</Interactions>
-        </SubComponent>
-      </SubComponents>
-    </SubSystem>
-    
-    <SubSystem>
-      <Name>Jump Input</Name>
-      <Description>Handles detecting jump actions via the spacebar and triggers physics-based vertical impulses.</Description>
-      <SubComponents repeat="true">
-        <SubComponent>
-          <Name>Jump Initiation</Name>
-          <Description>Determines when a jump is started by detecting spacebar press and ensuring Pippo is eligible to jump.</Description>
-          <ImplementationDetails>Checks if Pippo is on the ground or in an allowable state for double-jumping, and then applies the upward jump force.</ImplementationDetails>
-          <Interactions>Relies on collision and physics systems to verify ground contact and apply jump buffering or cooldowns.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Jump Buffering</Name>
-          <Description>Allows the game to register jump input slightly before Pippo is ready, improving responsiveness.</Description>
-          <ImplementationDetails>Implements a short time window where jump input is held and then executed the moment conditions become valid.</ImplementationDetails>
-          <Interactions>Interacts with the physics system and jump mechanics to ensure smooth play experience.</Interactions>
-        </SubComponent>
-      </SubComponents>
-    </SubSystem>
-    
-    <SubSystem>
-      <Name>Custom Input Mapping</Name>
-      <Description>Provides the functionality for players to remap keys for movement and jump actions via the options menu.</Description>
-      <SubComponents repeat="true">
-        <SubComponent>
-          <Name>Key Binding Storage</Name>
-          <Description>Stores user-defined key settings persistently.</Description>
-          <ImplementationDetails>Saves key mappings to a configuration file or local storage, and retrieves them on game startup.</ImplementationDetails>
-          <Interactions>Works with the input system to override default key mappings.</Interactions>
-        </SubComponent>
-        <SubComponent>
-          <Name>Runtime Update</Name>
-          <Description>Applies new input mappings immediately during gameplay without restarting the game.</Description>
-          <ImplementationDetails>Monitors options menu changes and updates the input event mappings in real-time.</ImplementationDetails>
-          <Interactions>Directly feeds into the Movement and Jump Input sub-systems ensuring consistency.</Interactions>
-        </SubComponent>
-      </SubComponents>
-    </SubSystem>
-  </InputControlSystems>
-  
-</Game>
+<gameHierarchy>
+  <Metadata>
+    <name>Jump Quest</name>
+    <content>
+      Jump Quest is a classic 2D side-scrolling platformer featuring Pippo, a vibrant adventurer navigating whimsical environments with precision jumping and exploration. Keyboard controls (arrow keys for movement and spacebar for jump) are customizable. The game’s UI consists of a Main Menu (Start Game, Options, Exit), an in-game HUD displaying lives, coins, power-ups, and a timer (if applicable), plus a Pause Menu for in-game actions. Core game mechanics include physics-based jumping, combat via stomp attacks and power-ups, resource management through coin collection, level transitions, scoring systems with bonus and high score features, scripted events that reveal hidden passages, breakable blocks, and dynamic challenges that increase as players progress.
+    </content>
+  </Metadata>
+  <Game>
+    <description>
+      This root element outlines the game’s high-level structure, encapsulating core components such as mechanics, UI/HUD systems, and input/control systems.
+    </description>
+    <Mechanics>
+      <Description>
+        Game mechanics are methods invoked by game agents to interact with the game state. This includes movement, combat, resource management, level transitions, scoring, progression, and scripted events.
+      </Description>
+      <Movement_Mechanics>
+        <Mechanic>
+          <Name>Basic Horizontal Movement</Name>
+          <Description>Pippo moves left and right using the arrow keys for navigation.</Description>
+          <Implementation_Details>Maps left/right arrow keys to update Pippo's x-coordinate with a defined speed.</Implementation_Details>
+          <PseudoCode>
+            if keyPressed('left') then pippo.x -= speed;
+            if keyPressed('right') then pippo.x += speed
+          </PseudoCode>
+          <Details>
+            <Purpose>Enable smooth lateral movement.</Purpose>
+            <Function>Listens to key events and changes Pippo's position accordingly.</Function>
+            <Implementation>Integrates with the physics engine for consistent movement; minimal dependency on other systems.</Implementation>
+            <Interactions>Directly interfaces with the Keyboard Input component in the InputControlSystems.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Physics-Based Jumping</Name>
+          <Description>Implements a jumping mechanic using physics principles, incorporating momentum and gravity for precision jumps.</Description>
+          <Implementation_Details>Utilizes a physics engine to apply an upward impulse when spacebar is pressed and continuously applies gravity. The jump height varies based on the duration of the jump key press.</Implementation_Details>
+          <PseudoCode>
+            if keyPressed('space') then set vertical_velocity = jump_force;
+            apply gravity;
+            update pippo.y based on vertical_velocity
+          </PseudoCode>
+          <Details>
+            <Purpose>Allow Pippo to navigate vertical obstacles and platforms.</Purpose>
+            <Function>Initiates an upward impulse followed by gravitational pull to simulate realistic jumping.</Function>
+            <Implementation>Depends on the Physics Engine to calculate forces; checks input duration for variable height.</Implementation>
+            <Interactions>Relies on the Keyboard Input system and interacts with Collision Detection to determine when landing occurs.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Variable Jump Height</Name>
+          <Description>Allows higher jumps when the jump button is held longer within a brief time window to create a variable arc.</Description>
+          <Implementation_Details>Monitors the duration of the spacebar press and applies additional upward force until a maximum threshold is reached.</Implementation_Details>
+          <PseudoCode>
+            if keyHeld('space') and within_jump_window then increase upward force
+          </PseudoCode>
+          <Details>
+            <Purpose>Provide players with nuanced control over jump height.</Purpose>
+            <Function>Adjusts the jump force dynamically based on the time the jump key is held.</Function>
+            <Implementation>Utilizes a timer to measure key hold duration and applies additional force incrementally.</Implementation>
+            <Interactions>Works in tandem with the Physics-Based Jumping mechanic and the Keyboard Input system.</Interactions>
+          </Details>
+        </Mechanic>
+      </Movement_Mechanics>
+      <Combat_Mechanics>
+        <Mechanic>
+          <Name>Stomp Attack</Name>
+          <Description>Pippo defeats enemies by stomping on them while descending, which also triggers a bounce effect.</Description>
+          <Implementation_Details>Checks if Pippo’s vertical velocity is downwards at the moment of collision with an enemy. If so, flags the enemy as defeated and modifies Pippo’s velocity for a bounce.</Implementation_Details>
+          <PseudoCode>
+            if pippo.velocity.y > 0 and collision(pippo, enemy) then
+              enemy.defeated = true;
+              pippo.velocity.y = bounce_force
+          </PseudoCode>
+          <Details>
+            <Purpose>Enable combat by utilizing environmental physics.</Purpose>
+            <Function>Uses downward motion as a trigger for defeating enemies and bouncing off them.</Function>
+            <Implementation>Called within the game loop on collision events; depends on physics calculations.</Implementation>
+            <Interactions>Interacts with Collision Detection and the Physics Engine to ensure proper response.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Power-Up Enhanced Combat</Name>
+          <Description>Activates enhanced combat abilities such as temporary invincibility or increased damage when a power-up is active.</Description>
+          <Implementation_Details>Upon collection of a power-up, Pippo’s combat attributes are temporarily modified until the power-up expires.</Implementation_Details>
+          <PseudoCode>
+            if collision(pippo, power-up) then
+              apply powerUpEffect;
+            if powerUpEffect active and collision(pippo, enemy) then
+              enemy.defeated = true
+          </PseudoCode>
+          <Details>
+            <Purpose>Provide temporary battle advantages to the player.</Purpose>
+            <Function>Modifies player attributes and integrates with enemy collision logic.</Function>
+            <Implementation>Triggers attribute updates and a timer to revert changes after a set duration.</Implementation>
+            <Interactions>Works closely with the Collectibles and Power-Ups System and Collision Detection.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Damage and Invulnerability Frames</Name>
+          <Description>After taking damage, Pippo becomes temporarily invulnerable to prevent rapid consecutive hits.</Description>
+          <Implementation_Details>On collision with an enemy, if not already invulnerable, reduces Pippo’s life and then activates an invulnerability timer.</Implementation_Details>
+          <PseudoCode>
+            if collision(pippo, enemy) and not pippo.invulnerable then
+              pippo.lives -= 1;
+              set pippo.invulnerable = true;
+              start invulnerability_timer
+          </PseudoCode>
+          <Details>
+            <Purpose>Prevent unfair rapid damage accumulation.</Purpose>
+            <Function>Flags Pippo as invulnerable for a short period after taking damage.</Function>
+            <Implementation>Integrates timer logic to reinstate vulnerability after expiration.</Implementation>
+            <Interactions>Works with the Life Management mechanic and Collision Detection system.</Interactions>
+          </Details>
+        </Mechanic>
+      </Combat_Mechanics>
+      <Resource_Management_Mechanics>
+        <Mechanic>
+          <Name>Coin Collection</Name>
+          <Description>Pippo collects coins scattered throughout levels to increase his score and potentially earn extra lives.</Description>
+          <Implementation_Details>Collision detection triggers coin collection, increments the score, and removes the coin from the scene.</Implementation_Details>
+          <PseudoCode>
+            if collision(pippo, coin) then
+              score += coin_value;
+              remove coin from level
+          </PseudoCode>
+          <Details>
+            <Purpose>Reward exploration and navigation through levels.</Purpose>
+            <Function>Detects contact with coin objects and updates game state accordingly.</Function>
+            <Implementation>Relies on proper collision checks and score management routines.</Implementation>
+            <Interactions>Interfaces with the Score Tracker and Level Renderer to update visual elements.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Power-Ups Management</Name>
+          <Description>Handles the pickup and timed activation of power-ups such as Speed Hats, Bounce Boots, or Shield Caps.</Description>
+          <Implementation_Details>Activates the power-up effect upon collision, starts a timer, and reverts the effect upon timer expiration.</Implementation_Details>
+          <PseudoCode>
+            if collision(pippo, power-up) then
+              apply powerUp effect;
+              start powerUp_timer;
+            if powerUp_timer expires then
+              revert powerUp effect
+          </PseudoCode>
+          <Details>
+            <Purpose>Enhance gameplay by temporarily modifying player abilities.</Purpose>
+            <Function>Monitors collision events with power-ups and manages temporary effect duration.</Function>
+            <Implementation>Depends on both collision detection and a timing mechanism to revert boosts.</Implementation>
+            <Interactions>Integrates with the Combat Mechanics when enhanced combat is required and with the Save/Load System to persist temporary states if needed.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Life Management</Name>
+          <Description>Tracks Pippo's remaining lives and triggers a game over state when lives deplete.</Description>
+          <Implementation_Details>Monitors damage events and decrements the life counter; signals the Game State Manager if lives reach zero.</Implementation_Details>
+          <PseudoCode>
+            if damage_received and not invulnerable then
+              lives -= 1;
+            if lives == 0 then trigger game over
+          </PseudoCode>
+          <Details>
+            <Purpose>Ensure game progression is halted upon player failure.</Purpose>
+            <Function>Updates and maintains player life count during gameplay.</Function>
+            <Implementation>Works closely with Damage and Invulnerability Frames and the Game State Manager.</Implementation>
+            <Interactions>Communicates results to the Game Over state handler and UI systems displaying lives.</Interactions>
+          </Details>
+        </Mechanic>
+      </Resource_Management_Mechanics>
+      <Game_State_Mechanics>
+        <Mechanic>
+          <Name>Level Transition</Name>
+          <Description>Manages the shift between levels after objectives are met, handling asset unloading and reinitialization.</Description>
+          <Implementation_Details>On reaching the level's endpoint, loads the next level, resets Pippo's position, and prepares new assets.</Implementation_Details>
+          <PseudoCode>
+            if level_end_triggered then
+              load next level;
+              reset player position
+          </PseudoCode>
+          <Details>
+            <Purpose>Progress the game narrative and challenge scaling.</Purpose>
+            <Function>Triggers level unload and load routines.</Function>
+            <Implementation>Integrates with the Level Loader and Progression Controller.</Implementation>
+            <Interactions>Directly interacts with the Game State Manager and Level Management System.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Pause and Resume</Name>
+          <Description>Allows players to pause gameplay, freezing all active processes, and resume from the paused state.</Description>
+          <Implementation_Details>Displays a pause overlay and interrupts active timers and animations. Resumes game state when prompted.</Implementation_Details>
+          <PseudoCode>
+            if pause_key_pressed then
+              game_state = PAUSED;
+              display pause menu;
+            if resume_selected then
+              game_state = IN_GAME
+          </PseudoCode>
+          <Details>
+            <Purpose>Offer players control over the game pace to manage interruptions.</Purpose>
+            <Function>Freezes and resumes game logic including animations and timers.</Function>
+            <Implementation>Works by halting the update loop; reactivates processes upon resume.</Implementation>
+            <Interactions>Communicates with the UIHUDSystems (Pause Menu) and Input Control Systems to detect pause/resume commands.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Game Over State</Name>
+          <Description>Handles the end-of-game scenario by triggering a game over screen when Pippo's lives are fully depleted.</Description>
+          <Implementation_Details>Switches the game state to GAME_OVER and presents options for restarting or exiting the game.</Implementation_Details>
+          <PseudoCode>
+            if lives <= 0 then
+              game_state = GAME_OVER;
+              display game over screen
+          </PseudoCode>
+          <Details>
+            <Purpose>Conclude the game session and prompt player decision.</Purpose>
+            <Function>Invokes game over routines and displays relevant menus.</Function>
+            <Implementation>Uses the Game State Manager to halt gameplay and transition UI elements.</Implementation>
+            <Interactions>Notifies UIHUDSystems for game over display and Save/Load systems for final state persistence.</Interactions>
+          </Details>
+        </Mechanic>
+      </Game_State_Mechanics>
+      <Scoring_Mechanics>
+        <Mechanic>
+          <Name>Real-Time Score Tracking</Name>
+          <Description>Continuously updates the player's score based on coin collection and level completion.</Description>
+          <Implementation_Details>Monitors scoring events and dynamically updates the score display.</Implementation_Details>
+          <PseudoCode>
+            on coin collection: score += coin_value;
+            on level complete: score += level_bonus
+          </PseudoCode>
+          <Details>
+            <Purpose>Provide immediate feedback on player achievements.</Purpose>
+            <Function>Listens to game events and updates numeric displays accordingly.</Function>
+            <Implementation>Integrates with the HUD for live updates and high score management routines.</Implementation>
+            <Interactions>Interacts with Resource Management and UI systems.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>High Score Management</Name>
+          <Description>Tracks and stores the highest scores achieved to encourage replayability and competition.</Description>
+          <Implementation_Details>Compares the current score against a stored high score and updates it if a new record is set.</Implementation_Details>
+          <PseudoCode>
+            if current_score > high_score then
+              high_score = current_score
+          </PseudoCode>
+          <Details>
+            <Purpose>Foster competitive play and replayability.</Purpose>
+            <Function>Maintains persistent records of score achievements.</Function>
+            <Implementation>Reads and writes to a persistent storage system; integrates with the Save/Load Manager.</Implementation>
+            <Interactions>Works with the Score Tracker display and Save/Load systems.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Time-Based Bonus Scoring</Name>
+          <Description>Rewards players with additional points based on how quickly they complete levels.</Description>
+          <Implementation_Details>Calculates a bonus from the remaining time using a multiplier and adds it to the overall score upon level completion.</Implementation_Details>
+          <PseudoCode>
+            if level_complete then
+              bonus = time_remaining * multiplier;
+              score += bonus
+          </PseudoCode>
+          <Details>
+            <Purpose>Incentivize faster level completion and high replay value.</Purpose>
+            <Function>Determines bonus score based on a time formula.</Function>
+            <Implementation>Uses level timer data and integrates with the scoring system.</Implementation>
+            <Interactions>Synchronizes with the Level Loader and Score Tracker systems.</Interactions>
+          </Details>
+        </Mechanic>
+      </Scoring_Mechanics>
+      <Progression_Mechanics>
+        <Mechanic>
+          <Name>Sequential Level Unlock</Name>
+          <Description>Progresses players to subsequent, more challenging levels in a linear fashion.</Description>
+          <Implementation_Details>Upon level completion, updates progression data and unlocks the next level for play.</Implementation_Details>
+          <PseudoCode>
+            if level_completed then
+              unlock next level;
+              update progression record
+          </PseudoCode>
+          <Details>
+            <Purpose>Ensure a consistent and gradual increase in difficulty.</Purpose>
+            <Function>Manages level availability and unlock status.</Function>
+            <Implementation>Integrates with both the Level Loader and Progression Controller.</Implementation>
+            <Interactions>Notifies UI elements and Save/Load systems to record progression.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Checkpoint System</Name>
+          <Description>Saves player progress at designated positions within levels to allow respawning upon failure.</Description>
+          <Implementation_Details>Records Pippo’s status and position when a checkpoint is reached, and restores it upon death.</Implementation_Details>
+          <PseudoCode>
+            if player reaches checkpoint then
+              save current_position;
+            if player dies then
+              respawn at last checkpoint
+          </PseudoCode>
+          <Details>
+            <Purpose>Reduce player frustration by offering a midway save point.</Purpose>
+            <Function>Captures and stores game state at key intervals during a level.</Function>
+            <Implementation>Depends on a persistent memory system; integrates with the Game State Manager.</Implementation>
+            <Interactions>Works with Level Management and Save/Load Systems to store checkpoint data.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Replay and Score Improvement</Name>
+          <Description>Allows players to replay levels to improve scores, discover missed secrets, and earn higher rewards.</Description>
+          <Implementation_Details>Stores the best score for each level and provides an option to replay levels from level select or post-level screens.</Implementation_Details>
+          <PseudoCode>
+            if player selects replay then
+              load level with best score displayed
+          </PseudoCode>
+          <Details>
+            <Purpose>Encourage skill improvement and exploration.</Purpose>
+            <Function>Retrieves saved level records and prompts the replay option.</Function>
+            <Implementation>Works in tandem with the UI and Score Tracking systems.</Implementation>
+            <Interactions>Interfaces with the Level Loader and UIHUDSystems for displaying replay options.</Interactions>
+          </Details>
+        </Mechanic>
+      </Progression_Mechanics>
+      <Game_Events_Mechanics>
+        <Mechanic>
+          <Name>Scripted Event Triggering</Name>
+          <Description>Executes predefined events (such as hidden passage activations or breakable block interactions) when certain conditions are met.</Description>
+          <Implementation_Details>An event manager monitors specific triggers and executes corresponding scripted actions in the game.</Implementation_Details>
+          <PseudoCode>
+            if event_condition_met then
+              trigger scripted_event;
+              execute event actions
+          </PseudoCode>
+          <Details>
+            <Purpose>Enhance game narrative and interactivity.</Purpose>
+            <Function>Detects scripted triggers and initiates event actions accordingly.</Function>
+            <Implementation>Relies on real-time event polling and state checking; integrates with level geometry.</Implementation>
+            <Interactions>Interacts with Level Loader and UI components to display event outcomes.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Environmental Hazard Activation</Name>
+          <Description>Activates dynamic hazards (e.g., falling platforms, spikes) when the player enters designated danger zones.</Description>
+          <Implementation_Details>Triggers hazard animations and collision checks when Pippo enters specific areas marked as dangerous.</Implementation_Details>
+          <PseudoCode>
+            if player enters hazard_zone then
+              activate hazard_effects;
+              monitor collisions
+          </PseudoCode>
+          <Details>
+            <Purpose>Create environmental challenges that test player reflexes.</Purpose>
+            <Function>Monitors player position relative to hazards and triggers appropriate responses.</Function>
+            <Implementation>Uses collision detection and pre-set hazard triggers within level design.</Implementation>
+            <Interactions>Works with the Physics and Collision System to ensure timely activation and resolution.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Secret Discovery</Name>
+          <Description>Rewards exploration by unveiling hidden passages or bonus areas that yield extra rewards.</Description>
+          <Implementation_Details>Invisible triggers are placed in the level, and upon detection, reveal secret areas and grant bonus rewards.</Implementation_Details>
+          <PseudoCode>
+            if player collides with secret_trigger then
+              reveal secret_area;
+              grant bonus_reward
+          </PseudoCode>
+          <Details>
+            <Purpose>Encourage thorough exploration and reward inquisitive play.</Purpose>
+            <Function>Detects collision with hidden triggers and alters the level layout to expose bonuses.</Function>
+            <Implementation>Couples with Collision Detection and Level Management to ensure secrets are revealed correctly.</Implementation>
+            <Interactions>Interacts with the Score Tracking and Power-Ups systems to apply rewards.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Breakable Blocks</Name>
+          <Description>Allows players to break certain blocks that may reveal coins or power-ups.</Description>
+          <Implementation_Details>When Pippo collides with or attacks a breakable block, a breaking animation is triggered and, based on the block's configuration, a coin or power-up is released.</Implementation_Details>
+          <PseudoCode>
+            if attack_collision with breakable_block then
+              trigger block_break animation;
+              if block contains coin then release coin;
+              else if block contains power-up then release power-up
+          </PseudoCode>
+          <Details>
+            <Purpose>Add an extra layer of exploration and reward.</Purpose>
+            <Function>Integrates with collision detection and attack mechanics to identify and process breakable blocks.</Function>
+            <Implementation>Uses scripted triggers and state changes to manage block destruction and item release.</Implementation>
+            <Interactions>Works with the Resource Management Mechanics (Coin Collection and Power-Ups Management) for item spawning.</Interactions>
+          </Details>
+        </Mechanic>
+        <Mechanic>
+          <Name>Time Trials Challenge</Name>
+          <Description>Introduces an optional challenge where players must complete a level within a target time to earn bonus rewards.</Description>
+          <Implementation_Details>At the start of a level, a timer is initiated. If the level is completed with time remaining above a target threshold, a bonus reward is applied, and the bonus is added to the score.</Implementation_Details>
+          <PseudoCode>
+            if level_complete and time_remaining > target_time then
+              apply bonus reward
+          </PseudoCode>
+          <Details>
+            <Purpose>Motivate speed-run style gameplay and add replay value.</Purpose>
+            <Function>Monitors level timer and evaluates performance against a preset target time.</Function>
+            <Implementation>Integrates with the Level Transition and Score Tracking systems.</Implementation>
+            <Interactions>Works with Real-Time Score Tracking and Level Management to award bonuses appropriately.</Interactions>
+          </Details>
+        </Mechanic>
+      </Game_Events_Mechanics>
+    </Mechanics>
+    <UIHUDSystems>
+      <Description>
+        The interface layer displays essential game information including lives, coins, power-ups, and timer, and provides the navigational menus: Main Menu, HUD, and Pause Menu.
+      </Description>
+      <SubSystem>
+        <Name>Main Menu</Name>
+        <Description>Provides options for Start Game, Options, and Exit. Serves as the game’s primary entry point.</Description>
+        <Implementation_Details>A simple, intuitive menu with clickable buttons and keyboard navigation. Integrates with the Game State Manager for state transitions.</Implementation_Details>
+        <Interaction_Details>
+          <Purpose>Guide players into entering the game.</Purpose>
+          <Function>Handles user selections and dispatches events accordingly.</Function>
+          <Implementation>Uses button event handlers and sound cues from the Audio System.</Implementation>
+          <Interactions>Directly interacts with InputControlSystems and Game State Manager.</Interactions>
+        </Interaction_Details>
+      </SubSystem>
+      <SubSystem>
+        <Name>HUD</Name>
+        <Description>Displays real-time gameplay information such as Pippo's lives, coin count, current power-ups, and timer (if applicable).</Description>
+        <Implementation_Details>A dynamic overlay updated in real-time based on game events and state changes.</Implementation_Details>
+        <Interaction_Details>
+          <Purpose>Provide constant feedback on game status.</Purpose>
+          <Function>Updates display elements during gameplay when receiving events like coin collection or damage taken.</Function>
+          <Implementation>Links with the Score Tracker and Life Management mechanics for live data.</Implementation>
+          <Interactions>Works closely with the Mechanics systems and is refreshed by the Game State Manager.</Interactions>
+        </Interaction_Details>
+      </SubSystem>
+      <SubSystem>
+        <Name>Pause Menu</Name>
+        <Description>Offers options to resume, restart, change settings, or return to the Main Menu during gameplay.</Description>
+        <Implementation_Details>An overlay interface triggered on pause, halting game updates and providing navigational choices.</Implementation_Details>
+        <Interaction_Details>
+          <Purpose>Allow players to interrupt gameplay in an organized manner.</Purpose>
+          <Function>Pauses active timers and animations, suspending the game until resumed.</Function>
+          <Implementation>Integrates with the Game State Manager to freeze and resume game logic.</Implementation>
+          <Interactions>Interfaces with InputControlSystems to detect pause/resume inputs and with Audio System for feedback sounds.</Interactions>
+        </Interaction_Details>
+      </SubSystem>
+    </UIHUDSystems>
+    <InputControlSystems>
+      <Description>
+        This system captures user inputs and maps keyboard event data to in-game actions such as movement and jumping. It also supports real-time customization of input configurations.
+      </Description>
+      <SubSystem>
+        <Name>Keyboard Input</Name>
+        <Description>Handles arrow keys for movement and the spacebar for jumping, mapping these inputs to game actions.</Description>
+        <Implementation_Details>Directly maps key events to gameplay functions and supports real-time updates via configuration changes.</Implementation_Details>
+        <Interaction_Details>
+          <Purpose>Bridge between user commands and game mechanics.</Purpose>
+          <Function>Monitors and processes key events and dispatches them to the relevant game subsystems.</Function>
+          <Implementation>Relies on event listeners and integrates tightly with movement and jump mechanics.</Implementation>
+          <Interactions>Works with the Custom Configurator and the Game State Manager for seamless input handling.</Interactions>
+        </Interaction_Details>
+      </SubSystem>
+      <SubSystem>
+        <Name>Custom Configurator</Name>
+        <Description>Allows players to customize their control mappings in real time through an intuitive settings interface.</Description>
+        <Implementation_Details>Provides a UI for remapping keys, immediately updating the Keyboard Input configuration.</Implementation_Details>
+        <Interaction_Details>
+          <Purpose>Enhance game accessibility and player comfort.</Purpose>
+          <Function>Captures new key settings and propagates changes to the input handling system.</Function>
+          <Implementation>Connects with persistent storage to save changes and applies them instantly upon confirmation.</Implementation>
+          <Interactions>Works directly with Keyboard Input and Save/Load and Configuration System to ensure settings persist.</Interactions>
+        </Interaction_Details>
+      </SubSystem>
+    </InputControlSystems>
+  </Game>
+</gameHierarchy>

@@ -1,0 +1,77 @@
+{
+  "levels": [
+    {
+      "id": "level1",
+      "theme": "forest",
+      "difficulty": "easy",
+      "platforms": [
+        { "x": 0, "y": 400, "width": 300, "height": 20 },
+        { "x": 350, "y": 350, "width": 200, "height": 20 },
+        { "x": 600, "y": 300, "width": 150, "height": 20 }
+      ],
+      "hazards": [
+        { "type": "spikes", "x": 300, "y": 380, "width": 50, "height": 20 }
+      ],
+      "enemies": [
+        { "type": "Goblin", "x": 400, "y": 320, "patrolBounds": { "left": 400, "right": 600 } }
+      ],
+      "collectibles": [
+        { "type": "coin", "x": 100, "y": 370 },
+        { "type": "coin", "x": 500, "y": 320 },
+        { "type": "powerup", "x": 650, "y": 270 }
+      ],
+      "transitions": [
+        { "trigger": "nextLevel", "x": 750, "y": 250, "width": 50, "height": 50, "target": "level2" }
+      ]
+    },
+    {
+      "id": "level2",
+      "theme": "cave",
+      "difficulty": "medium",
+      "platforms": [
+        { "x": 0, "y": 420, "width": 250, "height": 20 },
+        { "x": 300, "y": 380, "width": 200, "height": 20 },
+        { "x": 550, "y": 340, "width": 150, "height": 20 },
+        { "x": 750, "y": 300, "width": 100, "height": 20 }
+      ],
+      "hazards": [
+        { "type": "spikes", "x": 250, "y": 400, "width": 50, "height": 20 },
+        { "type": "fire", "x": 700, "y": 280, "width": 50, "height": 20 }
+      ],
+      "enemies": [
+        { "type": "Bat", "x": 350, "y": 360, "patrolBounds": { "left": 350, "right": 550 } },
+        { "type": "Goblin", "x": 800, "y": 260, "patrolBounds": { "left": 800, "right": 900 } }
+      ],
+      "collectibles": [
+        { "type": "coin", "x": 150, "y": 390 },
+        { "type": "coin", "x": 400, "y": 340 },
+        { "type": "powerup", "x": 850, "y": 250 }
+      ],
+      "transitions": [
+        { "trigger": "bossRoom", "x": 900, "y": 260, "width": 50, "height": 50, "target": "boss" }
+      ]
+    },
+    {
+      "id": "boss",
+      "theme": "lair",
+      "difficulty": "hard",
+      "platforms": [
+        { "x": 0, "y": 450, "width": 400, "height": 20 },
+        { "x": 450, "y": 420, "width": 200, "height": 20 },
+        { "x": 700, "y": 390, "width": 150, "height": 20 }
+      ],
+      "hazards": [
+        { "type": "spikes", "x": 400, "y": 440, "width": 50, "height": 20 },
+        { "type": "fire", "x": 850, "y": 370, "width": 50, "height": 20 }
+      ],
+      "enemies": [
+        { "type": "Boss", "x": 800, "y": 350, "behavior": "bossAttack" }
+      ],
+      "collectibles": [
+        { "type": "coin", "x": 100, "y": 430 },
+        { "type": "powerup", "x": 500, "y": 400 }
+      ],
+      "transitions": []
+    }
+  ]
+}

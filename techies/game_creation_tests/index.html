@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jump Quest</title>
+    <link rel="stylesheet" href="css-style.css" />
+  </head>
+  <body>
+    <!-- Main Menu Container -->
+    <div id="main-menu">
+      <button id="start-game">Start Game</button>
+      <button id="options">Options</button>
+      <button id="exit">Exit</button>
+    </div>
+
+    <!-- Game Canvas/Container -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Pause Menu Container (hidden by default) -->
+    <div id="pause-menu" style="display: none">
+      <button id="resume-game">Resume</button>
+      <button id="restart-game">Restart</button>
+      <button id="main-menu-btn">Main Menu</button>
+    </div>
+
+    <!-- Narrative overlay container will be added by narrative.js dynamically -->
+
+    <!-- Scripts -->
+    <script src="scenes-gameplayScene.js"></script>
+    <script src="js-game.js"></script>
+    <script src="js-narrative.js"></script>
+    <script src="js-enemy.js"></script>
+    <script src="js-collectibles.js"></script>
+  </body>
+</html>

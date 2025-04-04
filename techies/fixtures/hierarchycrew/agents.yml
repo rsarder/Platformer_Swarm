@@ -6,6 +6,32 @@ _no_deleg: &common_attributes_no_deleg
   <<: *common_attributes
   allow_delegation: false
 
+hierarchy_systems_engineer:
+  <<: *common_attributes_no_deleg
+  goal: >
+    Generate a comprehensive and exhaustive list of all necessary game systems required for the game. Your task is to ensure that every essential system is accounted for, covering all aspects of game functionality.
+  backstory: >
+    You are a meticulous game systems engineer, knowledgable about game systems.
+  tools:
+    - read_file
+    - write_file 
+  llm:
+    - gpt-4o-2024-08-06
+
+hierarchy_mechanics_engineer:
+  <<: *common_attributes_no_deleg
+  goal: >
+    Generate a comprehensive and exhaustive list of all necessary game mechanics required for the game. Your task is to ensure that every essential mechanic is accounted for, covering all aspects of gameplay.
+    Use the query_mechanics tool to identify other possible game mechanics and to see examples of game mechanics descriptions.
+    Your final output must be the game mechanics list and nothing else.
+  backstory: >
+    You are a meticulous game mechanics engineer, knowledgable about game mechanics. 
+  tools:
+    - query_mechanics
+    - write_file
+    - read_file
+  llm:
+    - gpt-4o-2024-08-06
 
 hierarchy_architect_v2:
   <<: *common_attributes
@@ -124,47 +150,27 @@ hierarchy_implementation_planner:
   llm:
     - gpt-4o-2024-08-06
 
-hierarchy_mechanics_agent:
-  <<: *common_attributes_no_deleg
-  goal: >
-    Your task is to expand the game_hierarchy.xml file by detailing the neccessary game mechanics. This involves:
-    - Current Game Mechanics Identification: Review the existing game hierarchy and identify all game mechanics currently described.
-    - Sub and Related Game Mechanics Identification: For each current game mechanics, identify all sub-mechanics and related game mechanics.
-    - Use all identified game mechanics to search the game mechanics data base with the query_mechanics tool to identify other possible game mechanics and to see examples of game mechanics descriptions.
-    - Generate a complete list of all game mechanics identified with descriptions in a format similar to those in the game mechanics data base. 
+# hierarchy_mechanics_agent:
+#   <<: *common_attributes_no_deleg
+#   goal: >
+#     Your task is to expand the game_hierarchy.xml file by detailing the neccessary game mechanics. This involves:
+#     - Current Game Mechanics Identification: Review the existing game hierarchy and identify all game mechanics currently described.
+#     - Sub and Related Game Mechanics Identification: For each current game mechanics, identify all sub-mechanics and related game mechanics.
+#     - Use all identified game mechanics to search the game mechanics data base with the query_mechanics tool to identify other possible game mechanics and to see examples of game mechanics descriptions.
+#     - Generate a complete list of all game mechanics identified with descriptions in a format similar to those in the game mechanics data base. 
 
-    Your goal is to ensure that all game mechancis for every aspect of the game are identified and listed, capturing the detailed mechanical requirements for the game.
+#     Your goal is to ensure that all game mechancis for every aspect of the game are identified and listed, capturing the detailed mechanical requirements for the game.
 
-  backstory: >
-    You are a meticulous game mechanics engineer, knowledgable about game mechanics. 
-  tools:
-    - read_file
-    - write_file
-    - query_mechanics
-  llm:
-    - gpt-4o-2024-08-06
+#   backstory: >
+#     You are a meticulous game mechanics engineer, knowledgable about game mechanics. 
+#   tools:
+#     - read_file
+#     - write_file
+#     - query_mechanics
+#   llm:
+#     - gpt-4o-2024-08-06
 
-hierarchy_mechanics_engineer:
-  <<: *common_attributes_no_deleg
-  goal: >
-    Generate a comprehensive and exhaustive list of all necessary game mechanics required for the game. Your task is to ensure that every essential mechanic is accounted for, covering all aspects of gameplay.
-    Use the query_mechanics tool to identify other possible game mechanics and to see examples of game mechanics descriptions.
-    Your final output must be the game mechanics list and nothing else.
-  backstory: >
-    You are a meticulous game mechanics engineer, knowledgable about game mechanics. 
-  tools:
-    - query_mechanics
-  llm:
-    - gpt-4o-2024-08-06
 
-hierarchy_systems_engineer:
-  <<: *common_attributes_no_deleg
-  goal: >
-    Generate a comprehensive and exhaustive list of all necessary game systems required for the game. Your task is to ensure that every essential system is accounted for, covering all aspects of game functionality.
-  backstory: >
-    You are a meticulous game systems engineer, knowledgable about game systems. 
-  llm:
-    - gpt-4o-2024-08-06
 
 # hierarchy_extractor:
 #   <<: *common_attributes
