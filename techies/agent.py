@@ -1,29 +1,30 @@
+import inspect
 from techies.fixture_loader import load_fixture
+from techies.llms import ChatOpenAINoTemp
 from techies.tools import get_all_tools
 from crewai import Agent as _Agent
 from agentops import track_agent
+from langchain_openai import ChatOpenAI
+
+def supports_temperature(llm_class):
+    sig = inspect.signature(llm_class.__init__)
+    return "temperature" in sig.parameters
 
 @track_agent()
 class Agent(_Agent):
     @staticmethod
     def eager_load_all(**extra_kwargs):
-
         agent_pool = {}
         all_tools = get_all_tools()
         for config_name in load_fixture('agents').keys():
             if not config_name.startswith('_'):
-                agent = Agent(
-                    config_name,
-                    agent_pool=agent_pool,
-                    tools_available=all_tools,
-                    **extra_kwargs
-                )
-
+                Agent(config_name=config_name,
+                      agent_pool=agent_pool,
+                      tools_available=all_tools,
+                      **extra_kwargs)
         return agent_pool
 
-    def __init__(
-        self, config_name, *, agent_pool=None, tools_available=None, **kwargs
-    ):
+    def __init__(self, *, config_name, agent_pool=None, tools_available=None, **kwargs):
         agent_config = load_fixture('agents')[config_name]
         agent_config['role'] = config_name
         agent_config['name'] = config_name.replace('_', ' ').title()
@@ -40,4 +41,3 @@ class Agent(_Agent):
 
         agent_config.update(kwargs)
         super().__init__(**agent_config)
-

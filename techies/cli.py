@@ -53,8 +53,9 @@ def get_openai_crew(crewname, manage_agentops=False):
 
     from langchain_openai import ChatOpenAI
 
-    # agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="o3-mini", temperature=0.4))
+    # agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="gpt-4o-2024-08-06", temperature=0.4))
     agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="o3-mini"))
+    # agent_pool = Agent.eager_load_all()
     task_pool = Task.eager_load_all(agent_pool)
     if isinstance(crewname, str):
         crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
@@ -78,6 +79,7 @@ def get_anthropic_crew(crewname, **kwargs):
 
     # agent_pool = Agent.eager_load_all(llm=ChatAnthropic(model="claude-3-5-sonnet-20240620"))
     agent_pool = Agent.eager_load_all(llm=ChatAnthropic(model="claude-3-7-sonnet-20250219"))
+    # agent_pool = Agent.eager_load_all()
     task_pool = Task.eager_load_all(agent_pool)
     crew = Crew(crewname, agent_pool=agent_pool, task_pool=task_pool)
 
@@ -187,9 +189,9 @@ Usage:
             self.kickoff_hierarchy_crew(extra_args)
             return
 
-        if not os.path.exists("game.html"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/build/game.html")
-            shutil.copy(scaffold_file_path, "game.html")
+        # if not os.path.exists("game.html"):
+        #     scaffold_file_path = os.path.normpath(__file__ + "/../refs/build/game.html")
+        #     shutil.copy(scaffold_file_path, "game.html")
 
         self.kickoff_hierarchy_crew(extra_args)
 

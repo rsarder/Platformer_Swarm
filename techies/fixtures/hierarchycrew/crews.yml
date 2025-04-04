@@ -3,16 +3,34 @@ _crew_common: &crew_common
   max_iter: 100
   memory: false
 
+
 hierarchy_crew_v2:
   <<: *crew_common
   agents:
-    - hierarchy_extractor
-    - mechanics_ai_specialist
-    - hierarchy_compiler
-    - hierarchy_evaluator
+    - hierarchy_systems_engineer
+    - hierarchy_mechanics_engineer
+    - hierarchy_architect_v2
+    - hierarchy_entity_engineer_v2
+    - hierarchy_validator
 
   tasks:
-    - game_hierarchy_extraction
-    - mechanics_ai_extraction
-    - game_hierarchy_compilation
+    - hierarchy_systems_generation
+    - hierarchy_mechanics_generation
+    - game_hierarchy_representation_v2
+    - game_hierarchy_inner_layers_task
     - game_hierarchy_validation
+
+
+# hierarchy_crew_v2:
+#   <<: *crew_common
+#   agents:
+#     - hierarchy_extractor
+#     - mechanics_ai_specialist
+#     - hierarchy_compiler
+#     - hierarchy_evaluator
+
+#   tasks:
+#     - game_hierarchy_extraction
+#     - mechanics_ai_extraction
+#     - game_hierarchy_compilation
+#     - game_hierarchy_validation

@@ -123,12 +123,6 @@ grid, ensuring that the resulting game is both user-friendly and faithful to
 the original design and gameplay mechanics.
 """,
 
-
-MarioClone_gamespec = """
-This classic 2D side-scrolling platformer centers on a nimble protagonist who navigates a series of intricately designed levels composed of tiled backgrounds and platforms. The game engine employs a tile-based system with precise collision detection, allowing the character to traverse terrains that include static and moving platforms, hidden passages, and warp mechanisms. Movement is governed by simple yet responsive controls: directional inputs move the character horizontally while a dedicated jump action, influenced by realistic physics parameters such as gravity, momentum, and friction, enables the player to clear obstacles, gaps, and oncoming adversaries. Enemies follow preset patrol routes with basic AI that triggers interactions upon proximity or collision, requiring players to time their jumps and maneuvers carefully. Additionally, the environment is rich with collectible items and power-ups that temporarily enhance abilities—such as increased size, strength, or speed—and secret areas that reward exploration. The game’s architecture supports modular level design, featuring scripted events, dynamic object interactions, and an underlying scoring and timer system that together create a progressively challenging experience.
-
-""",
-
 Mario_upgraded = """
 "Jump Quest" is a classic 2D side-scrolling platformer inspired by iconic titles from the genre, focusing on precision jumping and exploration. The game features Pippo, a vibrant and adventurous character, embarking on an exciting quest filled with obstacles, enemies, and hidden secrets.
 Theme and Setting:
@@ -184,4 +178,36 @@ Additional Focus Areas:
 Designing levels that encourage replayability through secret discovery and time trials.
 Incorporating feedback systems to assist player learning and progression.
 """,
+
+Platformer_Test = """
+Game Name: Platformer Test
+
+Game Concept and Vision:
+
+The game is a retro-inspired 2D platformer designed to challenge players' agility and strategic thinking. Set against a strikingly simple black background, the game's colorful characters, enemies, and obstacles stand out vividly, capturing the aesthetic of classic arcade games. The player navigates through progressively challenging levels, aiming to reach each level's endpoint while collecting coins, avoiding various obstacles, and defeating dynamic and patterned enemies with their gun.
+
+User Interface (UI):
+
+The heads-up display (HUD) will include elements like:
+
+Score Counter: Displaying the total coins collected.
+Life Indicator: Showing the remaining lives.
+Level Indicator: Indicating the current level number.
+Main menus, pause screens, and settings will use simple, intuitive navigation with a pixel art style consistent with the game.
+
+User Input Mechanisms:
+
+Keyboard: WASD keys for movement (left/right), spacebar for jump, a dedicated key for sprint (like Shift) and arrow keys for aiming and shooting the gun.
+
+Game Logic and Rules:
+
+Core Gameplay Mechanics: Players will jump, and sprint their way through levels while shooting enemies.
+Gun: The player will have a gun that shoots bullets at enemies. The aiming of the gun should be controled by the arrow keys. The bullets should kill enemies.
+Enemy Types: Include both predictable (back and forth, jumping, climbing) and dynamic (following the player) enemies.
+Obstacles: Vary from stationary to moving, with effects like hazards or hindrances (sticky floors).
+Win/Loss Conditions: Completing a level successfully involves reaching the end point without losing all lives. Collecting coins adds to the player's score but isn't mandatory for level completion.
+
+""",
+
+
 )

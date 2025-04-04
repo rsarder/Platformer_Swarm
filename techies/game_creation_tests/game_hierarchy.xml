@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Metadata>
+  <name>Jump Quest</name>
+  <content>A classic 2D side-scrolling platformer featuring Pippo, where precision jumping, exploration, and physics-based platform mechanics are at the forefront. The game challenges players with obstacles, hidden secrets, and dynamic enemy encounters. The UI/HUD displays key game data and menus, while customizable keyboard input ensures smooth gameplay.</content>
+</Metadata>
+
+<Game>
+  <description>This element encapsulates all major components of the game including mechanics, UI/HUD systems, and input/control systems with a modular and scalable design for further expansion.</description>
+  
+  <Mechanics>
+    <Description>Game mechanics cover movement, jumping, combat, and advanced interactions as defined in the game mechanics list.</Description>
+    
+    <Mechanic>
+      <Name>Basic Horizontal Movement</Name>
+      <Description>Processes left/right movement input to update Pippo’s position across the platforming level.</Description>
+      <ImplementationDetails>Implemented via key polling of left/right input. Normalizes user inputs into Pippo’s horizontal velocity adjustments while checking for collision boundaries.</ImplementationDetails>
+      <PseudoCode>
+if keyPressed("left") then
+    Pippo.velocity.x = -moveSpeed
+else if keyPressed("right") then
+    Pippo.velocity.x = moveSpeed
+else
+    Pippo.velocity.x = 0
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Jumping</Name>
+      <Description>Enables Pippo to perform a physics-based jump for overcoming obstacles and reaching higher platforms.</Description>
+      <ImplementationDetails>Checks if Pippo is on the ground; if jump input is active, applies an upward impulse. Incorporates buffering and coyote time for a responsive jump feel.</ImplementationDetails>
+      <PseudoCode>
+if keyPressed("space") and Pippo.isOnGround then
+    Pippo.velocity.y = jumpForce
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Double Jump</Name>
+      <Description>Allows Pippo to initiate a secondary jump mid-air for extra reach and agility.</Description>
+      <ImplementationDetails>Tracks the number of available jumps. Resets jump counter upon landing; permits one extra jump when Pippo is airborne.</ImplementationDetails>
+      <PseudoCode>
+if Pippo.onGround then
+    Pippo.jumps = 0
+if keyPressed("space") then
+    if Pippo.onGround then
+        Pippo.velocity.y = jumpForce
+        Pippo.jumps = 1
+    else if Pippo.jumps &lt; 2 then
+        Pippo.velocity.y = jumpForce
+        Pippo.jumps++
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Wall Jump</Name>
+      <Description>Enables Pippo to jump off walls when airborne, expanding vertical traversal options.</Description>
+      <ImplementationDetails>Detects contact with a wall on either side. On jump input, applies an upward impulse plus a horizontal push away from the wall. Resets jump counters appropriately on landing.</ImplementationDetails>
+      <PseudoCode>
+if (touchingLeftWall or touchingRightWall) and keyPressed("space") then
+    Pippo.velocity.y = jumpForce
+    if touchingLeftWall then
+        Pippo.velocity.x = horizontalPush
+    else if touchingRightWall then
+        Pippo.velocity.x = -horizontalPush
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Wall Slide</Name>
+      <Description>Slows Pippo’s descent when in contact with a wall to provide extra time for planning jumps.</Description>
+      <ImplementationDetails>Checks if Pippo is sliding against a wall while falling. Limits downward velocity to a predefined slide speed and optionally changes Pippo’s animation state.</ImplementationDetails>
+      <PseudoCode>
+if (touchingLeftWall and keyPressed("left")) or (touchingRightWall and keyPressed("right")) then
+    if Pippo.velocity.y &gt; slideSpeedLimit then
+        Pippo.velocity.y = slideSpeedLimit
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Climbing</Name>
+      <Description>Enables vertical movement when overlapping climbable objects like ladders.</Description>
+      <ImplementationDetails>Detects collision with climbable surfaces. Disables gravity as long as Pippo remains in climbing mode and allows precise vertical movement via input.</ImplementationDetails>
+      <PseudoCode>
+if overlapping(ladder) then
+    Pippo.onLadder = true
+    disableGravity(Pippo)
+if Pippo.onLadder then
+    if keyPressed("up") then
+        Pippo.velocity.y = -climbSpeed
+    else if keyPressed("down") then
+        Pippo.velocity.y = climbSpeed
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Grappling Hook</Name>
+      <Description>Allows Pippo to latch onto valid surfaces and swing or pull himself across gaps.</Description>
+      <ImplementationDetails>On activation via specific input, performs raycasting to detect valid targets. Disables gravity temporarily, applies directional force, and renders a visual rope effect. Re-enables gravity once the grapple is released or target is reached.</ImplementationDetails>
+      <PseudoCode>
+if grappleButtonPressed and not Pippo.isGrappling then
+    target = findGrapplePoint(Pippo.position, aimDirection)
+    if target exists then
+        Pippo.isGrappling = true
+        disableGravity(Pippo)
+        Pippo.velocity = normalize(target - Pippo.position) * grappleSpeed
+if Pippo.isGrappling then
+    updateRopeLine(Pippo.position, target)
+    if reached(target) or cancelGrapple then
+        Pippo.isGrappling = false
+        enableGravity(Pippo)
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Rope Swinging</Name>
+      <Description>Enables a swinging motion on a rope or vine using pendulum dynamics.</Description>
+      <ImplementationDetails>Upon detecting overlap with a rope, Pippo enters swing mode. The system calculates angular momentum and applies pendulum physics until release input is detected, returning Pippo to normal physics.</ImplementationDetails>
+      <PseudoCode>
+if overlapping(ropeEnd) then
+    Pippo.onRope = true
+    disableGravity(Pippo)
+    setSwingParameters(Pippo, ropeAnchor)
+if Pippo.onRope then
+    updateSwing(Pippo)
+    if releaseInput then
+        Pippo.onRope = false
+        enableGravity(Pippo)
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Sliding</Name>
+      <Description>Triggers a low-profile slide to pass under obstacles or evade attacks on the ground.</Description>
+      <ImplementationDetails>On detection of down input with sufficient horizontal speed while grounded, reduces Pippo’s collider size and applies a burst of horizontal movement; reverts after a fixed duration.</ImplementationDetails>
+      <PseudoCode>
+if keyPressed("down") and Pippo.onGround and abs(Pippo.velocity.x) &gt; threshold then
+    Pippo.isSliding = true
+    adjustCollider(Pippo, reducedSize)
+    setVelocity(Pippo, slideSpeed)
+    after(slideDuration):
+        Pippo.isSliding = false
+        restoreCollider(Pippo)
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Crouching</Name>
+      <Description>Enables Pippo to decrease his collider height to avoid obstacles or drop through platforms.</Description>
+      <ImplementationDetails>On down input when grounded, reduces the collider’s height. Optionally, if jump is pressed then temporarily disables collision with one-way platforms.</ImplementationDetails>
+      <PseudoCode>
+if keyPressed("down") and Pippo.onGround then
+    Pippo.isCrouching = true
+    adjustCollider(Pippo, halfHeight)
+if Pippo.isCrouching and keyPressed("space") then
+    disablePlatformCollision(temporary)
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Swimming</Name>
+      <Description>Alters movement dynamics in water by reducing gravity and increasing drag, simulating liquid resistance.</Description>
+      <ImplementationDetails>Detects when Pippo enters water zones. Modifies gravity and movement properties accordingly and repurposes jump inputs for vertical swimming.</ImplementationDetails>
+      <PseudoCode>
+if Pippo in waterZone then
+    Pippo.inWater = true
+    setGravity(Pippo, reducedGravity)
+    setDrag(Pippo, waterDrag)
+if Pippo.inWater then
+    if keyPressed("up") then
+        Pippo.velocity.y = -swimSpeed
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Flying</Name>
+      <Description>Temporarily grants the ability to move freely in the air by reducing or disabling gravity, typically via a power-up.</Description>
+      <ImplementationDetails>On activation, disables normal gravity and allows directional control. Reverts to normal physics when the power-up expires.</ImplementationDetails>
+      <PseudoCode>
+if flightPowerActive then
+    disableGravity(Pippo)
+    if keyPressed("up") then
+        Pippo.velocity.y = -flySpeed
+    if flightPowerExpired then
+        enableGravity(Pippo)
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Environmental Movement Effects</Name>
+      <Description>Adjusts Pippo’s movement based on environmental conditions such as wind, ice, or water currents.</Description>
+      <ImplementationDetails>Checks Pippo’s current environment zone. Applies forces like constant acceleration for wind or reduced friction for ice to affect the movement trajectory.</ImplementationDetails>
+      <PseudoCode>
+if Pippo in windZone then
+    Pippo.velocity.x += windForce
+if Pippo on ice then
+    setFriction(Pippo, low)
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Time Manipulation for Platforming</Name>
+      <Description>Allows Pippo to temporarily slow time, making it easier to perform precise maneuvers in challenging sequences.</Description>
+      <ImplementationDetails>On activation via a designated power-up or input, adjusts the game’s time scale. Reverts back to normal after a limited duration with a cooldown period.</ImplementationDetails>
+      <PseudoCode>
+if timeManipulationActivated then
+    setTimeScale(0.2)
+    after(duration):
+        setTimeScale(1)
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Stomp Attack</Name>
+      <Description>Allows Pippo to defeat enemies by jumping on them, triggering enemy defeat and a bounce effect.</Description>
+      <ImplementationDetails>Detects collision between Pippo’s downward movement and an enemy’s hitbox. Applies a bounce force upon successful enemy defeat.</ImplementationDetails>
+      <PseudoCode>
+if Pippo.velocity.y > 0 and detectCollision(Pippo.bottom, enemy.top) then
+    defeat(enemy)
+    Pippo.velocity.y = bounceForce
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Power-Up Combat</Name>
+      <Description>Enables Pippo to acquire temporary combat advantages through power-ups, enhancing offensive or defensive capabilities.</Description>
+      <ImplementationDetails>On collecting a power-up, temporarily modifies Pippo’s combat attributes for enhanced performance during enemy encounters.</ImplementationDetails>
+      <PseudoCode>
+if collision(Pippo, powerUp) then
+    activatePowerUp(effect, duration)
+if powerUpActive then
+    modifyCombatAttributes(Pippo)
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Damage and Invulnerability Frames</Name>
+      <Description>Manages how Pippo receives damage and grants a brief period of invulnerability to prevent rapid successive hits.</Description>
+      <ImplementationDetails>On taking damage from enemies or hazards, reduces Pippo’s life count and initiates a timer during which Pippo is immune to further damage.</ImplementationDetails>
+      <PseudoCode>
+if collision(Pippo, enemy) then
+    if not Pippo.invulnerable then
+        Pippo.lives -= 1
+        Pippo.invulnerable = true
+        startTimer(invulnerabilityDuration, function() { Pippo.invulnerable = false })
+      </PseudoCode>
+    </Mechanic>
+    
+    <Mechanic>
+      <Name>Boss Combat Mechanics</Name>
+      <Description>Defines multi-phase boss encounters with alternating attack, defense, and vulnerable states for challenging gameplay.</Description>
+      <ImplementationDetails>Uses a state machine to control the boss's behavior, switching between attack, defense, and vulnerable phases, and applying damage when appropriate.</ImplementationDetails>
+      <PseudoCode>
+switch(boss.state):
+    case "attack":
+        boss.performAttackPattern()
+    case "defense":
+        boss.reduceDamage()
+    case "vulnerable":
+        if Pippo.dealsDamage() then
+            applyDamage(boss)
+            if boss.health &lt;= 0 then
+                defeat(boss)
+      </PseudoCode>
+    </Mechanic>
+    
+  </Mechanics>
+  
+  <UIHUDSystems>
+    <Description>The interface layer displays game information such as lives, coins, power-ups and menus to guide and assist the player during gameplay.</Description>
+    
+    <SubSystem>
+      <Name>Main Menu</Name>
+      <Description>Displays options including Start Game, Options, and Exit in an intuitive layout.</Description>
+      <SubComponents repeat="true">
+        <SubComponent>
+          <Name>Start Game Button</Name>
+          <Description>Button that initiates the game, transitioning from menu to active play.</Description>
+          <ImplementationDetails>On click or selection input, calls loadGameScene to begin gameplay. Changes visual state upon hover and click.</ImplementationDetails>
+          <Interactions>Relies on the input system and scene manager to transition screens.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Options Button</Name>
+          <Description>Button to access and modify game settings including input bindings and audio/video preferences.</Description>
+          <ImplementationDetails>Opens the settings menu overlay when clicked. Integrates with the custom input mapping system.</ImplementationDetails>
+          <Interactions>Communicates with the Input Control and Audio Systems to reflect changes immediately.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Exit Button</Name>
+          <Description>Button that exits the game application.</Description>
+          <ImplementationDetails>Triggers the shutdown routine when selected, ensuring all processes are safely terminated.</ImplementationDetails>
+          <Interactions>Interacts with system-level commands to close the application.</Interactions>
+        </SubComponent>
+      </SubComponents>
+    </SubSystem>
+    
+    <SubSystem>
+      <Name>HUD</Name>
+      <Description>Displays real-time in-game data such as lives, coins collected, active power-ups, and optionally a timer.</Description>
+      <SubComponents repeat="true">
+        <SubComponent>
+          <Name>Lives Indicator</Name>
+          <Description>Graphical display showing remaining lives of Pippo.</Description>
+          <ImplementationDetails>Dynamically updates as Pippo loses or gains extra lives. Uses icons or numbers as visual cues.</ImplementationDetails>
+          <Interactions>Listens to gameplay events that change Pippo’s health state.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Coin Counter</Name>
+          <Description>Shows the number of coins collected in the current level.</Description>
+          <ImplementationDetails>Increments on collision with coin objects. Updates the HUD immediately to reflect score changes.</ImplementationDetails>
+          <Interactions>Directly linked to the Coin Collection and Scoring mechanic.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Power-Up Display</Name>
+          <Description>Visual indicator for current active power-ups along with their remaining durations.</Description>
+          <ImplementationDetails>Activates when a power-up is collected. Uses icons with optional timers.</ImplementationDetails>
+          <Interactions>Synchronizes with the Power-Up Mechanics to display current status and countdown.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Timer</Name>
+          <Description>Optional countdown or elapsed time display, used in time-trial sections or challenges.</Description>
+          <ImplementationDetails>Starts when the level begins. Stops or resets when the level ends or is paused.</ImplementationDetails>
+          <Interactions>Interacts with level progression and pause systems to ensure accuracy.</Interactions>
+        </SubComponent>
+      </SubComponents>
+    </SubSystem>
+    
+    <SubSystem>
+      <Name>Pause Menu</Name>
+      <Description>Accessible during gameplay to resume, restart, adjust settings, or return to the main menu.</Description>
+      <SubComponents repeat="true">
+        <SubComponent>
+          <Name>Resume Button</Name>
+          <Description>Returns the player to active gameplay from the paused state.</Description>
+          <ImplementationDetails>Closes the pause overlay and restores the previous game state.</ImplementationDetails>
+          <Interactions>Tied to the game loop to continue updates after pause.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Restart Button</Name>
+          <Description>Restarts the current level, resetting all necessary game states.</Description>
+          <ImplementationDetails>Reloads level assets and resets scores, timers, and Pippo’s position.</ImplementationDetails>
+          <Interactions>Communicates with the Level Loader to perform a full restart.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Settings Button</Name>
+          <Description>Opens the settings interface from within the pause menu.</Description>
+          <ImplementationDetails>Invokes settings overlay, allowing modifications to controls, audio, and video.</ImplementationDetails>
+          <Interactions>Interfaces with Input Control and Audio Systems for on-the-fly adjustments.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Main Menu Button</Name>
+          <Description>Exits the current game session and returns the player to the main menu.</Description>
+          <ImplementationDetails>Triggers a scene transition from the current level to the main menu screen.</ImplementationDetails>
+          <Interactions>Works with the scene manager to safely unload the level and prepare the main menu.</Interactions>
+        </SubComponent>
+      </SubComponents>
+    </SubSystem>
+  </UIHUDSystems>
+  
+  <InputControlSystems>
+    <Description>Handles all user input and translates it into game actions using customizable controls and event-handling mechanisms.</Description>
+    
+    <SubSystem>
+      <Name>Movement Input</Name>
+      <Description>Processes left/right movement through keyboard arrow keys or custom mappings.</Description>
+      <SubComponents repeat="true">
+        <SubComponent>
+          <Name>Key Polling</Name>
+          <Description>Continuously checks for left/right key presses to update Pippo’s horizontal movement.</Description>
+          <ImplementationDetails>Uses event polling to determine if the left or right keys are pressed. Normalizes and maps these actions to velocity changes.</ImplementationDetails>
+          <Interactions>Directly affects Pippo’s basic horizontal movement mechanic and collision detection.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Input Normalization</Name>
+          <Description>Ensures that movement inputs are translated into a consistent velocity value.</Description>
+          <ImplementationDetails>Converts raw key press values into predetermined speed vectors considering game settings such as multiplier effects.</ImplementationDetails>
+          <Interactions>Works in conjunction with the game physics system to apply smooth movement.</Interactions>
+        </SubComponent>
+      </SubComponents>
+    </SubSystem>
+    
+    <SubSystem>
+      <Name>Jump Input</Name>
+      <Description>Handles detecting jump actions via the spacebar and triggers physics-based vertical impulses.</Description>
+      <SubComponents repeat="true">
+        <SubComponent>
+          <Name>Jump Initiation</Name>
+          <Description>Determines when a jump is started by detecting spacebar press and ensuring Pippo is eligible to jump.</Description>
+          <ImplementationDetails>Checks if Pippo is on the ground or in an allowable state for double-jumping, and then applies the upward jump force.</ImplementationDetails>
+          <Interactions>Relies on collision and physics systems to verify ground contact and apply jump buffering or cooldowns.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Jump Buffering</Name>
+          <Description>Allows the game to register jump input slightly before Pippo is ready, improving responsiveness.</Description>
+          <ImplementationDetails>Implements a short time window where jump input is held and then executed the moment conditions become valid.</ImplementationDetails>
+          <Interactions>Interacts with the physics system and jump mechanics to ensure smooth play experience.</Interactions>
+        </SubComponent>
+      </SubComponents>
+    </SubSystem>
+    
+    <SubSystem>
+      <Name>Custom Input Mapping</Name>
+      <Description>Provides the functionality for players to remap keys for movement and jump actions via the options menu.</Description>
+      <SubComponents repeat="true">
+        <SubComponent>
+          <Name>Key Binding Storage</Name>
+          <Description>Stores user-defined key settings persistently.</Description>
+          <ImplementationDetails>Saves key mappings to a configuration file or local storage, and retrieves them on game startup.</ImplementationDetails>
+          <Interactions>Works with the input system to override default key mappings.</Interactions>
+        </SubComponent>
+        <SubComponent>
+          <Name>Runtime Update</Name>
+          <Description>Applies new input mappings immediately during gameplay without restarting the game.</Description>
+          <ImplementationDetails>Monitors options menu changes and updates the input event mappings in real-time.</ImplementationDetails>
+          <Interactions>Directly feeds into the Movement and Jump Input sub-systems ensuring consistency.</Interactions>
+        </SubComponent>
+      </SubComponents>
+    </SubSystem>
+  </InputControlSystems>
+  
+</Game>
