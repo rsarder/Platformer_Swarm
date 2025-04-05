@@ -1,0 +1,15 @@
+/* Minimal styling */
+body {
+  margin: 0;
+  background: #121212;
+  font-family: sans-serif;
+}
+
+#game {
+  overflow: hidden;
+  margin: 0 auto;
+  display: block;
+  width: 800px; /* match the game width */
+  height: 600px; /* match the game height */
+  border: 2px solid #333;
+}
