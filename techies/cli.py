@@ -168,20 +168,9 @@ Usage:
     def kickoff_hierarchy_crew(self, extra_args):
         parser = argparse.ArgumentParser(prog=f"{self.prog_name} run", description=f"{extra_args[0]} - Description-included crew interface")
         parser.add_argument('crew', type=str, help='Crew to use, with {extra_args[0]}')
-        parser.add_argument('--game', type=str, help='Predefined game specification')
-        parser.add_argument('gamefiles', type=str, help='Game specification file', nargs='?')
         options = parser.parse_args(extra_args)
-
-        if options.game:
-            game_specifications= game_specs(options.game)
-        elif options.gamefiles:
-            with fileinput.input(files=options.gamefiles) as f:
-                game_specifications = "\n".join(f)
-        else:
-            print("No game specification provided")
-            sys.exit(1)
-
-        inputs = { "game_specifications": game_specifications }
+        
+        inputs = { "input": "some input" }
         crew = self.get_crew(options.crew, manage_agentops=True).kickoff(inputs)
 
     def kickoff_html5_crew(self, extra_args):

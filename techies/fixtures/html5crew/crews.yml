@@ -6,24 +6,6 @@ _crew_common: &crew_common
 html5_crew:
   <<: *crew_common
   agents:
-    - game_architect
-    - gameplay_programmer
-    - enemy_ai_developer
-    - collectibles_specialist
-    - ui_designer
-    - level_designer
-    - narrative_designer
-    - performance_optimiser
+    - tool_demo_expert
   tasks:
-    - integrate_base_scaffold
-    - html5_game_initial_structure
-    - implement_player_controls
-    - integrate_health_system
-    - develop_enemy_ai
-    - create_collectibles_system
-    - design_ui_components
-    - design_level_layouts
-    - incorporate_narrative_elements
-    - html5_game_code_implementation
-    - perform_optimization_and_testing
-    - final_integration_and_system_testing
+    - demo_task

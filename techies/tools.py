@@ -35,10 +35,8 @@ class WriteFileToolSchema(BaseModel):
         "The content to write to the file. Field should be formatted as a string."
     )
 
-
 class ListFilesToolSchema(BaseModel):
     pass
-
 
 class SearchSoundToolSchema(BaseModel):
     query: str = Field(type=str, description="Search query for the sound.")
@@ -53,7 +51,6 @@ class SearchSoundToolSchema(BaseModel):
         type=int,
         description="Maximum number of search results to return."
     )
-
 
 class SaveSoundToolSchema(BaseModel):
     sound_id: int = Field(type=int, description="ID of the sound to save.")
@@ -80,6 +77,16 @@ class ReadScaffoldToolSchema(BaseModel):
         default=None,
         description="If mode is 'read', specify the name of the file to view. Use 'all' to view all files."
     )
+    
+class SearchAndSaveSoundToolSchema(BaseModel):
+    """
+    Defines the input arguments needed to perform a Freesound search
+    and save the first matching sound.
+    """
+    description: str = Field(..., description="Formatted query for Freesound API. For every term, you can also use '+' and '-' modifier characters to indicate that a term is 'mandatory' or 'prohibited' (by default, terms are considered to be 'mandatory'). For example, in a query such as query=term_a -term_b, sounds including term_b will not match the search criteria.")
+    output_path: str = Field(..., description="Local file path where the chosen sound will be saved.")
+    min_duration: int = Field(5, description="Minimum sound duration (seconds).")
+    max_results: int = Field(8, description="Maximum number of results to fetch.")
 
 class ReadFileTool(BaseTool):
     name: str = "Read a File"
@@ -455,6 +462,95 @@ class ReadScaffoldTool(BaseTool):
         except Exception as e:
             return f"Failed to read scaffold: {e}"
 
+class SearchAndSaveSoundTool(BaseTool):
+    """
+    Searches Freesound for the first sound matching the query and minimum duration.
+    Scrapes a short description from its webpage, saves the sound locally, and returns info as JSON.
+    """
+    name: str = "search_and_save_sound"
+    id: str = "search_and_save_sound"
+    description: str = "Formatted query for Freesound API. For every term, you can also use '+' and '-' modifier characters to indicate that a term is 'mandatory' or 'prohibited' (by default, terms are considered to be 'mandatory'). For example, in a query such as query=term_a -term_b, sounds including term_b will not match the search criteria. "
+    args_schema = SearchAndSaveSoundToolSchema
+
+    def _run(self, **kwargs) -> Any:
+        import os
+        import json
+        import re
+        import requests
+        from bs4 import BeautifulSoup
+        from freesound import FreesoundClient
+
+        description = kwargs["description"]
+        output_path = kwargs["output_path"]
+        min_duration = kwargs.get("min_duration", 5)
+        max_results = kwargs.get("max_results", 8)
+
+        if not description or not output_path:
+            return "Missing required fields: 'description' and 'output_path'."
+
+        token = os.environ.get("FREESOUND_CLIENT_API_KEY")
+        if not token:
+            return "FREESOUND_CLIENT_API_KEY environment variable is not set."
+
+        # Initialize the client
+        client = FreesoundClient()
+        client.set_token(token, "token")
+
+        # Perform the search
+        try:
+            filter_str = f"duration:[{min_duration} TO *]"
+            pager = client.text_search(query=description, filter=filter_str)
+        except Exception as e:
+            return f"Freesound search failed: {e}"
+
+        # Collect the first result
+        results = []
+        for idx, sound in enumerate(pager):
+            if idx >= max_results:
+                break
+            results.append(sound)
+
+        if not results:
+            return "No results found."
+
+        # We'll just pick the first result to save
+        chosen_sound = results[0]
+        sound_id = chosen_sound.id
+        sound_user = chosen_sound.username
+        url = f"https://freesound.org/people/{sound_user}/sounds/{sound_id}/"
+
+        # Scrape a short description
+        try:
+            page = requests.get(url)
+            soup = BeautifulSoup(page.content, "html.parser")
+            desc_section = soup.find(id="soundDescriptionSection")
+            raw_desc = re.sub(r"<.*?>", "", str(desc_section)) if desc_section else ""
+        except Exception:
+            raw_desc = "N/A"
+
+        # Save the preview locally
+        try:
+            directory = os.path.dirname(output_path)
+            filename = os.path.basename(output_path)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory, exist_ok=True)
+            chosen_sound.retrieve_preview(directory, filename)
+        except Exception as e:
+            return f"Failed to save sound (ID={sound_id}): {e}"
+
+        # Build the response
+        response_data = {
+            "chosen_sound_id": sound_id,
+            "name": chosen_sound.name,
+            "description": raw_desc.strip(),
+            "saved_path": output_path
+        }
+        return json.dumps(response_data, indent=2)
+
+    async def _arun(self, **kwargs) -> Any:
+        return self._run(**kwargs)
+
+
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
     base_dir = "."
@@ -467,7 +563,8 @@ def get_all_tools():
     tools = {}
     toolklasses = [
         ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool, ReadScaffoldTool
+        # SaveSoundTool, SearchSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool, ReadScaffoldTool
+        SearchAndSaveSoundTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool, ReadScaffoldTool
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)
