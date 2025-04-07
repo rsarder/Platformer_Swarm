@@ -5,7 +5,16 @@ _task_common: &task_common
 demo_task:
   <<: *task_common
   agent: tool_demo_expert
+#   description: >
+#    Use the search_and_save_sound tool to find and save a sound for: "noisy restaurant". Refine and format your tool query to be more specific and include the type of sound you are looking for.
+#   expected_output: >
+#    A confirmation of the sound file being saved. Include your query and why you chose it based on the requested description.
+#   description: >
+#    Use the generate_and_download_image tool to generate an image of a : Retro Wizard Sprite Sheet. 
+#    Refine and format your tool query to properly reflect what you are generating an image for.
+#   expected_output: >
+#    A confirmation of the image being saved if it saved successfully, and what the image is depicting. If it failed, include the error message.
   description: >
-   Use the search_and_save_sound tool to find a sound file of zoo animals making noise and save it.
+   Look online for a good tiramisu recipe. Use the google_search tool to find a recipe that is easy to follow and has good reviews.
   expected_output: >
-   A confirmation of the sound file being saved.
+   Your source website, and the full recipe. Include the ingredients and steps to make it. If you can't find a good recipe, explain why you couldn't find one.

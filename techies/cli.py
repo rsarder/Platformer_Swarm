@@ -54,7 +54,8 @@ def get_openai_crew(crewname, manage_agentops=False):
     from langchain_openai import ChatOpenAI
 
     # agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="gpt-4o-2024-08-06", temperature=0.4))
-    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="o3-mini"))
+    # agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="o3-mini"))
+    agent_pool = Agent.eager_load_all(llm=ChatOpenAI(model="chatgpt-4o-latest"))
     # agent_pool = Agent.eager_load_all()
     task_pool = Task.eager_load_all(agent_pool)
     if isinstance(crewname, str):
