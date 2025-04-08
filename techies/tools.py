@@ -391,21 +391,57 @@ class GoogleSearchTool(BaseTool):
 class ReadScaffoldTool(BaseTool):
     name: str = "Read Scaffold Tool"
     id: str = "read_scaffold"
-    description: str = "Retrieve the base scaffolding to be used as a starting point for a project."
+    description: str = (
+        "Retrieve the base scaffolding files for a platformer project. "
+        "Use mode 'list' to view available files, or 'read' to read a specific file (or all files)."
+    )
     args_schema: Type[BaseModel] = ReadScaffoldToolSchema
     base_dir: str
+
     _scaffold_path: str = PrivateAttr()
-    
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def _run(self, **kwargs) -> str:
         try:
-            # Directly refer to the scaffold file
-            self._scaffold_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/game.html")
-            with open(self._scaffold_path, "r", encoding="utf-8") as f:
-                content = f.read()
-            return content
+            # Determine the scaffold directory relative to this file.
+            scaffold_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), "../refs/scaffold_platformer"))
+            
+            # Parse incoming arguments.
+            args = self.args_schema.parse_obj(kwargs)
+            mode = args.mode.lower()
+            
+            if mode == "list":
+                # List all available scaffold files.
+                files = os.listdir(scaffold_dir)
+                if not files:
+                    return "No scaffold files available."
+                return "Available scaffold files:\n" + "\n".join(files)
+            
+            elif mode == "read":
+                # If filename is not provided, default to "all".
+                requested_file = args.filename if args.filename else "all"
+                if requested_file.lower() == "all":
+                    files = os.listdir(scaffold_dir)
+                    if not files:
+                        return "No scaffold files found."
+                    contents = []
+                    for filename in files:
+                        file_path = os.path.join(scaffold_dir, filename)
+                        with open(file_path, "r", encoding="utf-8") as f:
+                            contents.append(f"----- {filename} -----\n{f.read()}\n")
+                    return "\n".join(contents)
+                else:
+                    # Return the contents of the specified file.
+                    file_path = os.path.join(scaffold_dir, requested_file)
+                    if not os.path.exists(file_path):
+                        return f"File '{requested_file}' does not exist in the scaffold folder."
+                    with open(file_path, "r", encoding="utf-8") as f:
+                        content = f.read()
+                    return content
+            else:
+                return "Invalid mode specified. Please use 'list' or 'read'."
         except Exception as e:
             return f"Failed to read scaffold: {e}"
         
