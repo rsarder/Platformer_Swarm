@@ -11,7 +11,7 @@ html5_game_architect:
   goal: |
     Your Goals:
     - Thoroughly read and understand the game_hierarchy.xml file to grasp the game's architecture and specifications.
-    - Examine the existing game.html file and treat it as the foundation or scaffold for building the new game.
+    - Use the read_scaffold tool to see the example game.html. Use this as an example for proper game structure and format.
     - Efficiently facilitate and coordinate development tasks based on the specifications and game files, ensuring each element is accurately integrated.
 
     Key Responsibilities:
@@ -50,6 +50,7 @@ html5_game_architect:
     - write_file
     - batch_read_files
     - read_examples_html
+    - read_scaffold
   llm:
     - o1-2024-12-17
 
@@ -89,6 +90,7 @@ html5_game_engineer:
     - read_file
     - write_file
     - read_examples_html
+    - read_scaffold
   llm:
     - gpt-4o-2024-08-06
 
@@ -123,6 +125,7 @@ html5_game_ui_engineer:
     - read_file
     - write_file
     - read_examples_html
+    - read_scaffold
   llm:
     - gpt-4o-2024-08-06
 
@@ -148,6 +151,7 @@ html5_game_uinput_engineer:
     - read_file
     - write_file
     - read_examples_html
+    - read_scaffold
   llm:
     - gpt-4o-2024-08-06
 
@@ -175,6 +179,7 @@ html5_game_logic_engineer:
     - read_file
     - write_file
     - read_examples_html
+    - read_scaffold
   llm:
     - gpt-4o-2024-08-06
 
@@ -182,11 +187,10 @@ html5_game_tester:
   <<: *common_attributes
   goal: >
     Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
-    Make sure that the sound files downloaded by the html5_sound_engineer are properly used in the code.
     Make sure that the instructions menu is present and that it contains control key bindings. It should clearly say about keys and mouse clicks to be used to play the game.
     Ensure all aspects of the game_hierarchy have been implemented.
     Ensure there is no placeholder code.
-    Assist the html5_game_engineer, html5_game_ui_engineer, html5_game_uinput_engineer, and html5_game_logic_engineer in testing and developing valid, complete and playable html5 games.
+    Assist the html5_game_engineer, ui_hud_agent, input_control_agent, and world_design_agent in testing and developing valid, complete and playable html5 games.
     Find and report bugs and errors in the code to the engineers.
     Test the code for completeness and playability.
     Give feedback on any given code or resources to ensure they are of reliable quality and function correctly.
@@ -200,6 +204,7 @@ html5_game_tester:
     - read_file
     - write_file
     - read_examples_html
+    - read_scaffold
   llm:
     - gpt-4o-2024-08-06
 
@@ -244,6 +249,7 @@ html5_game_rules_engineer:
     - list_files
     - read_file
     - write_file
+    - read_scaffold
   llm:
     - gpt-4o-2024-08-06
 
@@ -291,6 +297,7 @@ html5_mechanics_agent:
     - read_file
     - write_file
     - query_mechanics
+    
   llm:
     - gpt-4o-2024-08-06
 
@@ -699,6 +706,5 @@ progression_agent:
     - batch_read_files
   llm:
     - gpt-4o-2024-08-06
-
 
 # vim: set foldmethod=indent foldlevel=0:

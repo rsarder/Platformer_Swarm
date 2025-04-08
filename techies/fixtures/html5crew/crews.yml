@@ -4,19 +4,18 @@ _crew_common: &crew_common
   memory: false
 
 
+
 html5_crew:
   <<: *crew_common
   agents:
     - html5_game_architect
+    - html5_game_engineer
+    - html5_game_tester
+    - html5_game_rules_engineer
     - mechanics_agent
-    - presentation_agent
-    - audio_agent
     - ui_hud_agent
     - input_control_agent
-    - ai_agent
-    - physics_simulation_agent
     - world_design_agent
-    - progression_agent
   tasks:
     - html5_game_coding
 
