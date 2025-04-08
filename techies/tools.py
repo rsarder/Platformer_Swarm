@@ -71,9 +71,13 @@ class GoogleSearchToolSchema(BaseModel):
     query: str = Field(type=str, description="The search query to use for Google search.")
 
 class ReadScaffoldToolSchema(BaseModel):
-    path: str = Field(
-        type=str, 
-        description="Path to the scaffold file."
+    mode: Optional[str] = Field(
+        default="read",
+        description="Operation mode: 'list' to list available scaffold files, or 'read' to read file content."
+    )
+    filename: Optional[str] = Field(
+        default=None,
+        description="If mode is 'read', specify the name of the file to view. Use 'all' to view all files."
     )
 
 class ReadFileTool(BaseTool):
