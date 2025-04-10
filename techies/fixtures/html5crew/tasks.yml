@@ -2,190 +2,404 @@ _task_common: &task_common
   human_input: false
   async_execution: false
 
-html5_game_coding:
-  <<: *task_common
-  agent: html5_game_architect
-  description: >
-    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
-    Write a perfect HTML5, CSS, and JavaScript code.
-    Make sure that the final code represent a complete and playable game as detailed in the game layout and specifications.
-    Test and review the code with every change.
-    Delegate the task of coding the different parts of the game to the most fitting agents.
-    For any tasks that do not fit any specialized agents, delegate the task to the html5_game_engineer agent.
-    Agents must be conscious of their coworkers' code, and must ensure they refer to already exisiting components. If a necessary component does not exist, create it in the code or delegate the task of doing so to the right agent.
-    Delegate the task of generating and integrating a comprehensive Rules and Instructions menu into the "game.html" to html5_game_rules_engineer agent based on the game hierarchy and interactions outlined in game_hierarchy.xml and game.html files.
-    Delegate the task of testing the code and giving feedback to the html5_game_tester.
-    Do not finalize your answer until the html5_game_tester says the game is complete and playable, and you have met all requirements.
-    Your final output should include code in a single file for the game and only HTML5 code for the game.
-  expected_output: >
-    After fill out all the requirements and complete the file "game.html", say "I have successfully developed the game saved in "game.html", as described per the game specification and game_hierarchy.xml file."
 
-html5_game_coding:
+html5_game_task_file_generator:
   <<: *task_common
-  agent: html5_game_architect
-  description: >
-    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
-    Write a perfect HTML5, CSS, and JavaScript code.
-    Make sure that the final code represent a complete and playable game as detailed in the game layout and specifications.
-    Test and review the code with every change.
-    Delegate the task of coding the different parts of the game to the most fitting agents.
-    For any tasks that do not fit any specialized agents, delegate the task to the html5_game_engineer agent.
-    Agents must be conscious of their coworkers' code, and must ensure they refer to already exisiting components. If a necessary component does not exist, create it in the code or delegate the task of doing so to the right agent.
-    Delegate the task of generating and integrating a comprehensive Rules and Instructions menu into the "game.html" to html5_game_rules_engineer agent based on the game hierarchy and interactions outlined in game_hierarchy.xml and game.html files.
-    Delegate the task of testing the code and giving feedback to the html5_game_tester.
-    Do not finalize your answer until the html5_game_tester says the game is complete and playable, and you have met all requirements.
-    Your final output should include code in a single file for the game and only HTML5 code for the game.
-  expected_output: >
-    After fill out all the requirements and complete the file "game.html", say "I have successfully developed the game saved in "game.html", as described per the game specification and game_hierarchy.xml file."
+  agent: html5_game_task_planner
+  description: |
+    You are tasked with reading the "game_hierarchy.xml" file and generating a separate implementation plan file for each core component of the game.
 
-html5_game_validation:
-  <<: *task_common
-  agent: html5_validation_agent
-  description: >
-    Read the game hierarchy file "game_hierarchy.xml" to understand the game hierarchy, specifications and details.
-    Read and analyze the game file "game.html" to understand what has been coded so far and what has not been coded.
-    Think about what needs to be updated, changed or added to the code to make it a fully functional game with all aspects listed in the game hierarchy.
-    Use the write_file tool to write to the file "game_updates.txt" a list of what needs to be updated, changed or added to make the game fully functional.
-    Include detailed descriptions and instructions on how to make these updates, changes or additions.
+    Each output file must contain **verbatim content** from the XML hierarchy. You must **not summarize, rephrase, or omit any portion** of the original XML content. Only include the full and exact relevant sections.
+
+    **Setup:**
+    - Use the `read_file` tool to load the full contents of `game_hierarchy.xml`.
+
+    **Core Task:**
+    - For each of the following game components:
+      1. Game Initialization (`game.js`)
+      2. Boot Scene (`scenes-boot.js`)
+      3. Menu Scene (`scenes-menu.js`)
+      4. Game Scene (`scenes-game.js`)
+      5. Pause Scene (`scenes-pause.js`)
+      6. Settings Scene (`scenes-settings.js`)
+      7. Instructions Scene (`scenes-instructions.js`)
+      8. Game Systems (`systems.js`)
+      9. Game Mechanics (`mechanics.js`)
+      10. Player Entity (`entities-player.js`)
+      11. Enemy Entity (`entities-enemy.js`)
+      12. Level Config (`level-config.json`)
+      13. Final Scaffold (`index.html`, `styles.css`)
+
+    - Do the following:
+      - Identify the **specific XML nodes** in `game_hierarchy.xml` that correspond to each component.
+      - Copy the entire XML content of the relevant `<Mechanic>`, `<SubSystem>`, or `<SubComponent>` elements as-is.
+      - Do not alter the formatting, content, or structure of the XML.
+      - For each component, create a corresponding markdown file named `task-[component].md` (e.g., `task-game-scene.md`).
+
+    - If multiple XML elements are relevant to a single component, include all of them, each separated by a header that reflects the XML tag’s `<Name>` field.
+
+    - Do not deduplicate or try to avoid redundancy. If a mechanic or system is referenced by multiple modules, include the full original version in each relevant task file.
+
+    **Final Step:**
+    - Use the `write_file` tool to save the following files:
+
+      - `task-game-init.md`
+      - `task-boot-scene.md`
+      - `task-menu-scene.md`
+      - `task-game-scene.md`
+      - `task-pause-scene.md`
+      - `task-settings-scene.md`
+      - `task-instructions-scene.md`
+      - `task-game-systems.md`
+      - `task-game-mechanics.md`
+      - `task-player-entity.md`
+      - `task-enemy-entity.md`
+      - `task-level-config.md`
+      - `task-html-scaffold.md`
+
   expected_output: >
-    A detailed list writtent to the file "game_updates.txt" of updates, changes and additions with descriptions and instructions on how to implement these updates, changes and additions.
+    All task files have been created. Each file contains exact excerpts from game_hierarchy.xml with no alterations, summarizations, or omissions.
+
+html5_game_initial_structure:
+  <<: *task_common
+  agent: html5_game_engineer
+  description: |
+    Read the game_hierarchy.xml.
+    You are tasked with creating the foundational structure for an HTML5 game based on the provided game_hierarchy.xml file. You are not implementing the complete logic yet, but instead focusing on laying down a modular and well-organized scaffold.
     
-html5_game_update:
-  <<: *task_common
-  agent: html5_game_architect
-  description: >
-    Read the game updates file "game_updates.txt" to understand the game updates.
-    Write a perfect HTML5, CSS, and JavaScript code.
-    Make sure that the final code represent a complete and playable game as detailed in the game layout and specifications.
-    Test and review the code with every change.
-    Sound is required for the game.
-    Delegate the task of coding the different parts of the game to the most fitting agents.
-    For any tasks that do not fit any specialized agents, delegate the task to the html5_game_engineer agent.
-    Agents must be conscious of their coworkers' code, and must ensure they refer to already exisiting components. If a necessary component does not exist, create it in the code or delegate the task of doing so to the right agent.
-    Delegate the task of generating and integrating a comprehensive Rules and Instructions menu into the "game.html" to html5_game_rules_engineer agent based on the game hierarchy and interactions outlined in game_hierarchy.xml and game.html files.
-    Delegate the task of downloading the sound resources as per the "game_hierarchy.xml" to html5_sound_engineer agent.
-    Delegate the task of integrating the downloaded sounds to html5_sound_integrator_agent agent. Make sure that html5_sound_integrator_agent agent consult with co-workers to carefully integrate the downloaded sound files provided by the sound engineer into the "game.html" file using the <audio> tags at their appropriate places.
-    Delegate the task of testing the code and giving feedback to the html5_game_tester.
-    Do not finalize your answer until the html5_game_tester says the game is complete and playable, and you have met all requirements.
-    Your final output should include code in a single file for the game and only HTML5 code for the game.
-  expected_output: >
-    After fill out all the requirements and complete the file "game.html", say "I have successfully developed the game saved in "game.html", as described per the game specification and game_hierarchy.xml file."
-########################################################################
-integrate_base_scaffold:
-  <<: *task_common
-  agent: game_architect
-  description: >
-    Retrieve and verify the base scaffold (scaffold.html) using read_scaffold. Confirm that all placeholder scenes and inline JavaScript modules are loaded correctly and meet baseline technical requirements.
-  expected_output: >
-    The base scaffold is successfully loaded and accessible, providing a verified foundation for subsequent development.
+    **Setup:**
+    - **Review the "game_hierarchy.xml" File:**
+      - Thoroughly examine the game_hierarchy.xml to understand all core mechanics, UI components, game systems (audio, input, HUD, scenes, rules, etc.).
 
-implement_player_controls:
-  <<: *task_common
-  agent: gameplay_programmer
-  description: >
-    Enhance the GameScene by implementing robust player controls, including responsive input handling (WASD/Space), gravity application, and accurate collision detection.
-  expected_output: >
-    A fully responsive player character that moves, jumps, and collides with level geometry according to design specifications.
-  depends_on: [integrate_base_scaffold]
+    **Core Task:**
+    - **Functions & Placeholder Pseudocode:**
+      - Create the following game files with appropriate placeholders, function stubs, and pseudocode, as described below:
+        - index.html
+          - Standard HTML5 boilerplate.
+          - <script> and <link> tags referencing all other files.
+          - Placeholder <div>s or <canvas> for rendering, menus, and HUD.
+          - Load Phaser or other required libraries.
+        - styles.css
+          - Minimal styling for layout visualization (game canvas, HUD elements, basic UI structure).
+          - Include class or ID hooks for game state, settings, pause, etc.
+        - game.js
+          - The game entry point.
+          - Define initGame(), loadAssets(), startGame(), etc.
+          - Use function stubs or pseudocode—no full implementation.
+        - scenes-boot.js
+          - Pseudocode for:
+          - Preloading assets
+          - Transition to Menu scene
+        - scenes-menu.js
+          - Placeholder for main menu scene
+          - Button handlers (Start, Settings, Instructions)
+        - scenes-game.js
+          - Pseudocode for:
+          - Main gameplay loop
+          - Entity updates
+          - Collision logic references
+        - scenes-pause.js
+          - Logic for pausing/resuming the game
+          - Placeholder buttons (Resume, Menu, Settings)
+        - scenes-settings.js
+          - Placeholder UI and logic for audio/toggle settings
+        - scenes-instructions.js
+          - Pseudocode for displaying game instructions/rules
+          - Return to menu logic  
+        - mechanics.js
+          - Function stubs for mechanics like:
+            - Movement
+            - Combat
+            - Interaction
+        - systems.js
+          - Function stubs for systems like:
+            - Score Counter
+            - Life Indicator
+        - entities-player.js
+          - Placeholder class for Player
+          - Pseudocode methods like move(), takeDamage(), interact()
+        - entities-enemy.js
+          - Placeholder class for Enemy
+          - Pseudocode methods like patrol(), attack(), spawn()
+        - level-config.json
+          - JSON skeleton:
+          - Level ID, layout, player/enemy spawn points
+          - Environmental settings (music, difficulty, background)
 
-integrate_health_system:
-  <<: *task_common
-  agent: gameplay_programmer
-  description: >
-    Implement a health system by integrating collision-based damage detection, player health/life tracking, and respawn logic. Ensure state transitions are triggered upon player damage or death.
-  expected_output: >
-    A robust health system that decrements health appropriately, triggers respawn or game over states, and communicates with the UI for feedback.
-  depends_on: [implement_player_controls]
+    **Testing & Review:**
+    - Delegate the task of verifying the existence of all aspects of the code to the html5_game_tester.
 
-develop_enemy_ai:
-  <<: *task_common
-  agent: enemy_ai_developer
-  description: >
-    Develop adaptive enemy AI routines including patrol, detection, and attack behaviors. Ensure that enemy collisions with the player interact with the health system as specified.
-  expected_output: >
-    Enemy entities demonstrate defined behaviors and interact with the player in accordance with the validated hierarchy.
-  depends_on: [implement_player_controls]
+    **Final Step:**
+    - **Save the File:**
+      - Use the write_file tool to save all the above files:
+        - index.html
+        - styles.css
+        - game.js
+        - scenes-boot.js
+        - scenes-menu.js
+        - scenes-game.js
+        - scenes-pause.js
+        - scenes-settings.js
+        - cenes-instructions.js
+        - mechanics-systems.js
+        - entities.js
+        - level-config.json
 
-create_collectibles_system:
-  <<: *task_common
-  agent: collectibles_specialist
-  description: >
-    Implement a collectibles system to spawn items (e.g., coins, power-ups), handle collision-based pickups, and update score variables, with real-time integration into the HUD.
+    - **Output Confirmation:**
+      - Conclude by confirming that all scaffold files have been created with the necessary pseudocode/function placeholders, and that the game is now structurally ready for implementation.
   expected_output: >
-    Collectible items spawn and are collected as per design, with the score and HUD updating accurately upon pickup.
-  depends_on: [implement_player_controls]
+    Conclude by confirming that all scaffold files have been created with the necessary pseudocode/function placeholders, and that the game is now structurally ready for implementation.
 
-design_ui_components:
+html5_game_main_logic:
   <<: *task_common
-  agent: ui_designer
-  description: >
-    Develop interactive UI components including main menus, pause screens, settings interfaces (with volume control), and an in-game HUD that reflect the specifications outlined in the game hierarchy.
-  expected_output: >
-    Functional and responsive UI screens enabling seamless game navigation and accurate display of game metrics.
-  depends_on: [integrate_base_scaffold]
+  agent: html5_game_engineer
+  description: |
+    Read task-game-init.md, to understand all neccessary elements for `game.js`.
+    Implement the entry point logic for the game in `game.js`, including asset loading, game configuration, and system boot-up.
 
-design_level_layouts:
-  <<: *task_common
-  agent: level_designer
-  description: >
-    Design and implement engaging level layouts with platforms, hazards, and environmental features that adhere to difficulty scaling and progression guidelines from the hierarchy.
-  expected_output: >
-    Multiple levels are implemented with appropriate spatial design and interactive elements, consistent with the validated hierarchy.
-  depends_on: [implement_player_controls, develop_enemy_ai, create_collectibles_system]
+    **Core Task:**
+    - Define and implement the `initGame()` function.
+    - Call and coordinate all scenes and systems from this file.
+    - Set up Phaser or custom game engine config.
 
-integrate_audio_effects:
-  <<: *task_common
-  agent: sound_designer
-  description: >
-    Incorporate audio components including sound effects and background music, as well as visual effects such as particle systems and screen shakes, to enhance player feedback and immersion.
-  expected_output: >
-    Audio and visual effects are fully integrated, with event-driven triggers aligning with gameplay actions, and volume control integrated within the UI.
-  depends_on: [integrate_base_scaffold]
+    **Dependencies:**
+    - Calls boot scene, handles global setup.
 
-incorporate_narrative_elements:
-  <<: *task_common
-  agent: narrative_designer
-  description: >
-    Develop and integrate narrative components including dialogue sequences, cutscenes, and story triggers, ensuring they align with level transitions and key game events as defined in the hierarchy.
+    **Final Step:**
+    - Save the implemented `game.js` file.
   expected_output: >
-    Narrative elements are seamlessly incorporated, with scripted events and dialogues triggering at appropriate times during gameplay.
-  depends_on: [design_level_layouts]
+    The game.js file has been implemented, including initGame and global setup logic.
 
-perform_optimization_and_testing:
+html5_boot_scene_logic:
   <<: *task_common
-  agent: performance_optimiser
-  description: >
-    Analyze, refactor, and optimize the entire codebase to ensure efficient resource usage and stable frame rates, while conducting systematic QA testing across all modules.
-  expected_output: >
-    The game achieves optimal performance metrics with minimal bugs, meeting the quality standards set forth in the hierarchy.
-  depends_on:
-    - implement_player_controls
-    - develop_enemy_ai
-    - create_collectibles_system
-    - design_ui_components
-    - design_level_layouts
-    - integrate_audio_effects
-    - incorporate_narrative_elements
+  agent: html5_game_engineer
+  description: |
+    Read task-boot-scene.md, to understand all neccessary elements for `scenes-boot.js`.
+    Implement the Boot Scene in `scenes-boot.js`, which loads assets and transitions to the Menu Scene.
 
-final_integration_and_system_testing:
-  <<: *task_common
-  agent: game_architect
-  description: >
-    Merge all module contributions into a cohesive game product and perform end-to-end system testing to verify that gameplay, AI, UI, audio, and narrative elements operate in harmony as specified in the validated hierarchy.
+    **Core Task:**
+    - Implement asset loading logic (sprites, audio, etc.).
+    - Preload and transition to `scenes-menu.js`.
+    - Handle loading screen (can be minimal).
+
+    **Final Step:**
+    - Save `scenes-boot.js` with working BootScene logic.
   expected_output: >
-    A fully integrated, feature-complete platformer game that adheres to the design specifications and is ready for release.
-  depends_on:
-    - integrate_base_scaffold
-    - implement_player_controls
-    - integrate_health_system
-    - develop_enemy_ai
-    - create_collectibles_system
-    - design_ui_components
-    - design_level_layouts
-    - integrate_audio_effects
-    - incorporate_narrative_elements
-    - perform_optimization_and_testing
-###################################################################
+    Boot scene logic completed and saved in scenes-boot.js.
+
+html5_menu_scene_logic:
+  <<: *task_common
+  agent: html5_game_ui_engineer
+  description: |
+    Read task-menu-scene.md, to understand all neccessary elements for `scenes-menu.js`.
+    Implement the main menu in `scenes-menu.js`, with buttons to navigate to game, instructions, and settings.
+
+    **Core Task:**
+    - Display game title and menu.
+    - Add buttons for Start Game, Settings, Instructions.
+    - Connect buttons to scene transitions.
+
+    **Final Step:**
+    - Save implemented `scenes-menu.js`.
+  expected_output: >
+    Menu scene UI and navigation have been implemented in scenes-menu.js.
+
+html5_gameplay_scene_logic:
+  <<: *task_common
+  agent: html5_game_logic_engineer
+  description: |
+    Read task-game-scene.md, to understand all neccessary elements for `scenes-game.js`.
+    Implement the main gameplay logic in `scenes-game.js`.
+
+    **Core Task:**
+    - Load player/enemy entities.
+    - Use `level-config.json` for layout.
+    - Handle game loop logic: updating, rendering, win/loss detection.
+
+    **Final Step:**
+    - Save the completed `scenes-game.js`.
+  expected_output: >
+    Core gameplay scene implemented in scenes-game.js.
+
+html5_entity_definitions:
+  <<: *task_common
+  agent: html5_game_logic_engineer
+  description: |
+    Read task-entity.md, to understand all neccessary elements for `entities-player.js` and `entities-enemy.js`.
+    Implement player and enemy classes in `entities-player.js` and `entities-enemy.js`.
+
+    **Core Task:**
+    - Define constructors, movement, collision, interaction.
+    - Implement shared logic for animations or stats.
+
+    **Final Step:**
+    - Save `entities-player.js` and `entities-enemy.js`.
+  expected_output: >
+    Player and enemy entity classes implemented with full behavior.
+
+html5_pause_scene_logic:
+  <<: *task_common
+  agent: html5_game_ui_engineer
+  description: |
+    Read task-pause-scene.md, to understand all neccessary elements for `scenes-pause.js`.
+    Implement the pause menu in `scenes-pause.js`.
+
+    **Core Task:**
+    - Create pause overlay and menu.
+    - Add buttons for Resume, Main Menu.
+    - Implement logic to pause/resume game state.
+
+    **Final Step:**
+    - Save the implemented `scenes-pause.js`.
+  expected_output: >
+    Pause scene completed and working in scenes-pause.js.
+
+html5_settings_scene_logic:
+  <<: *task_common
+  agent: html5_game_ui_engineer
+  description: |
+    Read task-settings-scene.md, to understand all neccessary elements for `scenes-settings.js`.
+    Implement the settings menu in `scenes-settings.js`.
+
+    **Core Task:**
+    - Add toggles for audio, fullscreen, etc.
+    - Store user preferences (in-memory or localStorage).
+    - Connect to audio or other systems as needed.
+
+    **Final Step:**
+    - Save `scenes-settings.js`.
+  expected_output: >
+    Settings scene implemented and saved in scenes-settings.js.
+
+html5_instructions_scene_logic:
+  <<: *task_common
+  agent: html5_game_rules_engineer
+  description: |
+    Read task-instructions-scene.md, to understand all neccessary elements for `scenes-instructions.js`.
+    Implement the game instructions/rules screen in `scenes-instructions.js`.
+
+    **Core Task:**
+    - Display textual or visual rules/instructions.
+    - Ensure back-to-menu functionality.
+    - Style using CSS classes.
+
+    **Final Step:**
+    - Save the completed `scenes-instructions.js`.
+  expected_output: >
+    Instructions scene logic implemented in scenes-instructions.js.
+
+html5_game_systems_implementation:
+  <<: *task_common
+  agent: html5_game_engineer
+  description: |
+    You are responsible for implementing the **game systems** in the file `systems.js`. This includes all logic that falls under global systems, UI systems, and input control systems.
+
+    **Setup:**
+    - Use the `read_file` tool to open and analyze the `task-game-systems.md` file.
+    - Identify all system-level responsibilities, including UI interactions, input handling, audio playback, and game state control.
+
+    **Core Task:**
+    - Implement all **game systems** identified in the task file. Systems include (but are not limited to):
+      - Input control systems that manage key mappings and player input.
+      - UI/HUD systems such as score displays, health indicators, level transitions.
+      - Game state and flow control (e.g. pause/resume, transitions).
+      - Audio integration, including sound effect and music triggers.
+    - Ensure modularity and clarity—separate concerns logically inside the file.
+
+    **Final Step:**
+    - Save the completed file as `systems.js` using the `write_file` tool.
+  expected_output: >
+    All global game systems have been implemented and saved in systems.js.
+
+
+html5_game_mechanics_implementation:
+  <<: *task_common
+  agent: html5_game_engineer
+  description: |
+    You are responsible for implementing the **game mechanics** in the file `mechanics.js`. This includes all core gameplay logic derived from the design outlined in `task-game-mechanics.md`.
+
+    **Setup:**
+    - Use the `read_file` tool to open and analyze the `task-game-mechanics.md` file.
+    - Identify all game mechanics described, including their implementation details, parameters, subcomponents, and pseudocode.
+
+    **Core Task:**
+    - Implement all **mechanics** logic described in the task file. Mechanics may include:
+      - Movement, jumping, attacking, or shooting.
+      - Scoring and progression triggers.
+      - Collision-based responses, resource pickups, or buffs.
+      - Health, lives, win/loss, and game over conditions.
+    - Each mechanic should be cleanly implemented and callable from the game loop or relevant systems.
+
+    **Final Step:**
+    - Save the completed file as `mechanics.js` using the `write_file` tool.
+  expected_output: >
+    All core game mechanics have been implemented and saved in mechanics.js.
+
+html5_level_config_creation:
+  <<: *task_common
+  agent: html5_game_engineer
+  description: |
+    You are tasked with creating the `level-config.json` file, which defines the structure, layout, and configuration data for levels in the game.
+
+    **Setup:**
+    - Use the `read_file` tool to open and review `task-level-config.md`.
+    - Extract all relevant parameters from the game_hierarchy.xml as summarized in the task file, including:
+      - Level metadata
+      - Player/enemy spawn points
+      - Background environment settings
+      - Layout configuration
+      - References to assets or difficulty modifiers
+
+    **Core Task:**
+    - Define a JSON structure that supports:
+      - Multiple levels, each with its own ID or name
+      - Initial positions for the player and enemies
+      - List of entities or objects to place in the level (coins, hazards, power-ups, etc.)
+      - Background settings, such as music or tilemap
+      - Win/loss conditions or exit points
+      - Level-specific settings such as time limits or score targets
+
+    - Make the structure extendable so future levels can be easily added or edited.
+
+    - Include at least one fully defined sample level entry in the JSON output for testing and template reference.
+
+    **Final Step:**
+    - Use the `write_file` tool to save the resulting structure as `level-config.json`.
+
+  expected_output: >
+    The level-config.json file has been created with a flexible structure that defines all key parameters for at least one sample level.
+
+html5_game_file_structure_and_index:
+  <<: *task_common
+  agent: html5_game_engineer
+  description: |
+    Read task-html-scaffold.md, to understand all neccessary elements for `index.html` and `styles.css`.
+    You are tasked with creating the final foundational structure and entry point for the HTML5 game project. This task should be completed only after all other game modules, scenes, entities, and configuration files have already been implemented.
+
+    You will create:
+    - `index.html` – The main HTML entry point that loads the canvas and links all JavaScript and CSS files required to run the game.
+    - `styles.css` – The main CSS file defining layout and visual structure for the game canvas, menus, and HUD.
+
+    **Setup:**
+    - Use the `list_files` tool to view the directory and identify all existing game-related JavaScript files (scenes, systems, entities, config, etc.).
+
+    **Core Task:**
+    - **Create and implement `index.html`:**
+      - Include a valid HTML5 structure with `<head>` and `<body>`.
+      - Add a `<canvas>` or `<div id="game-container">` for the game display.
+      - Link the `styles.css` file in the `<head>`.
+      - Add `<script>` tags for each JavaScript file discovered via `list_files`. Ensure they are ordered in a way that respects dependencies (e.g., engine config before scenes, core systems before entities).
+      - If the game engine (e.g., Phaser) is not included in the file list, add a CDN reference.
+
+    - **Create and implement `styles.css`:**
+      - Style the game canvas or container to fill the screen appropriately.
+      - Add basic CSS for menus, overlays, and HUD elements as needed.
+
+    **Final Step:**
+    - Use the `write_file` tool to save the completed `index.html` and `styles.css` files.
+
+  expected_output: >
+    The project scaffold has been finalized. index.html and styles.css have been created, and all necessary files discovered via list_files have been correctly linked. The HTML entry point is now ready for gameplay testing.
 
 
 # vim: set foldmethod=indent foldlevel=0:

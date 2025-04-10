@@ -4,9 +4,12 @@ import Player from "./entities-player.js";
 import Enemy from "./entities-enemy.js";
 
 export default class GameScene extends Phaser.Scene {
-  constructor(levelData = null) {
+  constructor() {
     super({ key: "GameScene" });
-    this.levelData = levelData;
+  }
+
+  init(data) {
+    this.levelData = data.levelData || null;
   }
 
   preload() {

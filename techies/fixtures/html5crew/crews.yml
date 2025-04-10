@@ -8,16 +8,28 @@ _crew_common: &crew_common
 html5_crew:
   <<: *crew_common
   agents:
-    - html5_game_architect
+    - html5_game_task_planner
     - html5_game_engineer
-    - html5_game_tester
+    - html5_game_ui_engineer
+    - html5_game_uinput_engineer
+    - html5_game_logic_engineer
     - html5_game_rules_engineer
-    - mechanics_agent
-    - ui_hud_agent
-    - input_control_agent
-    - world_design_agent
+    - html5_game_tester
   tasks:
-    - html5_game_coding
+    - html5_game_task_file_generator
+    - html5_game_initial_structure
+    - html5_game_main_logic
+    - html5_boot_scene_logic
+    - html5_game_systems_implementation
+    - html5_game_mechanics_implementation
+    - html5_entity_definitions
+    - html5_menu_scene_logic
+    - html5_pause_scene_logic
+    - html5_settings_scene_logic
+    - html5_instructions_scene_logic
+    - html5_gameplay_scene_logic
+    - html5_level_config_creation
+    - html5_game_file_structure_and_index
 
 
 # html5_crew:

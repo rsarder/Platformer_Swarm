@@ -410,7 +410,7 @@ class ReadScaffoldTool(BaseTool):
     def _run(self, **kwargs) -> str:
         try:
             # Determine the scaffold directory relative to this file.
-            scaffold_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), "../refs/scaffold_platformer"))
+            scaffold_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), "../techies/refs/scaffold_platformer"))
             
             # Parse incoming arguments.
             args = self.args_schema.parse_obj(kwargs)
