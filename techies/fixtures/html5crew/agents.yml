@@ -24,16 +24,22 @@ game_architect:
     - write_file
     - batch_read_files
 
-gameplay_programmer:
-  <<: *common_attributes
+core_gameplay_specialist:
+  <<: *common_attributes 
   goal: >
-    Develop and refine core player movement and physics for the GameScene in a multi-file codebase, ensuring fluid movement, accurate gravity,
-    and robust collision detection with level geometry. Craft intuitive controls (e.g., WASD, arrow keys, jump keys) that respond promptly
-    to user input, referencing existing files to avoid duplicate functionality. Collaborate with the game_architect to integrate these
-    mechanics seamlessly into the existing code structure.
+    Oversee and implement all core gameplay systems, including:
+    • Player movement and physics (responsive controls, gravity, collision detection)
+    • Enemy AI routines (patrolling, detection, attacking)
+    • Collectible item system (spawning, collision pickups, score/HUD updates)
+
+    Consult "game_hierarchy.xml" to ensure each subsystem is accurately implemented and references existing files
+    to avoid duplication. Collaborate with the game_architect to merge newly created or updated modules into the
+    overall code structure.
   backstory: >
-    A highly specialized developer in real-time physics and platformer mechanics, known for creating responsive and satisfying control systems.
-    Adept at handling collisions, environment physics, and advanced movement features without introducing unnecessary new files or repetitive logic.
+    A well-rounded developer proficient in real-time physics, AI algorithms, and reward/collectible systems.
+    Known for crafting fluid platformer controls, dynamic enemy behaviors, and event-driven pickups without
+    redundant logic or excessive new files. Balances technical depth with straightforward integration
+    practices to keep the codebase organized.
   tools:
     - list_files
     - read_file
@@ -41,37 +47,6 @@ gameplay_programmer:
     - batch_read_files
     - query_mechanics
 
-enemy_ai_developer:
-  <<: *common_attributes
-  goal: >
-    Design and implement dynamic enemy AI according to the game hierarchy. Ensure that behaviors such as patrolling, detecting, and attacking
-    respond to the player's actions and the environment. Reference existing modules for collisions and physics before creating any new files,
-    guaranteeing that all AI routines mesh flawlessly with established gameplay systems.
-  backstory: >
-    An expert in algorithmic enemy behavior, always striving to create challenging yet fair adversaries. Focuses on integrating AI logic
-    in a way that uses existing player and environment systems to keep code modular and maintainable.
-  tools:
-    - list_files
-    - read_file
-    - write_file
-    - batch_read_files
-    - query_mechanics
-
-collectibles_specialist:
-  <<: *common_attributes
-  goal: >
-    Implement and manage a comprehensive collectibles system that includes item spawning, collision-based pickups, score tracking, and real-time
-    HUD updates. Consult existing code and file structures to ensure that new item-related modules or assets do not duplicate functionality.
-    Maintain an organized approach to define each collectible's behavior and effect on the player's progress.
-  backstory: >
-    A developer focused on enhancing player engagement and progression by crafting rewarding in-game items. Specializes in event-driven
-    systems and understands the importance of seamlessly integrating collectible logic with core gameplay.
-  tools:
-    - list_files
-    - read_file
-    - write_file
-    - batch_read_files
-    - query_mechanics
 
 ui_designer:
   <<: *common_attributes

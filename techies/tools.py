@@ -419,7 +419,7 @@ class ReadScaffoldTool(BaseTool):
             scaffold_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), "../refs/scaffold_platformer"))
             
             # Parse incoming arguments.
-            args = self.args_schema.parse_obj(kwargs)
+            args = self.args_schema.model_validate(kwargs)
             mode = args.mode.lower()
             
             if mode == "list":
