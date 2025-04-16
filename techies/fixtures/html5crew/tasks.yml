@@ -59,98 +59,98 @@ html5_game_task_file_generator:
 
   expected_output: >
     All task files have been created. Each file contains exact excerpts from game_hierarchy.xml with no alterations, summarizations, or omissions.
-
-html5_game_initial_structure:
-  <<: *task_common
-  agent: html5_game_engineer
-  description: |
-    Read the game_hierarchy.xml.
-    You are tasked with creating the foundational structure for an HTML5 game based on the provided game_hierarchy.xml file. You are not implementing the complete logic yet, but instead focusing on laying down a modular and well-organized scaffold.
     
-    **Setup:**
-    - **Review the "game_hierarchy.xml" File:**
-      - Thoroughly examine the game_hierarchy.xml to understand all core mechanics, UI components, game systems (audio, input, HUD, scenes, rules, etc.).
+# html5_game_initial_structure:
+#   <<: *task_common
+#   agent: html5_game_engineer
+#   description: |
+#     Read the game_hierarchy.xml.
+#     You are tasked with creating the foundational structure for an HTML5 game based on the provided game_hierarchy.xml file. You are not implementing the complete logic yet, but instead focusing on laying down a modular and well-organized scaffold.
+    
+#     **Setup:**
+#     - **Review the "game_hierarchy.xml" File:**
+#       - Thoroughly examine the game_hierarchy.xml to understand all core mechanics, UI components, game systems (audio, input, HUD, scenes, rules, etc.).
 
-    **Core Task:**
-    - **Functions & Placeholder Pseudocode:**
-      - Create the following game files with appropriate placeholders, function stubs, and pseudocode, as described below:
-        - index.html
-          - Standard HTML5 boilerplate.
-          - <script> and <link> tags referencing all other files.
-          - Placeholder <div>s or <canvas> for rendering, menus, and HUD.
-          - Load Phaser or other required libraries.
-        - styles.css
-          - Minimal styling for layout visualization (game canvas, HUD elements, basic UI structure).
-          - Include class or ID hooks for game state, settings, pause, etc.
-        - game.js
-          - The game entry point.
-          - Define initGame(), loadAssets(), startGame(), etc.
-          - Use function stubs or pseudocode—no full implementation.
-        - scenes-boot.js
-          - Pseudocode for:
-          - Preloading assets
-          - Transition to Menu scene
-        - scenes-menu.js
-          - Placeholder for main menu scene
-          - Button handlers (Start, Settings, Instructions)
-        - scenes-game.js
-          - Pseudocode for:
-          - Main gameplay loop
-          - Entity updates
-          - Collision logic references
-        - scenes-pause.js
-          - Logic for pausing/resuming the game
-          - Placeholder buttons (Resume, Menu, Settings)
-        - scenes-settings.js
-          - Placeholder UI and logic for audio/toggle settings
-        - scenes-instructions.js
-          - Pseudocode for displaying game instructions/rules
-          - Return to menu logic  
-        - mechanics.js
-          - Function stubs for mechanics like:
-            - Movement
-            - Combat
-            - Interaction
-        - systems.js
-          - Function stubs for systems like:
-            - Score Counter
-            - Life Indicator
-        - entities-player.js
-          - Placeholder class for Player
-          - Pseudocode methods like move(), takeDamage(), interact()
-        - entities-enemy.js
-          - Placeholder class for Enemy
-          - Pseudocode methods like patrol(), attack(), spawn()
-        - level-config.json
-          - JSON skeleton:
-          - Level ID, layout, player/enemy spawn points
-          - Environmental settings (music, difficulty, background)
+#     **Core Task:**
+#     - **Functions & Placeholder Pseudocode:**
+#       - Create the following game files with appropriate placeholders, function stubs, and pseudocode, as described below:
+#         - index.html
+#           - Standard HTML5 boilerplate.
+#           - <script> and <link> tags referencing all other files.
+#           - Placeholder <div>s or <canvas> for rendering, menus, and HUD.
+#           - Load Phaser or other required libraries.
+#         - styles.css
+#           - Minimal styling for layout visualization (game canvas, HUD elements, basic UI structure).
+#           - Include class or ID hooks for game state, settings, pause, etc.
+#         - game.js
+#           - The game entry point.
+#           - Define initGame(), loadAssets(), startGame(), etc.
+#           - Use function stubs or pseudocode—no full implementation.
+#         - scenes-boot.js
+#           - Pseudocode for:
+#           - Preloading assets
+#           - Transition to Menu scene
+#         - scenes-menu.js
+#           - Placeholder for main menu scene
+#           - Button handlers (Start, Settings, Instructions)
+#         - scenes-game.js
+#           - Pseudocode for:
+#           - Main gameplay loop
+#           - Entity updates
+#           - Collision logic references
+#         - scenes-pause.js
+#           - Logic for pausing/resuming the game
+#           - Placeholder buttons (Resume, Menu, Settings)
+#         - scenes-settings.js
+#           - Placeholder UI and logic for audio/toggle settings
+#         - scenes-instructions.js
+#           - Pseudocode for displaying game instructions/rules
+#           - Return to menu logic  
+#         - mechanics.js
+#           - Function stubs for mechanics like:
+#             - Movement
+#             - Combat
+#             - Interaction
+#         - systems.js
+#           - Function stubs for systems like:
+#             - Score Counter
+#             - Life Indicator
+#         - entities-player.js
+#           - Placeholder class for Player
+#           - Pseudocode methods like move(), takeDamage(), interact()
+#         - entities-enemy.js
+#           - Placeholder class for Enemy
+#           - Pseudocode methods like patrol(), attack(), spawn()
+#         - level-config.json
+#           - JSON skeleton:
+#           - Level ID, layout, player/enemy spawn points
+#           - Environmental settings (music, difficulty, background)
 
-    **Testing & Review:**
-    - Delegate the task of verifying the existence of all aspects of the code to the html5_game_tester.
+#     **Testing & Review:**
+#     - Delegate the task of verifying the existence of all aspects of the code to the html5_game_tester.
 
-    **Final Step:**
-    - **Save the File:**
-      - Use the write_file tool to save all the above files:
-        - index.html
-        - styles.css
-        - game.js
-        - scenes-boot.js
-        - scenes-menu.js
-        - scenes-game.js
-        - scenes-pause.js
-        - scenes-settings.js
-        - cenes-instructions.js
-        - mechanics-systems.js
-        - entities.js
-        - level-config.json
+#     **Final Step:**
+#     - **Save the File:**
+#       - Use the write_file tool to save all the above files:
+#         - index.html
+#         - styles.css
+#         - game.js
+#         - scenes-boot.js
+#         - scenes-menu.js
+#         - scenes-game.js
+#         - scenes-pause.js
+#         - scenes-settings.js
+#         - cenes-instructions.js
+#         - mechanics-systems.js
+#         - entities.js
+#         - level-config.json
 
-    - **Output Confirmation:**
-      - Conclude by confirming that all scaffold files have been created with the necessary pseudocode/function placeholders, and that the game is now structurally ready for implementation.
-  expected_output: >
-    Conclude by confirming that all scaffold files have been created with the necessary pseudocode/function placeholders, and that the game is now structurally ready for implementation.
+#     - **Output Confirmation:**
+#       - Conclude by confirming that all scaffold files have been created with the necessary pseudocode/function placeholders, and that the game is now structurally ready for implementation.
+#   expected_output: >
+#     Conclude by confirming that all scaffold files have been created with the necessary pseudocode/function placeholders, and that the game is now structurally ready for implementation.
 
-html5_game_main_logic:
+html5_game_main_logic:  #Doesn't appear to do anytthing at the moment
   <<: *task_common
   agent: html5_game_engineer
   description: |
@@ -187,39 +187,58 @@ html5_boot_scene_logic:
   expected_output: >
     Boot scene logic completed and saved in scenes-boot.js.
 
-html5_menu_scene_logic:
+html5_game_systems_implementation:
   <<: *task_common
-  agent: html5_game_ui_engineer
+  agent: html5_game_engineer
   description: |
-    Read task-menu-scene.md, to understand all neccessary elements for `scenes-menu.js`.
-    Implement the main menu in `scenes-menu.js`, with buttons to navigate to game, instructions, and settings.
+    You are responsible for implementing the **game systems** in the file `systems.js`. This includes all logic that falls under global systems, UI systems, and input control systems.
+
+    **Setup:**
+    - Use the `read_file` tool to open and analyze the `task-game-systems.md` file.
+    - Identify all system-level responsibilities, including UI interactions, input handling, audio playback, and game state control.
 
     **Core Task:**
-    - Display game title and menu.
-    - Add buttons for Start Game, Settings, Instructions.
-    - Connect buttons to scene transitions.
+    - Implement all **game systems** identified in the task file. Systems include (but are not limited to):
+      - Input control systems that manage key mappings and player input.
+      - UI/HUD systems such as score displays, health indicators, level transitions.
+      - Game state and flow control (e.g. pause/resume, transitions).
+      - Audio integration, including sound effect and music triggers.
+    - Ensure modularity and clarity—separate concerns logically inside the file.
 
     **Final Step:**
-    - Save implemented `scenes-menu.js`.
+    - Save the completed file as `systems.js` using the `write_file` tool.
   expected_output: >
-    Menu scene UI and navigation have been implemented in scenes-menu.js.
+    All global game systems have been implemented and saved in systems.js.
 
-html5_gameplay_scene_logic:
+html5_game_mechanics_implementation:
   <<: *task_common
-  agent: html5_game_logic_engineer
+  agent: html5_game_engineer
   description: |
-    Read task-game-scene.md, to understand all neccessary elements for `scenes-game.js`.
-    Implement the main gameplay logic in `scenes-game.js`.
+    You are responsible for implementing the **complete game mechanics** in the file `mechanics.js`, based on the design outlined in `task-game-mechanics.md`.
+
+    **Setup:**
+    - Use the `read_file` tool to open and analyze the `task-game-mechanics.md` file.
+    - Extract all described game mechanics, including implementation details, parameters, subcomponents, and any provided pseudocode or formulas.
 
     **Core Task:**
-    - Load player/enemy entities.
-    - Use `level-config.json` for layout.
-    - Handle game loop logic: updating, rendering, win/loss detection.
+    - Implement all **gameplay logic** fully in JavaScript with no placeholder code, no pseudocode, and no incomplete functions.
+    - Mechanics to include (as applicable):
+      - Character movement, jumping, attacking, or shooting.
+      - Scoring system, game progression, and level transitions.
+      - Collision detection and handling for environment, enemies, and items.
+      - Resource collection (e.g., health packs, power-ups), buffs, and temporary effects.
+      - Player state systems: health, lives, respawn, game over, and win conditions.
+    - Ensure all code is functional, organized, and callable from the main game loop or relevant systems.
+
+    **Requirements:**
+    - All logic must be written in valid JavaScript, structured for integration with an HTML5 game engine.
+    - No placeholders, no TODOs, no pseudocode — final code must be ready for direct execution and testing.
+    - Organize code using reusable functions and clearly separated modules for each mechanic, where applicable.
 
     **Final Step:**
-    - Save the completed `scenes-game.js`.
+    - Save the fully implemented file as `mechanics.js` using the `write_file` tool.
   expected_output: >
-    Core gameplay scene implemented in scenes-game.js.
+    All core game mechanics have been fully implemented in JavaScript with no pseudocode or placeholders and saved as mechanics.js.
 
 html5_entity_definitions:
   <<: *task_common
@@ -236,6 +255,23 @@ html5_entity_definitions:
     - Save `entities-player.js` and `entities-enemy.js`.
   expected_output: >
     Player and enemy entity classes implemented with full behavior.
+
+html5_menu_scene_logic:
+  <<: *task_common
+  agent: html5_game_ui_engineer
+  description: |
+    Read task-menu-scene.md, to understand all neccessary elements for `scenes-menu.js`.
+    Implement the main menu in `scenes-menu.js`, with buttons to navigate to game, instructions, and settings.
+
+    **Core Task:**
+    - Display game title and menu.
+    - Add buttons for Start Game, Settings, Instructions.
+    - Connect buttons to scene transitions.
+
+    **Final Step:**
+    - Save implemented `scenes-menu.js`.
+  expected_output: >
+    Menu scene UI and navigation have been implemented in scenes-menu.js.
 
 html5_pause_scene_logic:
   <<: *task_common
@@ -288,53 +324,23 @@ html5_instructions_scene_logic:
   expected_output: >
     Instructions scene logic implemented in scenes-instructions.js.
 
-html5_game_systems_implementation:
+html5_gameplay_scene_logic:
   <<: *task_common
-  agent: html5_game_engineer
+  agent: html5_game_logic_engineer
   description: |
-    You are responsible for implementing the **game systems** in the file `systems.js`. This includes all logic that falls under global systems, UI systems, and input control systems.
-
-    **Setup:**
-    - Use the `read_file` tool to open and analyze the `task-game-systems.md` file.
-    - Identify all system-level responsibilities, including UI interactions, input handling, audio playback, and game state control.
+    Read task-game-scene.md, to understand all neccessary elements for `scenes-game.js`.
+    Implement the main gameplay logic in `scenes-game.js`.
 
     **Core Task:**
-    - Implement all **game systems** identified in the task file. Systems include (but are not limited to):
-      - Input control systems that manage key mappings and player input.
-      - UI/HUD systems such as score displays, health indicators, level transitions.
-      - Game state and flow control (e.g. pause/resume, transitions).
-      - Audio integration, including sound effect and music triggers.
-    - Ensure modularity and clarity—separate concerns logically inside the file.
+    - Load player/enemy entities.
+    - Use `level-config.json` for layout.
+    - Handle game loop logic: updating, rendering, win/loss detection.
 
     **Final Step:**
-    - Save the completed file as `systems.js` using the `write_file` tool.
+    - Save the completed `scenes-game.js`.
   expected_output: >
-    All global game systems have been implemented and saved in systems.js.
-
-
-html5_game_mechanics_implementation:
-  <<: *task_common
-  agent: html5_game_engineer
-  description: |
-    You are responsible for implementing the **game mechanics** in the file `mechanics.js`. This includes all core gameplay logic derived from the design outlined in `task-game-mechanics.md`.
-
-    **Setup:**
-    - Use the `read_file` tool to open and analyze the `task-game-mechanics.md` file.
-    - Identify all game mechanics described, including their implementation details, parameters, subcomponents, and pseudocode.
-
-    **Core Task:**
-    - Implement all **mechanics** logic described in the task file. Mechanics may include:
-      - Movement, jumping, attacking, or shooting.
-      - Scoring and progression triggers.
-      - Collision-based responses, resource pickups, or buffs.
-      - Health, lives, win/loss, and game over conditions.
-    - Each mechanic should be cleanly implemented and callable from the game loop or relevant systems.
-
-    **Final Step:**
-    - Save the completed file as `mechanics.js` using the `write_file` tool.
-  expected_output: >
-    All core game mechanics have been implemented and saved in mechanics.js.
-
+    Core gameplay scene implemented in scenes-game.js.
+    
 html5_level_config_creation:
   <<: *task_common
   agent: html5_game_engineer
@@ -400,6 +406,47 @@ html5_game_file_structure_and_index:
 
   expected_output: >
     The project scaffold has been finalized. index.html and styles.css have been created, and all necessary files discovered via list_files have been correctly linked. The HTML entry point is now ready for gameplay testing.
+  callback: playwrite_test
 
+html5_game_debug_and_fix:
+  <<: *task_common
+  agent: html5_game_debugger
+  description: |
+    You are tasked with reviewing and fixing all browser-based errors in the game after all other implementation tasks have been completed.
+
+    **Setup:**
+    - Use the `read_file` tool to open and analyze `browser_errors.md`.
+    - Review the list of captured browser errors and warnings, including:
+      - JavaScript exceptions
+      - File load failures
+      - Missing exports or import paths
+      - Runtime logic errors or undefined variables
+
+    **Core Task:**
+    - For each error listed in `browser_errors.md`:
+      - Identify which file the error is coming from using line numbers, filenames, or function names.
+      - Use the `read_file` tool to inspect that file and locate the cause of the error.
+      - Use the `write_file` tool to apply a fix for the error in the appropriate source file.
+    - Ensure that:
+      - All syntax and logic errors are corrected.
+      - All imports/exports match across modules.
+      - There are no missing variables or undefined functions.
+      - All browser console errors from the report are resolved.
+
+    **Scope:**
+    - This task applies to all files in the game project, including but not limited to:
+      - `index.html`
+      - All `scenes-*.js`
+      - `mechanics-systems.js`, `entities-*.js`, `game.js`
+      - Stylesheets and JSON config files (if referenced in the error)
+
+    **Final Step:**
+    - Once all fixes are applied, use the `write_file` tool to update the corrected files.
+    - Include a summary list in your final message indicating:
+      - What files were changed
+      - What errors were fixed
+
+  expected_output: >
+    All errors described in browser_errors.md have been fixed across the relevant game files. A summary of file changes and resolved errors is included below.
 
 # vim: set foldmethod=indent foldlevel=0:
