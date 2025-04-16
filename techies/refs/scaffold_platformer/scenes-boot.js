@@ -8,7 +8,4 @@ export default class BootScene extends Phaser.Scene {
     // Normally, you'd preload images, sprites, etc. if you have them
   }
 
-  create() {
-    this.scene.start("MenuScene");
-  }
 }

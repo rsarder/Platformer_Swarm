@@ -1,5 +1,6 @@
 // scenes-game.js
-import MechanicsSystem from "./mechanics-systems.js";
+import Mechanics from "./mechanics.js";
+import System from "./systems.js";
 import Player from "./entities-player.js";
 import Enemy from "./entities-enemy.js";
 
@@ -29,8 +30,11 @@ export default class GameScene extends Phaser.Scene {
     // Set world bounds so the player can’t leave the screen.
     this.physics.world.setBounds(0, 0, 800, 600);
 
-    // Initialize the mechanics system (placeholder)
-    this.mechanics = new MechanicsSystem(this);
+    // Initialize the mechanics (placeholder)
+    this.mechanics = new Mechanics(this);
+
+    // Initialize the systems (placeholder)
+    this.systems = new Systems(this);
 
     // Create platforms as static rectangle shapes
     this.platforms = this.physics.add.staticGroup();

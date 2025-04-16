@@ -36,12 +36,13 @@ function initGame(levelData) {
     scene: [
       BootScene,
       MenuScene,
-      new GameScene(levelData),
+      GameScene,
       PauseScene,
       SettingsScene,
       InstructionsScene,
     ],
   };
 
-  new Phaser.Game(config);
+  const game = new Phaser.Game(config);
+  game.scene.start("BootScene", { levelData });
 }
