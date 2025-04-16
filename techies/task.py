@@ -1,5 +1,6 @@
 from techies.fixture_loader import load_fixture
 from crewai import Task as _Task
+from techies.callback_func import run_browser_server_and_capture_errors
 
 
 class Task(_Task):
@@ -16,6 +17,15 @@ class Task(_Task):
 
         agent = agent_pool.get(task_config['agent'])
         task_config['agent'] = agent
+
+        callback_key = task_config.get("callback")
+        if callback_key == "playwrite_test":
+            task_config["callback"] = lambda _: run_browser_server_and_capture_errors(
+                                                        filename="index.html",
+                                                        port=8000,
+                                                        wait_time_ms=5000
+                                                    )
+        
 
         context = []
         for context_name in task_config.pop('depends_on', []):
