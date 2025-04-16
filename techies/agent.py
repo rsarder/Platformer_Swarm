@@ -46,7 +46,7 @@ class Agent(_Agent):  # Inherit from _Agent class
         return agent_pool
     
     def __init__(
-        self, config_name, *, agent_pool=None, tools_available=None, llm = None, **kwargs
+        self, config_name, *, agent_pool=None, tools_available=None, **kwargs
     ):
         # Load the agent's configuration details from the fixture
         agent_config = load_fixture('agents')[config_name]
