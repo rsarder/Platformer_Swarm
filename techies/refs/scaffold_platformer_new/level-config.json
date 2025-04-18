@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "version": "1.0",
+    "defaultGravity": 500
+  },
+  "levels": [
+    {
+      "id": "level_01",
+      "name": "LEVEL NAME HERE",
+      "description": "Short summary of the level’s theme or objective",
+
+      "playerStart": { "x": 100, "y": 450 },
+
+      "platforms": [
+        { "x": 0,   "y": 580, "width": 960, "height": 40 },
+        { "x": 220, "y": 400, "width": 120, "height": 20 }
+      ],
+
+      "enemies": [
+        {
+          "type": "predictable",
+          "startPosition": { "x": 300, "y": 450 },
+          "movementPattern": "patrol",
+          "speed": 100,
+          "range": 200
+        },
+        {
+          "type": "dynamic",
+          "startPosition": { "x": 600, "y": 450 },
+          "movementPattern": "chase",
+          "speed": 120
+        }
+      ],
+
+      "entities": [
+        { "type": "collectible", "subtype": "coin",  "position": { "x": 150, "y": 350 } },
+        { "type": "obstacle",    "subtype": "spike", "position": { "x": 400, "y": 560 } }
+      ],
+
+      "background": {
+        "music":   "level_theme.mp3",
+        "tilemap": "tileset.png",
+        "parallaxLayers": [
+          { "image": "bg_layer1.png", "scrollFactor": 0.25 },
+          { "image": "bg_layer2.png", "scrollFactor": 0.50 }
+        ]
+      },
+
+      "winCondition": {
+        "type": "reachEndpoint",
+        "position": { "x": 920, "y": 450 }
+      },
+
+      "settings": {
+        "timeLimit":    300,
+        "scoreTarget":  1000,
+        "customFlags":  { "allowDoubleJump": false }
+      }
+    }
+  ]
+}

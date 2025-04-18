@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Mobile / Hi‑DPI friendliness -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Title & favicon (optional) -->
+  <title>Phaser‑Powered Game</title>
+  <!-- Replace "favicon.ico" with your own icon or omit if not needed -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <!-- Phaser (minified) from CDN – pin whichever version you need -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+  <!-- Custom global styles (optional) -->
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- Phaser inserts its canvas inside this container -->
+  <div id="game"></div>
+  <!-- ----------------------------------------------------------
+       Module scripts: add, remove, or reorder to match your build
+       ---------------------------------------------------------- -->
+  <script type="module" src="./game.js"></script>
+  <!-- Core engine / systems (rename to suit your project) -->
+  <script type="module" src="./systems.js"></script>
+  <script type="module" src="./mechanics.js"></script>
+  <!-- Generic entities (player / enemy / NPC / etc.) -->
+  <script type="module" src="./entities-player.js"></script>
+  <script type="module" src="./entities-enemy.js"></script>
+  <!-- Scenes (boot → menu → play → pause → settings → help, etc.) -->
+  <script type="module" src="./scenes-boot.js"></script>
+  <script type="module" src="./scenes-menu.js"></script>
+  <script type="module" src="./scenes-play.js"></script>
+  <script type="module" src="./scenes-pause.js"></script>
+  <script type="module" src="./scenes-settings.js"></script>
+  <script type="module" src="./scenes-help.js"></script>
+</body>
+</html>

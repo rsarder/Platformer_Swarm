@@ -1,0 +1,72 @@
+/* --------------------------------------------------
+   1.  Site‑wide design tokens (edit in one place)
+   -------------------------------------------------- */
+   :root {
+    --bg-col:       #000;    /* page background            */
+    --text-col:     #fff;    /* default overlay text colour*/
+    --accent-col:   #0f0;    /* hover or brand accents     */
+    --canvas-border:#fff;    /* 1px | 2px | 0 for none     */
+    --font-stack:   "Press Start 2P", "Courier New", monospace;
+  }
+  
+  /* --------------------------------------------------
+     2.  Reset & layout
+     -------------------------------------------------- */
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;      /* prevent accidental scroll   */
+    background: var(--bg-col);
+    font-family: var(--font-stack);
+  }
+  
+  /* --------------------------------------------------
+     3.  Game container flex‑centres the canvas
+     -------------------------------------------------- */
+  #game-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items:    center;
+    position: relative;    /* anchors HUD / menu overlays */
+  }
+  
+  /* --------------------------------------------------
+     4.  Canvas presentation (Phaser auto‑inserts <canvas>)
+     -------------------------------------------------- */
+  canvas {
+    border: 1px solid var(--canvas-border);
+    /* remove blur on pixel‑art scaling if desired */
+    image-rendering: pixelated;
+  }
+  
+  /* --------------------------------------------------
+     5.  Overlay layers
+     -------------------------------------------------- */
+  .overlay {               /* shared base */
+    position: absolute;
+    color: var(--text-col);
+    pointer-events: none;  /* let clicks pass through unless re‑enabled */
+  }
+  
+  .hud {
+    top: 10px;
+    left: 10px;
+    pointer-events: auto;  /* allow HUD buttons if you add them */
+  }
+  
+  .menu {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: auto;
+  }
+  
+  /* Optional hover state helper for interactive text */
+  .menu .item:hover,
+  .hud  .item:hover { color: var(--accent-col); cursor: pointer; }
+  

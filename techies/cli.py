@@ -168,46 +168,46 @@ Usage:
             return
 
         if not os.path.exists("entities-enemy.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/entities-enemy.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/entities-enemy.js")
             shutil.copy(scaffold_file_path, "entities-enemy.js")
         if not os.path.exists("entities-player.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/entities-player.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/entities-player.js")
             shutil.copy(scaffold_file_path, "entities-player.js")
         if not os.path.exists("game.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/game.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/game.js")
             shutil.copy(scaffold_file_path, "game.js")
         if not os.path.exists("index.html"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/index.html")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/index.html")
             shutil.copy(scaffold_file_path, "index.html")
         if not os.path.exists("level-config.json"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/level-config.json")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/level-config.json")
             shutil.copy(scaffold_file_path, "level-config.json")
         if not os.path.exists("mechanics.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/mechanics.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/mechanics.js")
             shutil.copy(scaffold_file_path, "mechanics.js")
         if not os.path.exists("scenes-boot.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/scenes-boot.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/scenes-boot.js")
             shutil.copy(scaffold_file_path, "scenes-boot.js")
         if not os.path.exists("scenes-game.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/scenes-game.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/scenes-game.js")
             shutil.copy(scaffold_file_path, "scenes-game.js")
         if not os.path.exists("scenes-instructions.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/scenes-instructions.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/scenes-instructions.js")
             shutil.copy(scaffold_file_path, "scenes-instructions.js")
         if not os.path.exists("scenes-menu.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/scenes-menu.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/scenes-menu.js")
             shutil.copy(scaffold_file_path, "scenes-menu.js")
         if not os.path.exists("scenes-pause.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/scenes-pause.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/scenes-pause.js")
             shutil.copy(scaffold_file_path, "scenes-pause.js")
         if not os.path.exists("scenes-settings.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/scenes-settings.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/scenes-settings.js")
             shutil.copy(scaffold_file_path, "scenes-settings.js")
         if not os.path.exists("systems.js"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/systems.js")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/systems.js")
             shutil.copy(scaffold_file_path, "systems.js")
         if not os.path.exists("styles.css"):
-            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer/styles.css")
+            scaffold_file_path = os.path.normpath(__file__ + "/../refs/scaffold_platformer_new/styles.css")
             shutil.copy(scaffold_file_path, "styles.css")
         self.kickoff_hierarchy_crew(extra_args)
 
