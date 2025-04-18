@@ -14,7 +14,12 @@ demo_task:
 #    Refine and format your tool query to properly reflect what you are generating an image for.
 #   expected_output: >
 #    A confirmation of the image being saved if it saved successfully, and what the image is depicting. If it failed, include the error message.
+  # description: >
+  #  Look online for a good tiramisu recipe. Use the google_search tool to find a recipe that is easy to follow and has good reviews.
+  # expected_output: >
+  #  Your source website, and the full recipe. Include the ingredients and steps to make it. If you can't find a good recipe, explain why you couldn't find one.
   description: >
-   Look online for a good tiramisu recipe. Use the google_search tool to find a recipe that is easy to follow and has good reviews.
+   Look online for a sound using the search_and_pick_sound tool. Use the search_and_pick_sound tool to find a sound that is a "noisy restaurant". Refine and format your tool query to be more specific and include the type of sound you are looking for.
   expected_output: >
-   Your source website, and the full recipe. Include the ingredients and steps to make it. If you can't find a good recipe, explain why you couldn't find one.
+   A confirmation of the sound file being saved, if saved successfully. Include your query and why you chose it based on the requested description.
+

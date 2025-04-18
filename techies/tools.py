@@ -65,7 +65,6 @@ class ReadHtmlExamplesToolSchema(BaseModel):
     pass
 
 class QueryMechanicsToolSchema(BaseModel):
-    
     query: str = Field(type=str, description="Search query for game mechanic.")
 
 class GoogleSearchToolSchema(BaseModel):
@@ -81,16 +80,6 @@ class ReadScaffoldToolSchema(BaseModel):
         description="If mode is 'read', specify the name of the file to view. Use 'all' to view all files."
     )
     
-class SearchAndSaveSoundToolSchema(BaseModel):
-    """
-    Defines the input arguments needed to perform a Freesound search
-    and save the first matching sound.
-    """
-    description: str = Field(..., description="Formatted query for Freesound API. For every term, you can use '+' and '-' modifier characters to indicate that a term is 'mandatory' or 'prohibited' (by default, terms are considered to be 'mandatory'). For example, in a query such as query=term_a -term_b, sounds including term_b will not match the search criteria. You are encouraged to generate a formatted query based on your sound description. Avoid using the word sound in the query unless necessary.")
-    output_path: str = Field(..., description="Local file path where the chosen sound will be saved.")
-    min_duration: int = Field(5, description="Minimum sound duration (seconds).")
-    max_results: int = Field(8, description="Maximum number of results to fetch.")
-
 class GenerateAndDownloadImageSchema(BaseModel):
     """
     Schema defining the arguments for generating and downloading an image.
@@ -476,99 +465,6 @@ class ReadScaffoldTool(BaseTool):
         except Exception as e:
             return f"Failed to read scaffold: {e}"
 
-class SearchAndSaveSoundTool(BaseTool):
-    """
-    Searches Freesound for the first sound matching the query and minimum duration.
-    Scrapes a short description from its webpage, saves the sound locally, and returns info as JSON.
-    """
-    name: str = "search_and_save_sound"
-    id: str = "search_and_save_sound"
-    description: str = "A formatted Freesound API query by using '+' for mandatory terms and '-' for prohibited ones (default is mandatory). For example, query=term_a -term_b excludes sounds with 'term_b'. Terms are separated by spaces. Generate a query based on your sound description. Avoid using the word sound in the query."
-    args_schema: Type[BaseModel] = SearchAndSaveSoundToolSchema
-
-    def _run(self, **kwargs) -> Any:
-        import os
-        import json
-        import re
-        import requests
-        from bs4 import BeautifulSoup
-        from freesound import FreesoundClient
-
-        description = kwargs["description"]
-        output_path = kwargs["output_path"]
-        min_duration = kwargs.get("min_duration", 5)
-        max_results = kwargs.get("max_results", 8)
-
-        if not description or not output_path:
-            return "Missing required fields: 'description' and 'output_path'."
-
-        token = os.environ.get("FREESOUND_CLIENT_API_KEY")
-        if not token:
-            return "FREESOUND_CLIENT_API_KEY environment variable is not set."
-
-        # Initialize the client
-        client = FreesoundClient()
-        client.set_token(token, "token")
-
-        # Perform the search
-        try:
-            filter_str = f"duration:[{min_duration} TO *]"
-            pager = client.text_search(query=description, filter=filter_str)
-        except Exception as e:
-            return f"Freesound search failed: {e}"
-
-        # Collect the first result
-        results = []
-        for idx, sound in enumerate(pager):
-            if idx >= max_results:
-                break
-            results.append(sound)
-
-        if not results:
-            return "No results found."
-
-        # We'll just pick the first result to save
-        chosen_sound = results[0]
-        sound_id = chosen_sound.id
-        sound_user = chosen_sound.username
-        url = f"https://freesound.org/people/{sound_user}/sounds/{sound_id}/"
-
-        # Scrape a short description
-        try:
-            page = requests.get(url)
-            soup = BeautifulSoup(page.content, "html.parser")
-            desc_section = soup.find(id="soundDescriptionSection")
-            raw_desc = re.sub(r"<.*?>", "", str(desc_section)) if desc_section else ""
-        except Exception:
-            raw_desc = "N/A"
-
-        # Save the preview locally
-        try:
-            directory = os.path.dirname(output_path)
-            filename = os.path.basename(output_path)
-            if directory and not os.path.exists(directory):
-                os.makedirs(directory, exist_ok=True)
-            chosen_sound.retrieve_preview(directory, filename)
-        except Exception as e:
-            return f"Failed to save sound (ID={sound_id}): {e}"
-
-        # Build the response
-        response_data = {
-            "chosen_sound_id": sound_id,
-            "name": chosen_sound.name,
-            "description": raw_desc.strip(),
-            "saved_path": output_path
-        }
-        return json.dumps(response_data, indent=2)
-
-    async def _arun(self, **kwargs) -> Any:
-        return self._run(**kwargs)
-
-dalle_tool = DallETool(model="dall-e-3",
-                       size="1024x1024",
-                       quality="standard",
-                       n=1)
-
 class GenerateAndDownloadImageTool(BaseTool):
     """
     A single tool that generates an image using OpenAI's DALL·E API and downloads it locally.
@@ -643,7 +539,192 @@ class GenerateAndDownloadImageTool(BaseTool):
 
     async def _arun(self, **kwargs) -> Any:
         return self._run(**kwargs)
-    
+
+class SearchAndPickSoundToolSchema(BaseModel):
+    """
+    Defines the input arguments for performing a Freesound search
+    and automatically picking one result in a single tool call.
+    """
+    description: str = Field(
+        ...,
+        description=(
+            "Formatted query for Freesound API. For every term, you can use '+' and '-' "
+            "modifier characters to indicate that a term is 'mandatory' or 'prohibited' "
+            "(by default, terms are considered 'mandatory'). For example, in a query such "
+            "as `term_a -term_b`, sounds including `term_b` will not match the search criteria. "
+            "Avoid using the word 'sound' in the query unless necessary."
+        )
+    )
+    output_path: str = Field(
+        ...,
+        description="Local file path where the chosen sound will be saved."
+    )
+    min_duration: int = Field(5, description="Minimum sound duration in seconds.")
+    max_results: int = Field(8, description="Maximum number of results to fetch.")
+    pick_instructions: str = Field(
+        default="Pick the most interesting or relevant item.",
+        description=(
+            "A short piece of text or instructions to pass to the sub-LLM. "
+            "It tells the LLM how to choose among the returned results."
+        )
+    )
+
+
+class SearchAndPickSoundTool(BaseTool):
+    """
+    In a single call:
+      - Searches Freesound for multiple results matching the query.
+      - Invokes an LLM to pick the best match.
+      - Downloads that chosen match to the specified path.
+      - Returns JSON with info about all results and the chosen one.
+    """
+    name: str = "search_and_pick_sound"
+    id: str = "search_and_pick_sound"
+    description: str = (
+        "Search Freesound with a single query, see multiple results, let an LLM choose one, "
+        "then download the chosen result. Provide instructions for how to pick the best match."
+    )
+    args_schema: Type[BaseModel] = SearchAndPickSoundToolSchema
+
+    def _run(self, **kwargs) -> Any:
+        """
+        Synchronous run. Gathers multiple search results, calls an LLM to decide,
+        downloads the chosen sound, and returns JSON describing everything.
+        """
+        # Extract arguments
+        description = kwargs["description"]
+        output_path = kwargs["output_path"]
+        min_duration = kwargs.get("duration", 5)
+        max_results = min(kwargs.get("max_results", 6), 6)
+        pick_instructions = kwargs.get("pick_instructions", "")
+
+        if not description or not output_path:
+            return "Missing required fields: 'description' and/or 'output_path'."
+
+        # Check environment variables
+        fs_token = os.environ.get("FREESOUND_CLIENT_API_KEY")
+        if not fs_token:
+            return "FREESOUND_CLIENT_API_KEY environment variable is not set."
+
+        openai_api_key = os.environ.get("OPENAI_API_KEY")  # needed for sub-LLM call
+        if not openai_api_key:
+            return "OPENAI_API_KEY environment variable is not set."
+
+        # ---- 1) FREESOUND SEARCH ----
+        client = FreesoundClient()
+        client.set_token(fs_token, "token")
+
+        try:
+            filter_str = f"duration:[{min_duration} TO *]"
+            pager = client.text_search(query=description, filter=filter_str, fields="id,name,username,duration,description")
+        except Exception as e:
+            return f"Freesound search failed: {e}"
+
+        # Collect results (with basic metadata)
+        results = []
+        for idx, sound in enumerate(pager):
+            if idx >= max_results:
+                break
+            results.append({
+                "index": idx,
+                "id": sound.id,
+                "name": sound.name,
+                "username": sound.username,
+                "description": sound.description[:150].strip() if sound.description else "N/A",
+                "duration": sound.duration
+            })
+
+        if not results:
+            return "No results found."
+
+        # ---- 2) USE LLM TO PICK BEST ----
+        # We'll feed the results + instructions into a small LLM prompt
+        openai.api_key = openai_api_key
+
+        # Build a short text prompt for the sub-LLM:
+        prompt_text = (
+            "We have a list of Freesound results, each has an `index`, `id`, `name`, `username`, and `duration`.\n\n"
+            "Your goal: Decide which one to pick, based on the instructions:\n"
+            f"'{pick_instructions}'\n\n"
+            "Here are the search results:\n"
+        )
+        for r in results:
+            prompt_text += (
+                f"- index: {r['index']}, id: {r['id']}, name: {r['name']}, "
+                f"uploader: {r['username']}, duration: {r['duration']:.1f} s\n"
+            )
+        prompt_text += (
+            "\nReturn ONLY the index (as a number) of the best choice, nothing else.\n"
+            "If uncertain, pick 0."
+        )
+
+        try:
+            llm_response = openai.chat.completions.create(
+                model="o3-mini",
+                messages=[
+                    {"role": "system", "content": "You choose the best sound from a list of sounds for a given scenario/request."},
+                    {"role": "user", "content": prompt_text}
+                ],
+                # temperature=0.2,
+                max_completion_tokens=20,
+                n=1,
+            )
+            choice_text = llm_response.choices[0].message.content.strip()
+        except Exception as e:
+            return f"LLM call failed: {e}"
+
+        # Attempt to parse the chosen index
+        try:
+            chosen_index = int(re.findall(r"\d+", choice_text)[0])
+        except:
+            chosen_index = 0
+
+        if chosen_index < 0 or chosen_index >= len(results):
+            chosen_index = 0  # fallback
+
+        chosen_info = results[chosen_index]
+        chosen_sound_id = chosen_info["id"]
+        chosen_username = chosen_info["username"]
+
+        # ---- 3) SCRAPE DESCRIPTION ----
+        try:
+            url = f"https://freesound.org/people/{chosen_username}/sounds/{chosen_sound_id}/"
+            page = requests.get(url)
+            soup = BeautifulSoup(page.content, "html.parser")
+            desc_section = soup.find(id="soundDescriptionSection")
+            raw_desc = re.sub(r"<.*?>", "", str(desc_section)) if desc_section else ""
+        except Exception:
+            raw_desc = "N/A"
+
+        # ---- 4) RETRIEVE SOUND PREVIEW ----
+        # Need the full Sound object from Freesound
+        chosen_sound = client.get_sound(chosen_sound_id)
+        try:
+            directory = os.path.dirname(output_path)
+            filename = os.path.basename(output_path)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory, exist_ok=True)
+            chosen_sound.retrieve_preview(directory, filename)
+        except Exception as e:
+            return f"Failed to save sound (ID={chosen_sound_id}): {e}"
+
+        # ---- 5) BUILD RESPONSE ----
+        data = {
+            "all_results": results,
+            "llm_decision": choice_text,  # e.g., "Picked index 2"
+            "chosen_index": chosen_index,
+            "chosen_sound_id": chosen_sound_id,
+            "chosen_sound_name": chosen_sound.name,
+            "chosen_sound_description": raw_desc.strip(),
+            "saved_path": output_path
+        }
+        import json
+        return json.dumps(data, indent=2)
+
+    async def _arun(self, **kwargs) -> Any:
+        """Async version calls the same logic."""
+        return self._run(**kwargs)
+      
 def get_all_tools():
     # base_dir = TemporaryDirectory(delete=False).name
     base_dir = "."
@@ -655,8 +736,7 @@ def get_all_tools():
 
     tools = {}
     toolklasses = [
-        ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool,
-        SearchAndSaveSoundTool, GenerateAndDownloadImageTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool, ReadScaffoldTool
+        ReadFileTool, BatchReadFilesTool, WriteFileTool, ListFilesTool, GenerateAndDownloadImageTool, ReadHtmlExamplesTool, QueryMechanicsTool, GoogleSearchTool, ReadScaffoldTool, SearchAndPickSoundTool
     ]
     for toolkls in toolklasses:
         tool = toolkls(base_dir=base_dir)
