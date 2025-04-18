@@ -406,6 +406,7 @@ html5_game_file_structure_and_index:
 
   expected_output: >
     The project scaffold has been finalized. index.html and styles.css have been created, and all necessary files discovered via list_files have been correctly linked. The HTML entry point is now ready for gameplay testing.
+  
   callback: playwrite_test
 
 html5_game_debug_and_fix:
@@ -448,5 +449,7 @@ html5_game_debug_and_fix:
 
   expected_output: >
     All errors described in browser_errors.md have been fixed across the relevant game files. A summary of file changes and resolved errors is included below.
+  
+  callback: playwrite_test
 
 # vim: set foldmethod=indent foldlevel=0:
