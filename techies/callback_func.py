@@ -23,20 +23,22 @@ def capture_browser_errors(url, wait_time_ms=5000, log_path="browser_errors.md")
     errors = []
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
-        page = browser.new_page()
+        context = browser.new_context(ignore_https_errors=True, bypass_csp=True, no_viewport=True)
+        page = context.new_page()
 
         def handle_console(msg):
-            if msg.type == "error" and "favicon.ico" not in msg.text:
+            if msg.type == "error":
                 loc = msg.location or {}
                 file = loc.get("url", "Unknown file")
                 line = loc.get("lineNumber", "?")
                 column = loc.get("columnNumber", "?")
 
                 error_text = f"""[CONSOLE ERROR]
-                                Type: {msg.type}
-                                Message: {msg.text}
-                                Source: {file}:{line}:{column}
-                                """
+        Message: {msg.text}
+        File: {file}
+        Line: {line}
+        Column: {column}
+        """
                 print(error_text)
                 errors.append(error_text)
 
@@ -54,6 +56,8 @@ def capture_browser_errors(url, wait_time_ms=5000, log_path="browser_errors.md")
 
         print(f"[BROWSER] Navigating to: {url}")
         page.goto(url)
+        print("[BROWSER] Page loaded. Forcing hard refresh...")
+        page.reload()  # Simulate hard refresh
         page.wait_for_timeout(wait_time_ms)
         browser.close()
         print("[BROWSER] Closed.")
@@ -104,3 +108,4 @@ def run_browser_server_and_capture_errors(
     httpd.shutdown()
     server_thread.join()
     print("[SERVER] Server thread finished.")
+
